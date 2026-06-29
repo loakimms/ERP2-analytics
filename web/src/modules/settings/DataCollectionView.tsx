@@ -928,11 +928,15 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 		setCollectorBusy(true);
 		setCollectorAutoUpdating(true);
 		setError(null);
+		const shouldRestartWorker = collectorStatus?.running === true;
 		try {
 			await runHostAgentSelfUpdate();
 			const updated = await waitForHostAgentVersion(REQUIRED_HOST_AGENT_VERSION, REQUIRED_HOST_AGENT_MANAGE_NO, 35_000);
 			if (!updated) {
 				throw new Error('self_update_timeout');
+			}
+			if (shouldRestartWorker) {
+				await startCollectorWithFreshTokens();
 			}
 			clearHostAgentAutoUpdateAttempt(accessMode);
 			setError(null);
@@ -1057,6 +1061,40 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 		}
 	};
 
+	const startCollectorWithFreshTokens = async (): Promise<void> => {
+		const token = await getIdToken({ forceRefresh: accessMode === 'nas' });
+		if (accessMode === 'nas' && !token) {
+			throw new Error('NAS Collector 시작에는 로그인 토큰이 필요합니다. 화면을 새로고침하거나 다시 로그인한 뒤 시작해 주세요.');
+		}
+		const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+		const collectorToken = await fetchCollectorWorkerToken(headers);
+		if (accessMode === 'nas') {
+			await assertNasCollectorToken(token || '');
+			await invokeCollectorBridge({
+				command: 'start',
+				apiBaseUrl: absoluteApiBaseUrl(apiBaseUrl),
+				bearerToken: token || '',
+				collectorToken,
+				deviceId: collectorDeviceId,
+			});
+		} else {
+			const res = await fetch(`${HOST_AGENT_LOCAL_ORIGIN}/collector/background/start`, {
+				method: 'POST',
+				cache: 'no-store',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					apiBaseUrl: absoluteApiBaseUrl(apiBaseUrl),
+					bearerToken: token || '',
+					collectorToken,
+					deviceId: collectorDeviceId,
+				}),
+			});
+			const data = await res.json().catch(() => ({} as any));
+			if (!res.ok || data?.ok !== true) throw new Error(String(data?.error || `HTTP ${res.status}`));
+		}
+		await refreshCollectorStatus();
+	};
+
 	const checkOrRestartHostAgent = async () => {
 		if (isHostAgentReachable) {
 			await refreshCollectorStatus();
@@ -1086,10 +1124,17 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 		collectorAutoUpdateAttemptedRef.current = true;
 		markHostAgentAutoUpdateAttempt(accessMode);
 		let cancelled = false;
+		const shouldRestartWorker = collectorStatus?.running === true;
 		const run = async () => {
 			setCollectorAutoUpdating(true);
 			try {
 				await runHostAgentSelfUpdate();
+				const updated = await waitForHostAgentVersion(REQUIRED_HOST_AGENT_VERSION, REQUIRED_HOST_AGENT_MANAGE_NO, 35_000);
+				if (shouldRestartWorker && updated && !cancelled) {
+					await startCollectorWithFreshTokens();
+					clearHostAgentAutoUpdateAttempt(accessMode);
+					return;
+				}
 				clearHostAgentAutoUpdateAttempt(accessMode);
 				window.setTimeout(() => {
 					if (!cancelled) void refreshCollectorStatus();
@@ -1104,43 +1149,13 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 		return () => {
 			cancelled = true;
 		};
-	}, [collectorStatus?.agentReachable, isCollectorAgentLatest, isCollectorWorkerLatest, collectorAutoUpdating, accessMode]);
+	}, [collectorStatus?.agentReachable, collectorStatus?.running, isCollectorAgentLatest, isCollectorWorkerLatest, collectorAutoUpdating, accessMode]);
 
 	const startCollector = async () => {
 		setCollectorBusy(true);
 		setError(null);
 		try {
-			const token = await getIdToken({ forceRefresh: accessMode === 'nas' });
-			if (accessMode === 'nas' && !token) {
-				throw new Error('NAS Collector 시작에는 로그인 토큰이 필요합니다. 화면을 새로고침하거나 다시 로그인한 뒤 시작해 주세요.');
-			}
-			const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
-			const collectorToken = await fetchCollectorWorkerToken(headers);
-			if (accessMode === 'nas') {
-				await assertNasCollectorToken(token || '');
-				await invokeCollectorBridge({
-					command: 'start',
-					apiBaseUrl: absoluteApiBaseUrl(apiBaseUrl),
-					bearerToken: token || '',
-					collectorToken,
-					deviceId: collectorDeviceId,
-				});
-			} else {
-				const res = await fetch(`${HOST_AGENT_LOCAL_ORIGIN}/collector/background/start`, {
-					method: 'POST',
-					cache: 'no-store',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						apiBaseUrl: absoluteApiBaseUrl(apiBaseUrl),
-						bearerToken: token || '',
-						collectorToken,
-						deviceId: collectorDeviceId,
-					}),
-				});
-				const data = await res.json().catch(() => ({} as any));
-				if (!res.ok || data?.ok !== true) throw new Error(String(data?.error || `HTTP ${res.status}`));
-			}
-			await refreshCollectorStatus();
+			await startCollectorWithFreshTokens();
 		} catch (e) {
 			setError(`Collector 시작 실패: ${errToMsg(e)}`);
 		} finally {
