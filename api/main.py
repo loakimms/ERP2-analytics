@@ -47433,7 +47433,9 @@ def _sum_ads_metrics_7d_for_product(
         pass
 
     # 2) title fallback (정확도 낮음)
-    t = str(title or "").strip()
+    # SmartStore 메타는 환경/수집 경로에 따라 "상품명 : 스토어명" suffix가 붙을 수 있다.
+    # 광고 리포트의 product_title은 suffix가 없는 경우가 많으므로 같은 정규화 규칙을 적용한다.
+    t = _normalize_product_title(title, mall_name=_infer_smartstore_mall_name(base)) or str(title or "").strip()
     if len(t) >= 4:
         try:
             q = (
@@ -48240,8 +48242,8 @@ def _product_index_score_row_data_complete(row: TrackedProductIndexScoreDaily | 
     # 양수면 수집된 것으로 간주하되, 전부 0이면 매칭/수집 누락 가능성이 있어 데이터부족으로 본다.
     if not good_source("ads_7d") or (ad_rows <= 0 and ad_metric_sum <= 0):
         return False
-    if not good_source("ctr_cat_avg_7d"):
-        return False
+    # 카테고리 평균 CTR은 클릭 점수 보정 기준이다. 실제 광고 rows가 있으면 점수 계산은
+    # CTR 자체를 기준으로 보수적으로 fallback하므로, 평균 CTR source 누락만으로 UNKNOWN 처리하지 않는다.
     if not (has_value("sales_7d") and good_source("sales_7d")):
         return False
     if not (has_value("sales_30d") and good_source("sales_30d")):
