@@ -31,6 +31,35 @@ function Assert-Ok([string] $what) { if ($LASTEXITCODE -ne 0) { throw "$what fai
 function Assert-RemotePathExists([string] $Path, [string] $Label) {
   if (-not $Path) { throw "Remote path is empty: $Label" }
 }
+function Get-TextMatch([string] $Path, [string] $Pattern, [string] $Label) {
+  if (-not (Test-Path -LiteralPath $Path)) { throw "Missing file for ${Label}: $Path" }
+  $text = Get-Content -LiteralPath $Path -Raw
+  $m = [regex]::Match($text, $Pattern, [System.Text.RegularExpressions.RegexOptions]::Multiline)
+  if (-not $m.Success) { throw "Could not parse $Label from $Path" }
+  return [string]$m.Groups[1].Value
+}
+function Get-ExpectedHostAgentRelease([string] $RepoRoot) {
+  $uiPath = Join-Path $RepoRoot 'web\src\modules\hostAgentRelease.ts'
+  $agentPath = Join-Path $RepoRoot 'tools\host-agent.ps1'
+  $installerPath = Join-Path $RepoRoot 'web\public\nas\Install-Analytics-HostAgent.ps1'
+  $uiVersion = Get-TextMatch $uiPath 'REQUIRED_HOST_AGENT_VERSION\s*=\s*[''"]([^''"]+)[''"]' 'UI required host agent version'
+  $uiManageNo = Get-TextMatch $uiPath 'REQUIRED_HOST_AGENT_MANAGE_NO\s*=\s*[''"]([^''"]+)[''"]' 'UI required host agent manage no'
+  $agentVersion = Get-TextMatch $agentPath '^\$AgentVersion\s*=\s*"([^"]+)"' 'host-agent.ps1 AgentVersion'
+  $agentManageNo = Get-TextMatch $agentPath '^\$AgentManageNo\s*=\s*"([^"]+)"' 'host-agent.ps1 AgentManageNo'
+  $bundledVersion = Get-TextMatch $installerPath '^\$bundledAgentVersion\s*=\s*"([^"]+)"' 'NAS installer bundledAgentVersion'
+  $bundledManageNo = Get-TextMatch $installerPath '^\$bundledAgentManageNo\s*=\s*"([^"]+)"' 'NAS installer bundledAgentManageNo'
+  foreach ($p in @(
+    @('UI version', $uiVersion, $agentVersion),
+    @('UI manageNo', $uiManageNo, $agentManageNo),
+    @('NAS installer version', $bundledVersion, $agentVersion),
+    @('NAS installer manageNo', $bundledManageNo, $agentManageNo)
+  )) {
+    if ([string]$p[1] -ne [string]$p[2]) {
+      throw ("Host Agent release mismatch: {0} actual={1} expected={2}" -f $p[0], $p[1], $p[2])
+    }
+  }
+  return @{ version = $agentVersion; manageNo = $agentManageNo }
+}
 
 $repoRoot = (Resolve-Path (Join-Path (Split-Path -Parent $PSCommandPath) '..')).Path
 Push-Location $repoRoot | Out-Null
@@ -51,6 +80,8 @@ try {
   if (-not $tagLine) { throw 'ANALYTICS_IMAGE_TAG not found in master lock' }
   $tag = ($tagLine -split '=', 2)[1].Trim()
   $safeTag = $tag -replace '[\\/:*?"<>|]', '_'
+  $expectedAgent = Get-ExpectedHostAgentRelease $repoRoot
+  Write-Step ("Host Agent release verified: version {0}, manageNo {1}" -f $expectedAgent.version, $expectedAgent.manageNo)
 
   # 사람이 NAS로 복사할 때 "어떤 파일인지" 명확히 알 수 있도록,
   # 고정 파일명(SoT) 외에 태그 포함 사본을 매번 남긴다. (덮어쓰기 혼선 방지)
@@ -165,16 +196,26 @@ try {
   if ($webJson -match 'imageTag[\"'']?\s*:\s*[\"'']?([^\"''\s]+)') {
     $webTag = $Matches[1]
     Write-Info "  Web imageTag: $webTag"
-    if ($webTag -ne $tag) { Write-Warning "  Expected tag $tag" }
-  } else { Write-Warning "  Could not parse version.json" }
+    if ($webTag -ne $tag) { throw "NAS web imageTag mismatch: expected=$tag actual=$webTag" }
+  } else { throw "Could not parse version.json" }
+
+  Write-Step 'Verify: NAS-served Host Agent installer release'
+  $installerText = & ssh.exe @sshOpts $sshTarget "bash -lc 'curl -sS http://127.0.0.1:6188/nas/Install-Analytics-HostAgent.ps1'" 2>$null | Out-String
+  if ($installerText -notmatch [regex]::Escape([string]$expectedAgent.version)) {
+    throw ("NAS installer missing expected Host Agent version: " + [string]$expectedAgent.version)
+  }
+  if ($installerText -notmatch [regex]::Escape([string]$expectedAgent.manageNo)) {
+    throw ("NAS installer missing expected Host Agent manageNo: " + [string]$expectedAgent.manageNo)
+  }
+  Write-Info ("  NAS installer Host Agent release OK: version {0}, manageNo {1}" -f $expectedAgent.version, $expectedAgent.manageNo)
 
   Write-Step 'Verify: api version'
   $apiVer = & ssh.exe @sshOpts $sshTarget "bash -lc 'curl -sS http://127.0.0.1:6189/api/version'" 2>$null | Out-String
   if ($apiVer -match 'imageTag[\"'']?\s*:\s*[\"'']?([^\"''\s]+)') {
     $apiTag = $Matches[1]
     Write-Info "  API imageTag: $apiTag"
-    if ($apiTag -ne $tag) { Write-Warning "  Expected tag $tag" }
-  } else { Write-Warning "  Could not parse api/version" }
+    if ($apiTag -ne $tag) { throw "NAS api imageTag mismatch: expected=$tag actual=$apiTag" }
+  } else { throw "Could not parse api/version" }
 
   Write-Info "Done. NAS Web: http://${NasHost}:6188  API: http://${NasHost}:6189  tag=$tag"
 }

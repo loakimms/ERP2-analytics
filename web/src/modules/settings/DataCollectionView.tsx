@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useMaybeAuth } from '../auth/AuthProvider';
 import { getHostSetupDownloads } from '../layout/hostSetupDownloads';
 import { buildErp2ClientIpHeaders, discoverNasHostCdpIp } from '../layout/hostCdpClient';
+import { REQUIRED_HOST_AGENT_MANAGE_NO, REQUIRED_HOST_AGENT_VERSION } from '../hostAgentRelease';
 
 const HOST_AGENT_LOCAL_ORIGIN = 'http://127.0.0.1:9230';
 const HOST_AGENT_START_PROTOCOL_URL = 'erp2-analytics-host-agent://start';
@@ -185,9 +186,6 @@ const runtimeLabel: Record<string, string> = {
 	collector_pc: '24시간 PC Collector',
 	web_manual: '웹 수동',
 };
-
-const REQUIRED_HOST_AGENT_VERSION = '2026.06.26-gfa-startup-cleanup-only';
-const REQUIRED_HOST_AGENT_MANAGE_NO = '20260626-1858';
 
 function normalizeManageNo(value: unknown): string {
 	return String(value ?? '').replace(/[^0-9A-Za-z_.:-]+/g, '').trim();

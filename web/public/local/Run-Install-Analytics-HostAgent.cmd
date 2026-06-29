@@ -69,9 +69,9 @@ function Register-HostAgentStartProtocol([string]$StartScriptPath) {
   New-Item -Path $commandKey -Force | Out-Null
   New-ItemProperty -Path $protocolRoot -Name "URL Protocol" -Value "" -PropertyType String -Force | Out-Null
   Set-Item -Path $protocolRoot -Value "URL:ERP2 Analytics Host Agent"
-  # 브라우저의 "상태확인/재시작"에서 띄우는 PowerShell 창은
-  # 성공/실패 안내를 사용자가 읽을 수 있어야 하므로 NoPause를 강제하지 않는다.
-  $command = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$StartScriptPath`" -Port $Port -CdpPort $CdpPort"
+  # 브라우저/UI의 자동 재시작 경로는 성공 안내 창을 남기지 않는다.
+  # 수동 설치 실행기만 마지막 안내/대기 창을 유지한다.
+  $command = "`"$pwsh`" -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File `"$StartScriptPath`" -Port $Port -CdpPort $CdpPort -NoPause"
   Set-Item -Path $commandKey -Value $command
 }
 
@@ -163,10 +163,10 @@ if (-not (Test-Path -LiteralPath $ensure)) { throw "ensure-host-agent.ps1 not fo
 if (-not (Test-Path -LiteralPath $start)) { throw "start-host-agent.ps1 not found. searched root=$repoRoot" }
 
 try {
-  $tr = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$agent`" -Port $Port -CdpPort $CdpPort"
-
-  $taskResult = Register-HostAgentTask -TaskName $taskName -TaskRunCommand $tr
   Register-HostAgentStartProtocol -StartScriptPath $start
+
+  $tr = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$agent`" -Port $Port -CdpPort $CdpPort"
+  $taskResult = Register-HostAgentTask -TaskName $taskName -TaskRunCommand $tr
 
   Write-Host ""
   Write-Host "✅ 설치 완료: 로그온 시 Host Agent가 자동 실행됩니다." -ForegroundColor Green

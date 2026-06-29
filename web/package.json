@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "vite --port 5188",
     "typecheck": "tsc --noEmit",
+    "verify-host-agent-release": "node scripts/verify-host-agent-release.mjs",
     "build-host-launchers": "node scripts/build-ps1-launchers.mjs",
     "pack-nas-bundle": "node scripts/pack-nas-host-bundle.mjs",
-    "prebuild": "npm run build-host-launchers && node scripts/pack-nas-host-bundle.mjs",
+    "prebuild": "npm run verify-host-agent-release && npm run build-host-launchers && node scripts/pack-nas-host-bundle.mjs",
     "build": "vite build",
     "build:checked": "npm run typecheck && vite build",
     "preview": "vite preview --port 5188",

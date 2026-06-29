@@ -83,9 +83,9 @@ function Register-HostAgentStartProtocol([string]$StartScriptPath) {
   New-Item -Path $commandKey -Force | Out-Null
   New-ItemProperty -Path $protocolRoot -Name "URL Protocol" -Value "" -PropertyType String -Force | Out-Null
   Set-Item -Path $protocolRoot -Value "URL:ERP2 Analytics Host Agent"
-  # 브라우저의 "상태확인/재시작"에서 띄우는 PowerShell 창은
-  # 성공/실패 안내를 사용자가 읽을 수 있어야 하므로 NoPause를 강제하지 않는다.
-  $command = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$StartScriptPath`" -Port $Port -CdpPort $CdpPort"
+  # 브라우저/UI의 자동 재시작 경로는 성공 안내 창을 남기지 않는다.
+  # 수동 설치 실행기만 마지막 안내/대기 창을 유지한다.
+  $command = "`"$pwsh`" -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File `"$StartScriptPath`" -Port $Port -CdpPort $CdpPort -NoPause"
   Set-Item -Path $commandKey -Value $command
 }
 
@@ -172,8 +172,8 @@ function Resolve-AnalyticsRepoRoot {
 
 $taskName = "ERP2-Analytics Host Agent"
 $taskNameEnsure = "ERP2-Analytics Host Agent (ensure)"
-$bundledAgentVersion = "2026.06.26-gfa-startup-cleanup-only"
-$bundledAgentManageNo = "20260626-1858"
+$bundledAgentVersion = "2026.06.29-token-safe-update"
+$bundledAgentManageNo = "20260629-1403"
 
 $pwsh = Resolve-PowerShellExe
 
@@ -252,6 +252,10 @@ function Ensure-BackgroundWorker([int]$port) {
   try {
     $raw = Get-Content -LiteralPath $configPath -Raw -ErrorAction Stop
     if ([string]::IsNullOrWhiteSpace($raw)) { return }
+    $cfg = $raw | ConvertFrom-Json
+    $bearerToken = [string]($cfg.bearerToken ?? "")
+    $collectorToken = [string]($cfg.collectorToken ?? "")
+    if ([string]::IsNullOrWhiteSpace($bearerToken) -and [string]::IsNullOrWhiteSpace($collectorToken)) { return }
     Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:{0}/collector/background/start" -f $port) -ContentType "application/json" -Body $raw -TimeoutSec 5 | Out-Null
   } catch {}
 }
@@ -328,6 +332,33 @@ function Test-AgentHealthy([int]$port) {
   }
 }
 
+function Stop-ExistingHostAgents([int]$port) {
+  try {
+    Invoke-RestMethod -Method Post -Uri ("http://127.0.0.1:{0}/shutdown" -f $port) -TimeoutSec 2 | Out-Null
+    Start-Sleep -Milliseconds 700
+  } catch {
+    # The process may already be down or blocked before the listener responds.
+  }
+
+  try {
+    $currentPid = $PID
+    $processes = Get-CimInstance Win32_Process | Where-Object {
+      $cmd = [string]($_.CommandLine)
+      if ([string]::IsNullOrWhiteSpace($cmd)) { return $false }
+      if ([int]$_.ProcessId -eq [int]$currentPid) { return $false }
+      $isHostAgent = $cmd -like "*host-agent.ps1*"
+      $usesPort = $cmd -like ("*-Port {0}*" -f $port)
+      return ($isHostAgent -and $usesPort)
+    }
+    foreach ($process in $processes) {
+      try { Stop-Process -Id ([int]$process.ProcessId) -Force -ErrorAction SilentlyContinue } catch {}
+    }
+  } catch {
+    # Best effort cleanup. The new process will still fail health check if the port is occupied.
+  }
+  Start-Sleep -Milliseconds 700
+}
+
 function Resolve-AnalyticsRepoRoot {
   $candidates = New-Object 'System.Collections.Generic.List[string]'
   foreach ($value in @($env:ERP2_ANALYTICS_ROOT, "D:\dev\ERP2-analytics", "C:\dev\ERP2-analytics")) {
@@ -347,6 +378,10 @@ Write-Host (" - health target: http://127.0.0.1:{0}/health" -f $Port)
 Write-Host ""
 
 $pwshExe = Resolve-PowerShellExe
+# Re-running the launcher is an explicit restart. Stop stale repo/standalone/worker
+# processes first so old Host Agent code cannot keep claiming collector jobs.
+Stop-ExistingHostAgents -port $Port
+
 Start-Process -FilePath $pwshExe -ArgumentList @(
   "-NoProfile",
   "-ExecutionPolicy", "Bypass",
@@ -519,12 +554,16 @@ Write-Output ($payload | ConvertTo-Json -Compress)
 exit 1
 '@
 
-if ($agentScript -match '(?m)^\$AgentVersion = ' ) {
-  $agentScript = $agentScript -replace '(?m)^\$AgentVersion = ".*"$', ('$AgentVersion = "' + $bundledAgentVersion + '"')
-}
-if ($agentScript -match '(?m)^\$AgentManageNo = ' ) {
-  $agentScript = $agentScript -replace '(?m)^\$AgentManageNo = ".*"$', ('$AgentManageNo = "' + $bundledAgentManageNo + '"')
-}
+$agentScript = [regex]::Replace(
+  $agentScript,
+  '(?m)^\$AgentVersion = ".*"$',
+  { param($m) '$AgentVersion = "' + $bundledAgentVersion + '"' }
+)
+$agentScript = [regex]::Replace(
+  $agentScript,
+  '(?m)^\$AgentManageNo = ".*"$',
+  { param($m) '$AgentManageNo = "' + $bundledAgentManageNo + '"' }
+)
 $agentScript = [regex]::Replace(
   $agentScript,
   '(?m)^(\s*)Join-Path `\$PSHOME ''pwsh\.exe'',\s*$',
@@ -535,55 +574,47 @@ $agentScript = [regex]::Replace(
   '(?m)^(\s*)Join-Path `\$PSHOME ''powershell\.exe'',\s*$',
   '${1}(Join-Path `$PSHOME ''powershell.exe''),'
 )
-$legacyCampaignOnOffPattern = '(?s)  const ensureCampaignOnOffFilter = async \(\) => \{.*?  \};\r?\n  const collectVisibleRows ='
-$newCampaignOnOffBlock = @'
-  const ensureCampaignOnOffFilter = async () => {
-    const rows = [...document.querySelectorAll('table tbody tr, [role="row"]')].filter(visible);
-    let onCount = 0;
-    let offCount = 0;
-    for (const row of rows) {
-      const cells = [...row.querySelectorAll('td, [role="cell"], [role="gridcell"]')].filter(visible);
-      const onoff = onoffFromRow(row, cells);
-      if (onoff === 'ON') onCount += 1;
-      if (onoff === 'OFF') offCount += 1;
-    }
-    stageLog.push('campaign_default_list_onoff_detected:ON=' + onCount + ',OFF=' + offCount);
-    if (onCount <= 0 && offCount <= 0) {
-      stageLog.push('campaign_default_list_onoff_not_detected');
-      return { ok: true, warning: 'gfa_campaign_default_onoff_not_detected', on_count: 0, off_count: 0 };
-    }
-    if (onCount <= 0 || offCount <= 0) {
-      stageLog.push('campaign_default_list_not_mixed_onoff_warning');
-    }
-    return { ok: true, on_count: onCount, off_count: offCount, default_all_campaigns_assumed: true };
-  };
-  const collectVisibleRows =
-'@
-$agentScript = [regex]::Replace($agentScript, $legacyCampaignOnOffPattern, $newCampaignOnOffBlock)
-$agentScript = $agentScript.Replace(@'
-  const onoffFilter = await ensureCampaignOnOffFilter();
-  if (!onoffFilter.ok) {
-    return { ok: false, human_action_required: false, items: [], campaign_type: campaignType, menu_label: menuLabel, stage_log: stageLog, page_url: location.href, title: document.title, body_sample: bodyText().slice(0, 900), error: onoffFilter.error || 'gfa_campaign_onoff_filter_apply_failed', via: 'naver_gfa_campaign_inventory_cdp' };
+$agentScript = [regex]::Replace(
+  $agentScript,
+  '(?s)(\s*)\$state = if \(\$isAuthFailure -and \$consecutiveAuthFailures -lt 3\) \{ "POLLING_RETRY" \} elseif \(\$isAuthFailure\) \{ "AUTH_EXPIRED" \} else \{ "ERROR" \}\s*\r?\n\s*Write-BackgroundStatus @\{ running = \$true; state = \$state; apiBaseUrl = \$ApiBaseUrl; deviceId = \$DeviceId; error = \$msg; authFailureCount = \$consecutiveAuthFailures; errorCount = \$consecutiveErrors; collectorTokenConfigured = \(-not \[string\]::IsNullOrWhiteSpace\(\$script:CollectorWorkerToken\)\) \}\s*\r?\n\s*Write-Warn \("background collector error: \{0\}" -f \$msg\)\s*\r?\n\s*Start-Sleep -Seconds 10',
+  {
+    param($m)
+    $indent = [string]$m.Groups[1].Value
+    @(
+      '${indent}$state = if ($isAuthFailure -and $consecutiveAuthFailures -lt 3) { "POLLING_RETRY" } elseif ($isAuthFailure) { "AUTH_EXPIRED" } else { "ERROR" }',
+      '${indent}Write-BackgroundStatus @{ running = $true; state = $state; apiBaseUrl = $ApiBaseUrl; deviceId = $DeviceId; error = $msg; authFailureCount = $consecutiveAuthFailures; errorCount = $consecutiveErrors; collectorTokenConfigured = (-not [string]::IsNullOrWhiteSpace($script:CollectorWorkerToken)) }',
+      '${indent}Write-Warn ("background collector error: {0}" -f $msg)',
+      '${indent}if ($state -eq "AUTH_EXPIRED") {',
+      '${indent}  Write-BackgroundStatus @{ running = $false; state = "AUTH_EXPIRED"; apiBaseUrl = $ApiBaseUrl; deviceId = $DeviceId; error = $msg; authFailureCount = $consecutiveAuthFailures; errorCount = $consecutiveErrors; collectorTokenConfigured = (-not [string]::IsNullOrWhiteSpace($script:CollectorWorkerToken)); stoppedReason = "auth_expired" }',
+      '${indent}  try { Remove-Item -LiteralPath (Get-BackgroundPidPath) -Force -ErrorAction SilentlyContinue } catch {}',
+      '${indent}  break',
+      '${indent}}',
+      '${indent}Start-Sleep -Seconds 10'
+    ) -replace '^\$\{indent\}', $indent -join "`r`n"
   }
-'@, @'
-  const onoffFilter = await ensureCampaignOnOffFilter();
-  if (onoffFilter.warning) stageLog.push(String(onoffFilter.warning));
-'@)
-$agentScript = $agentScript.Replace(@'
-  return { ok: true, items: all, campaign_type: campaignType, menu_label: menuLabel, count: all.length, stage_log: stageLog, page_url: location.href, title: document.title, body_sample: bodyText().slice(0, 900), error: null, via: 'naver_gfa_campaign_inventory_cdp' };
-'@, @'
-  const visibilitySummary = {
-    on_count: all.filter((item) => String(item.onoff || '').toUpperCase() === 'ON').length,
-    off_count: all.filter((item) => String(item.onoff || '').toUpperCase() === 'OFF').length,
-    active_status_count: all.filter((item) => /운영가능|운영중/.test(String(item.status || ''))).length,
-    inactive_status_count: all.filter((item) => /운영불가|중지|종료|삭제|비운영/.test(String(item.status || ''))).length,
-  };
-  stageLog.push('campaign_inventory_visibility_summary:' + JSON.stringify(visibilitySummary));
-  if (visibilitySummary.on_count <= 0 || visibilitySummary.off_count <= 0) {
-    stageLog.push('campaign_inventory_visibility_summary_warning');
+)
+$agentScript = [regex]::Replace(
+  $agentScript,
+  '(?s)(\s*)if \(`\$backgroundStatus -and `\$backgroundStatus\.running\) \{\s*\r?\n\s*Start-Sleep -Seconds 4\s*\r?\n\s*`\$apiBaseUrl = \[string\]\(`\$backgroundStatus\.apiBaseUrl\)\s*\r?\n\s*if \(\[string\]::IsNullOrWhiteSpace\(`\$apiBaseUrl\)\) \{ `\$apiBaseUrl = "http://127\.0\.0\.1:5189" \}\s*\r?\n\s*`\$deviceId = \[string\]\(`\$backgroundStatus\.deviceId\)\s*\r?\n\s*if \(\[string\]::IsNullOrWhiteSpace\(`\$deviceId\)\) \{ `\$deviceId = "settings-data-collection" \}\s*\r?\n\s*`\$payload = @\{ apiBaseUrl = `\$apiBaseUrl; deviceId = `\$deviceId \} \| ConvertTo-Json -Compress\s*\r?\n\s*for \(`\$i = 0; `\$i -lt 12; `\$i\+\+\) \{\s*\r?\n\s*try \{\s*\r?\n\s*Invoke-RestMethod -Method Post -Uri "http://127\.0\.0\.1:\$port/collector/background/start" -ContentType "application/json" -Body `\$payload -TimeoutSec 5 \| Out-Null\s*\r?\n\s*Write-UpdateLog "background restart requested"\s*\r?\n\s*break\s*\r?\n\s*\} catch \{\s*\r?\n\s*Start-Sleep -Seconds 2\s*\r?\n\s*\}\s*\r?\n\s*\}\s*\r?\n\s*\}',
+  {
+    param($m)
+    $indent = [string]$m.Groups[1].Value
+    @(
+      '${indent}if (`$backgroundStatus -and `$backgroundStatus.running) {',
+      '${indent}  Write-UpdateLog "background restart skipped: token refresh required"',
+      '${indent}}'
+    ) -replace '^\$\{indent\}', $indent -join "`r`n"
   }
-  return { ok: true, items: all, campaign_type: campaignType, menu_label: menuLabel, count: all.length, visibility_summary: visibilitySummary, stage_log: stageLog, page_url: location.href, title: document.title, body_sample: bodyText().slice(0, 900), error: null, via: 'naver_gfa_campaign_inventory_cdp' };
-'@)
+)
+$agentScript = [regex]::Replace(
+  $agentScript,
+  '(?m)^(\s*)bearerToken: String\(command\.bearerToken \|\| ''''\),\s*$',
+  {
+    param($m)
+    $indent = [string]$m.Groups[1].Value
+    $m.Value + "`r`n" + $indent + "collectorToken: String(command.collectorToken || ''),"
+  }
+)
 
 Write-TextUtf8NoBom -path $agentPath -content $agentScript
 Write-TextUtf8NoBom -path $ensurePath -content $ensureScript
@@ -605,9 +636,10 @@ try {
   # 그 repo의 tools\host-agent.ps1 를 우선 참조하면 self-update 후에도 예전 스크립트를 계속 실행하게 된다.
   # -> NAS 패키지 업데이트가 "안 된 것처럼" 보이는 원인이라, NAS 설치 경로에서는 repo override를 금지한다.
 
+  Register-HostAgentStartProtocol -StartScriptPath $effectiveStartPath
+
   $tr = "`"$pwsh`" -NoProfile -ExecutionPolicy Bypass -File `"$effectiveAgentPath`" -Port $Port -CdpPort $CdpPort"
   $taskResult = Register-HostAgentTask -TaskName $taskName -TaskRunCommand $tr
-  Register-HostAgentStartProtocol -StartScriptPath $effectiveStartPath
   $ensureTaskRemoved = $false
   if (Test-HostAgentTaskExists -TaskName $taskNameEnsure) {
     $deleteOutput = @(& schtasks.exe /Delete /TN "$taskNameEnsure" /F 2>&1)

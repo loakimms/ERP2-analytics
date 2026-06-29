@@ -41,6 +41,7 @@ import {
 	isRoutableNasHostCdpIpv4,
 	rewriteCdpHttpUrlForNas,
 } from './hostCdpClient';
+import { REQUIRED_HOST_AGENT_MANAGE_NO, REQUIRED_HOST_AGENT_VERSION } from '../hostAgentRelease';
 import { summarizeCaptchaSessionDebug } from './cdpDebugSummary';
 import { formatSessionPrepErrorMessage } from './sessionPrepError';
 
@@ -1677,8 +1678,6 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 		}
 	}, []);
 	const hostSetupDownloads = useMemo(() => getHostSetupDownloads(uiTarget), [uiTarget]);
-const REQUIRED_HOST_AGENT_VERSION = '2026.06.26-gfa-startup-cleanup-only';
-const REQUIRED_HOST_AGENT_MANAGE_NO = '20260626-1858';
 	const HOST_AGENT_AUTO_UPDATE_COOLDOWN_MS = 30 * 60 * 1000;
 	const HOST_AGENT_AUTO_UPDATE_KEY = `analytics:host-agent:auto-update-attempt:${uiTarget}:${REQUIRED_HOST_AGENT_MANAGE_NO}`;
 	type HostAgentStatus = 'checking' | 'connected' | 'outdated' | 'missing' | 'error';

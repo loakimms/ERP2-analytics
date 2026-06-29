@@ -22,6 +22,42 @@ $sshOpts = @(
 )
 if (Test-Path -LiteralPath $keyPath) { $sshOpts = @('-i', $keyPath) + $sshOpts }
 $sshTarget = "${NasUser}@${NasHost}"
+$repoRoot = (Resolve-Path (Join-Path (Split-Path -Parent $PSCommandPath) '..')).Path
+
+function Get-TextMatch([string] $Path, [string] $Pattern, [string] $Label) {
+  if (-not (Test-Path -LiteralPath $Path)) { throw "Missing file for ${Label}: $Path" }
+  $text = Get-Content -LiteralPath $Path -Raw
+  $m = [regex]::Match($text, $Pattern, [System.Text.RegularExpressions.RegexOptions]::Multiline)
+  if (-not $m.Success) { throw "Could not parse $Label from $Path" }
+  return [string]$m.Groups[1].Value
+}
+
+function Get-ExpectedHostAgentRelease {
+  $uiPath = Join-Path $repoRoot 'web\src\modules\hostAgentRelease.ts'
+  $agentPath = Join-Path $repoRoot 'tools\host-agent.ps1'
+  $installerPath = Join-Path $repoRoot 'web\public\nas\Install-Analytics-HostAgent.ps1'
+
+  $uiVersion = Get-TextMatch $uiPath 'REQUIRED_HOST_AGENT_VERSION\s*=\s*[''"]([^''"]+)[''"]' 'UI required host agent version'
+  $uiManageNo = Get-TextMatch $uiPath 'REQUIRED_HOST_AGENT_MANAGE_NO\s*=\s*[''"]([^''"]+)[''"]' 'UI required host agent manage no'
+  $agentVersion = Get-TextMatch $agentPath '^\$AgentVersion\s*=\s*"([^"]+)"' 'host-agent.ps1 AgentVersion'
+  $agentManageNo = Get-TextMatch $agentPath '^\$AgentManageNo\s*=\s*"([^"]+)"' 'host-agent.ps1 AgentManageNo'
+  $bundledVersion = Get-TextMatch $installerPath '^\$bundledAgentVersion\s*=\s*"([^"]+)"' 'NAS installer bundledAgentVersion'
+  $bundledManageNo = Get-TextMatch $installerPath '^\$bundledAgentManageNo\s*=\s*"([^"]+)"' 'NAS installer bundledAgentManageNo'
+
+  $pairs = @(
+    @('UI version', $uiVersion, $agentVersion),
+    @('UI manageNo', $uiManageNo, $agentManageNo),
+    @('NAS installer version', $bundledVersion, $agentVersion),
+    @('NAS installer manageNo', $bundledManageNo, $agentManageNo)
+  )
+  foreach ($p in $pairs) {
+    if ([string]$p[1] -ne [string]$p[2]) {
+      throw ("Host Agent release mismatch: {0} actual={1} expected={2}" -f $p[0], $p[1], $p[2])
+    }
+  }
+
+  return @{ version = $agentVersion; manageNo = $agentManageNo }
+}
 
 function Invoke-Ssh([string] $bashCmd, [string] $label) {
   $q = [char]34
@@ -54,6 +90,8 @@ Invoke-Ssh "set -eu; cd '$NasPath'; ls -l docker/analytics.nas.master.lock docke
 $tag = (Invoke-SshCapture "set -eu; cd '$NasPath'; sed -n 's/^ANALYTICS_IMAGE_TAG=//p' docker/analytics.nas.master.lock | sed -n '1p'" 'ssh read tag').Trim()
 if (-not $tag) { throw "Remote lock missing ANALYTICS_IMAGE_TAG ($NasPath/docker/analytics.nas.master.lock)" }
 Write-Info "NAS lock tag = $tag"
+$expectedAgent = Get-ExpectedHostAgentRelease
+Write-Info ("Expected Host Agent release = version {0}, manageNo {1}" -f $expectedAgent.version, $expectedAgent.manageNo)
 
 $remoteTar = "$NasPath/docker_images/analytics_images_$tag.tar"
 Write-Step "Verify tar exists ($remoteTar)"
@@ -91,6 +129,23 @@ Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f
 Write-Step 'Verify: web version.json (internal)'
 $webJson = Invoke-SshCapture "set -eu; curl -sS http://127.0.0.1:6188/version.json" 'ssh curl web version'
 Write-Info ("web version.json: " + ($webJson.Trim() -replace '\\s+', ' '))
+try {
+  $webObj = $webJson | ConvertFrom-Json
+  $webTag = [string]($webObj.imageTag ?? '')
+  if ($webTag -ne $tag) { throw "NAS web imageTag mismatch: expected=$tag actual=$webTag" }
+} catch {
+  throw ("NAS web version.json verify failed: " + $_.Exception.Message)
+}
+
+Write-Step 'Verify: NAS-served Host Agent installer release'
+$installerText = Invoke-SshCapture "set -eu; curl -sS http://127.0.0.1:6188/nas/Install-Analytics-HostAgent.ps1" 'ssh curl host agent installer'
+if ($installerText -notmatch [regex]::Escape([string]$expectedAgent.version)) {
+  throw ("NAS installer missing expected Host Agent version: " + [string]$expectedAgent.version)
+}
+if ($installerText -notmatch [regex]::Escape([string]$expectedAgent.manageNo)) {
+  throw ("NAS installer missing expected Host Agent manageNo: " + [string]$expectedAgent.manageNo)
+}
+Write-Info ("NAS installer Host Agent release OK: version {0}, manageNo {1}" -f $expectedAgent.version, $expectedAgent.manageNo)
 
 Write-Step 'Verify: api version (internal, retry up to 90s)'
 Write-Info '  waiting up to 90s for api version...'
@@ -106,6 +161,13 @@ if ($apiVer -match '__API_UNREACHABLE__') {
   throw 'API version check failed (unreachable)'
 }
 Write-Info ("api version: " + ($apiVer.Trim() -replace '\\s+', ' '))
+try {
+  $apiObj = $apiVer | ConvertFrom-Json
+  $apiTag = [string]($apiObj.imageTag ?? '')
+  if ($apiTag -ne $tag) { throw "NAS api imageTag mismatch: expected=$tag actual=$apiTag" }
+} catch {
+  throw ("NAS api version verify failed: " + $_.Exception.Message)
+}
 
 Write-Step 'Verify: discover-host-cdp endpoint exists (expect 400)'
 $code = Invoke-SshCapture "set -eu; curl -sS -o /dev/null -w '%{http_code}\\n' 'http://127.0.0.1:6189/search-rank/page-metrics/discover-host-cdp?cidr=192.168.0.0/33'" 'ssh curl discover endpoint'

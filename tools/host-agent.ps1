@@ -43,8 +43,8 @@ function Resolve-PowerShellExe {
 }
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).ProviderPath
-$AgentVersion = "2026.06.26-gfa-startup-cleanup-only"
-$AgentManageNo = "20260626-1858"
+$AgentVersion = "2026.06.29-token-safe-update"
+$AgentManageNo = "20260629-1403"
 $HostAgentInstallMode = if (Test-Path -LiteralPath (Join-Path $repoRoot "CANONICAL_ROOT.txt")) { "repo" } else { "standalone" }
 $startScript = Join-Path $repoRoot "tools\\start-host-chrome.ps1"
 $stopScript = Join-Path $repoRoot "tools\\stop-host-chrome.ps1"
@@ -205,21 +205,7 @@ try {
     Start-Process -FilePath `$pwsh -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", `$start, "-Port", "$port", "-CdpPort", "$cdpPort", "-NoPause") -WindowStyle Hidden | Out-Null
     Write-UpdateLog "restart requested"
     if (`$backgroundStatus -and `$backgroundStatus.running) {
-      Start-Sleep -Seconds 4
-      `$apiBaseUrl = [string](`$backgroundStatus.apiBaseUrl)
-      if ([string]::IsNullOrWhiteSpace(`$apiBaseUrl)) { `$apiBaseUrl = "http://127.0.0.1:5189" }
-      `$deviceId = [string](`$backgroundStatus.deviceId)
-      if ([string]::IsNullOrWhiteSpace(`$deviceId)) { `$deviceId = "settings-data-collection" }
-      `$payload = @{ apiBaseUrl = `$apiBaseUrl; deviceId = `$deviceId } | ConvertTo-Json -Compress
-      for (`$i = 0; `$i -lt 12; `$i++) {
-        try {
-          Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:$port/collector/background/start" -ContentType "application/json" -Body `$payload -TimeoutSec 5 | Out-Null
-          Write-UpdateLog "background restart requested"
-          break
-        } catch {
-          Start-Sleep -Seconds 2
-        }
-      }
+      Write-UpdateLog "background restart skipped: token refresh required"
     }
   } else {
     Write-UpdateLog "start script not found"
@@ -6154,6 +6140,11 @@ function Invoke-CollectorBackgroundWorker([string]$ApiBaseUrl, [string]$BearerTo
 			$state = if ($isAuthFailure -and $consecutiveAuthFailures -lt 3) { "POLLING_RETRY" } elseif ($isAuthFailure) { "AUTH_EXPIRED" } else { "ERROR" }
 			Write-BackgroundStatus @{ running = $true; state = $state; apiBaseUrl = $ApiBaseUrl; deviceId = $DeviceId; error = $msg; authFailureCount = $consecutiveAuthFailures; errorCount = $consecutiveErrors; collectorTokenConfigured = (-not [string]::IsNullOrWhiteSpace($script:CollectorWorkerToken)) }
 			Write-Warn ("background collector error: {0}" -f $msg)
+			if ($state -eq "AUTH_EXPIRED") {
+				Write-BackgroundStatus @{ running = $false; state = "AUTH_EXPIRED"; apiBaseUrl = $ApiBaseUrl; deviceId = $DeviceId; error = $msg; authFailureCount = $consecutiveAuthFailures; errorCount = $consecutiveErrors; collectorTokenConfigured = (-not [string]::IsNullOrWhiteSpace($script:CollectorWorkerToken)); stoppedReason = "auth_expired" }
+				try { Remove-Item -LiteralPath (Get-BackgroundPidPath) -Force -ErrorAction SilentlyContinue } catch {}
+				break
+			}
 			Start-Sleep -Seconds 10
 		}
 	}
@@ -6385,6 +6376,7 @@ function Get-CollectorBackgroundBridgeHtml {
         const body = {
           apiBaseUrl: String(command.apiBaseUrl || ''),
           bearerToken: String(command.bearerToken || ''),
+          collectorToken: String(command.collectorToken || ''),
           deviceId: String(command.deviceId || 'settings-data-collection'),
         };
         const res = await fetch('/collector/background/start', {
