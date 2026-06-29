@@ -185,9 +185,28 @@ try {
   & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d analytics-db --pull never --remove-orphans'"
   Assert-Ok 'SSH compose up db'
 
-  Write-Step 'NAS: compose up web/api (force-recreate)'
-  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-web analytics-api --pull never --remove-orphans'"
-  Assert-Ok 'SSH compose up web/api'
+  Write-Step 'NAS: stop web before api recreate (avoid proxy 502 during api warmup)'
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock stop analytics-web >/dev/null 2>&1 || true'"
+  Assert-Ok 'SSH stop web before api recreate'
+
+  Write-Step 'NAS: compose up api (force-recreate)'
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-api --pull never --remove-orphans'"
+  Assert-Ok 'SSH compose up api'
+
+  Write-Step 'NAS: wait api version before starting web'
+  $apiWarmup = & ssh.exe @sshOpts $sshTarget "bash -lc 'for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do curl -sS --max-time 3 http://127.0.0.1:6189/api/version 2>/dev/null && exit 0; sleep 2; done; echo __API_UNREACHABLE__; exit 0'" | Out-String
+  if ($apiWarmup -match '__API_UNREACHABLE__') {
+    throw 'API version check failed before web start'
+  }
+  if ($apiWarmup -match 'imageTag[\"'']?\s*:\s*[\"'']?([^\"''\s,}]+)') {
+    $apiWarmupTag = $Matches[1]
+    Write-Info "  API ready before web start: $apiWarmupTag"
+    if ($apiWarmupTag -ne $tag) { throw "NAS api imageTag mismatch before web start: expected=$tag actual=$apiWarmupTag" }
+  } else { throw "Could not parse api/version before web start" }
+
+  Write-Step 'NAS: compose up web (force-recreate)'
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-web --pull never --remove-orphans'"
+  Assert-Ok 'SSH compose up web'
 
   # 5) 검증
   Start-Sleep -Seconds 5

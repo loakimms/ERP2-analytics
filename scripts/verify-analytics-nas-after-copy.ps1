@@ -123,8 +123,27 @@ Invoke-Ssh "set -eu; ""`$DOCKER_BIN"" volume inspect analytics_analytics-db-data
 Write-Step 'NAS: compose up db (if needed)'
 Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d analytics-db --pull never --remove-orphans" 'ssh compose up db'
 
-Write-Step 'NAS: compose up web/api (force-recreate)'
-Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-web analytics-api --pull never --remove-orphans" 'ssh compose up web/api'
+Write-Step 'NAS: stop web before api recreate (avoid proxy 502 during api warmup)'
+Invoke-Ssh "set +e; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock stop analytics-web >/dev/null 2>&1; exit 0" 'ssh stop web before api recreate'
+
+Write-Step 'NAS: compose up api (force-recreate)'
+Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-api --pull never --remove-orphans" 'ssh compose up api'
+
+Write-Step 'NAS: wait api version before starting web'
+$apiWarmup = Invoke-SshCapture "set +e; for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do curl -sS --max-time 3 http://127.0.0.1:6189/api/version 2>/dev/null && exit 0; sleep 2; done; echo '__API_UNREACHABLE__'; exit 0" 'ssh wait api before web'
+if ($apiWarmup -match '__API_UNREACHABLE__') {
+  throw 'API version check failed before web start'
+}
+try {
+  $apiWarmupObj = $apiWarmup | ConvertFrom-Json
+  $apiWarmupTag = [string]($apiWarmupObj.imageTag ?? '')
+  if ($apiWarmupTag -ne $tag) { throw "NAS api imageTag mismatch before web start: expected=$tag actual=$apiWarmupTag" }
+} catch {
+  throw ("NAS api warmup verify failed: " + $_.Exception.Message)
+}
+
+Write-Step 'NAS: compose up web (force-recreate)'
+Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-web --pull never --remove-orphans" 'ssh compose up web'
 
 Write-Step 'Verify: web version.json (internal)'
 $webJson = Invoke-SshCapture "set -eu; curl -sS http://127.0.0.1:6188/version.json" 'ssh curl web version'
