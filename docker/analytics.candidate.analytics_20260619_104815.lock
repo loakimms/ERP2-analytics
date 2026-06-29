@@ -1,0 +1,11 @@
+# Analytics candidate lock (verification tag)
+ANALYTICS_IMAGE_TAG=analytics_20260619_104815
+
+# web/version.json 증거(빌드 시 주입)
+VITE_APP_VERSION=analytics_20260619_104815
+VITE_IMAGE_TAG=analytics_20260619_104815
+ANALYTICS_BUILD_TIME=2026-06-19T10:48:15
+ANALYTICS_GIT_SHA=
+
+# Firebase Auth 토큰 검증용 (비밀이 아닌 project id)
+FIREBASE_PROJECT_ID=money-management-e380f

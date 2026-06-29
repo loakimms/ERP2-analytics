@@ -1,0 +1,10 @@
+export { AiOpsHomeView } from './AiOpsHomeView';
+export { AiOpsActionsView } from './AiOpsActionsView';
+export { AiOpsLogsView } from './AiOpsLogsView';
+export { AiOpsProductsView } from './AiOpsProductsView';
+export { AiOpsAdsView } from './AiOpsAdsView';
+export { AiOpsSalesView } from './AiOpsSalesView';
+export { AiOpsReviewsView } from './AiOpsReviewsView';
+export { AiOpsQnaView } from './AiOpsQnaView';
+export { AiOpsTrendsView } from './AiOpsTrendsView';
+export { AiOpsPoliciesView } from './AiOpsPoliciesView';

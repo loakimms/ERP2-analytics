@@ -1,0 +1,38 @@
+---
+alwaysApply: true
+---
+
+## Analytics UI 롤백 재발 방지 규칙 (삭제 금지 / SoT)
+
+목표: analytics에서 “이미지/번들이 바뀌면서 옛 UI로 돌아가는 문제”를 구조적으로 재발 불가 상태로 만든다.
+
+### 핵심 원칙(반드시)
+
+- **단일 진실(SoT)**: analytics의 실행 태그는 `docker/analytics*.lock`의 `ANALYTICS_IMAGE_TAG`가 유일한 진실이다.
+- **불변 태그(immutable tag)**: 매 빌드마다 새 태그를 만든다(예: `analytics_YYYYMMDD_HHMMSS`).
+- **latest/placeholder 금지**: `latest`, `current_hold`, `candidate_pending` 같은 값은 사용 금지(실행 시 즉시 실패해야 함).
+- **compose는 fail-fast**: `ANALYTICS_IMAGE_TAG`가 없으면 컨테이너가 뜨지 않도록 `:?`로 막는다.
+- **백업은 수동(UI)**: 백업은 Analytics UI의 **버전관리 메뉴**에서 사용자가 필요 시점에만 수동으로 수행한다(자동 `docker save` 금지).
+
+### 허용되는 실행(표준)
+
+- **빌드→검증→승격/롤백(권장/표준)**: `scripts/analytics_rebuild_and_verify.ps1`
+  - `analytics_build_candidate.ps1`로 새 태그 생성 + candidate.lock 갱신
+  - `analytics_switch_to_candidate_and_verify.ps1`로 증거 검증
+  - `analytics_promote_or_rollback.ps1`로 PASS 승격 / FAIL 롤백
+
+#### (예외) 비상용 수동 백업
+
+- UI에 접근할 수 없는 비상 상황에서만 `scripts/analytics_backup_images.ps1`로 이미지 tar를 수동 생성할 수 있다.
+
+### 금지(재발 원인)
+
+- `start-analytics*.ps1`로 직접 compose를 띄우는 우회 기동(혼선/되돌림 체감 재발 위험)
+- `--env-file <lock>` 없이 `docker compose up` 실행(태그/증거 불일치 및 latest 폴백 위험)
+
+### 증거(항상 3종 세트로 확인)
+
+- 컨테이너 이미지 태그(= lock과 일치)
+- `web`의 `/version.json`에서 `imageTag` 확인
+- `api`의 `/api/version`에서 `imageTag` 확인
+

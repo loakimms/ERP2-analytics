@@ -1,0 +1,104 @@
+---
+alwaysApply: true
+---
+
+## ERP2-analytics 프로젝트 개요
+
+본 문서는 **ERP2-analytics(광고/검색/쇼핑 분석)** 프로젝트의 구조, 실행/운영 흐름, 디렉토리 구성, 데이터 수집 방식과 안정성 규칙을 요약합니다.
+
+> **중요(고정 규칙)**  
+> - AI 에이전트의 “터미널/스크립트 요청 처리 4단계 + 룰 수정 정책”은  
+>   `.cursor/rules/ops-agent-process.mdc`가 **단일 진실(SoT)** 이며, **삭제/축약/일반화 금지**입니다.  
+> - Analytics UI 롤백 재발 방지(불변 태그/candidate 검증/승격)는  
+>   `.cursor/rules/analytics-roll-back-prevention.mdc`가 **단일 진실(SoT)** 입니다.
+
+### AI 에이전트 운영 규칙 (필수, 터미널/스크립트 요청 시)
+
+사용자가 “터미널로 해줘/실행해줘/배포해줘/재빌드해줘”처럼 **실행을 요청**하면, 아래 원칙을 반드시 지킵니다.
+
+- **표준 절차(SoT)**: `.cursor/rules/ops-agent-process.mdc`
+- **고정 문장 매핑(SoT)**: `.cursor/rules/command-phrases.mdc`
+
+### 룰 문서 수정 정책 (중요)
+
+- **기존 룰을 삭제/덮어쓰지 않는다.** 반드시 “추가/병합”으로만 갱신한다.
+- 구조를 바꿔야 하면, 기존 내용을 지우지 말고 **`## Archived` 섹션**으로 옮겨 보존한다.
+
+---
+
+## 시스템 구성 (요약)
+
+- **Web(Frontend)**: Analytics 전용 Web(UI) — 포트 `5188`
+- **API(Backend)**: Analytics API — 포트 `5189`
+- **DB**: 별도 Postgres 컨테이너(`analytics-db`) 사용(ERP2-dev와 분리)
+- **수집 방식(현행)**:
+  - 네이버 SearchAd/데이터랩/키워드 도구: API 기반 수집
+  - 쇼핑 검색/상품 페이지 수집: 필요 시 Playwright + **Host Chrome CDP(9223)** 기반 수집(캡차/봇체크 대응)
+- **운영 안정성 핵심**:
+  - **불변 태그(immutable tag)** + lock 기반 실행
+  - candidate → verify → promote(or rollback) 표준 흐름으로 “UI 롤백/혼선” 재발 방지
+
+포트 요약:
+- **Analytics Web**: `5188`
+- **Analytics API**: `5189`
+- (NAS-mode 로컬 시뮬레이션) Web `6188`, API `6189`, debug `29222`
+- (Host Chrome CDP) `9223`
+
+---
+
+## 디렉토리 구조 (핵심)
+
+```text
+ERP2-analytics/
+  api/                   # Analytics API (FastAPI 기반)
+  web/                   # Analytics Web(UI)
+  docker/                # analytics.*.yml + analytics.*.lock (태그/증거 SoT)
+  scripts/               # build→verify→promote(표준) 및 운영 스크립트
+  tools/                 # Host Chrome CDP 도구 등
+  docs/                  # 운영/분석 문서
+  .cursor/rules/         # Cursor 규칙(오염 방지/표준 실행)
+```
+
+---
+
+## 표준 실행 흐름(로컬)
+
+### 1) 재빌드 + 검증 + 승격/롤백(표준, 추천)
+
+- 실행: `scripts/analytics_rebuild_and_verify.ps1`
+- 특징: 새 불변 태그 생성 → candidate.lock 갱신 → 증거 검증 → PASS 승격 / FAIL 롤백
+
+### 2) 재기동만(빌드 없음)
+
+- 실행: `scripts/cmd-analytics-local.ps1` 또는 `scripts/analytics_up.ps1`
+
+### 3) 금지(재발 원인)
+
+- lock 없이 `docker compose up`로 우회 기동
+- 포트를 바꿔서 “살리는” 임시 조치
+- 실행 중 컨테이너에 `dist/`를 덮어쓰는 배포 방식(재기동 시 되돌림/착시 유발)
+
+---
+
+## 증거(항상 확인)
+
+- 컨테이너 이미지 태그(= lock과 일치)
+- Web: `http://localhost:5188/version.json`에서 `imageTag` 확인
+- API: `http://localhost:5189/api/version`에서 `imageTag` 확인
+
+---
+
+## Host Chrome CDP(9223) 수집 개요
+
+쇼핑 검색이 보안 확인/캡차로 막히는 경우,
+컨테이너 내부 브라우저 대신 **호스트(윈도우) Chrome 세션**을 CDP로 열어 쿠키/로그인 상태를 재사용합니다.
+
+- 도구: `tools/start-host-chrome.ps1`, `tools/stop-host-chrome.ps1`, `tools/run-with-host-chrome.ps1`, `tools/collect-via-modal.ps1`
+
+---
+
+## 교차 오염 방지(완전 분리)
+
+- 이 워크스페이스는 **Analytics 전용**입니다.
+- ERP2-dev(회계/판매) 관련 스크립트/포트(5299/8086 등)는 이 저장소에서 실행/수정하지 않습니다.
+

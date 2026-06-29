@@ -1,0 +1,90 @@
+# ------------------------------
+# LEGACY COMPOSE (DO NOT USE)
+# ------------------------------
+#
+# 이 파일은 과거 개발용 compose 이며, 실수로 `docker compose up`를 실행하면
+# 스택/포트/이미지(tag)가 섞여 “되돌림”처럼 체감되는 문제가 재발할 수 있습니다.
+#
+# 표준 운영/개발은 아래 스크립트만 사용하세요.
+# - .\scripts\analytics_rebuild_and_verify.ps1  (빌드→검증→승격/롤백)
+# - .\scripts\analytics_up.ps1                 (재기동만)
+#
+# 이 legacy 스택은 기본 실행에서 제외되도록 모든 서비스에 profiles를 부여했습니다.
+# 필요 시에만 `docker compose --profile legacy up ...` 로 명시 실행하세요(비권장).
+
+services:
+  analytics-db:
+    profiles: ["legacy"]
+    image: postgres:16-alpine
+    container_name: analytics-db
+    environment:
+      POSTGRES_USER: analytics
+      POSTGRES_PASSWORD: analytics_pw
+      POSTGRES_DB: analytics
+    ports:
+      - "5442:5432"
+    volumes:
+      - analytics-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analytics -d analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  analytics-api:
+    profiles: ["legacy"]
+    build: ./api
+    container_name: analytics-api
+    depends_on:
+      analytics-db:
+        condition: service_healthy
+    environment:
+      ANALYTICS_DB_URL: postgresql://analytics:analytics_pw@analytics-db:5432/analytics
+      # (보안/일관성) API 키는 DB(app_settings)만 사용
+      API_SETTINGS_DB_ONLY: "1"
+      # CORS: 로컬 개발 편의(필요 시 "*" 또는 "https://example.com,https://..."로 조정)
+      # - 미지정 시 main.py 기본값(로컬호스트 전체 포트 허용 정규식)이 적용됨
+      CORS_ORIGINS: "*"
+      # Host(윈도우)에서 접속할 DevTools 포트(9222는 로컬 프로그램과 충돌 가능)
+      PW_DEBUG_HOST_PORT: "19222"
+      # (옵션) 쇼핑 검색이 컨테이너에서 418 하드 차단될 때, 호스트 Chrome(Remote Debugging) 세션을 재사용
+      # - 호스트에서 Chrome을 9223 포트로 띄운 뒤 사용하세요.
+      USE_HOST_CHROME: "1"
+      # 개인용 정책: 호스트(CDP) 세션이 아니면 폴백하지 않고 중단(캡차 급증 방지)
+      # 로컬 기본값은 폴백 허용(호스트 Chrome 미실행이어도 SEO/태그 기능이 500으로 죽지 않게)
+      REQUIRE_HOST_CDP: "0"
+      # Chrome DevTools는 Host 헤더가 "localhost 또는 IP"가 아니면 500으로 차단되는 경우가 있어,
+      # 앱 코드에서 host.docker.internal → IP로 자동 치환해 접속한다.
+      PW_CDP_URL: "http://host.docker.internal:9223"
+      # 캡차 세션 확보용 '시드' 상품 URL (개인용: 본인 스토어 상품 1개 고정 권장)
+      SHOPPING_SEED_PRODUCT_URL: "https://smartstore.naver.com/thesujata/products/4743750201"
+    ports:
+      - "5189:8000"
+      # 컨테이너 내부 Chromium DevTools (캡차 직접 해결용)
+      - "19222:9222"
+    extra_hosts:
+      # Docker Desktop 환경에서 컨테이너 → 호스트 접근(CDP) 경로 보장
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Playwright Chromium 사용자 데이터(쿠키/세션) 영속화
+      - analytics-browser-data:/data/playwright
+
+  analytics-web:
+    profiles: ["legacy"]
+    build:
+      context: ./web
+      dockerfile: Dockerfile.web
+    container_name: analytics-web
+    depends_on:
+      analytics-api:
+        condition: service_started
+    environment:
+      VITE_ANALYTICS_API_BASE_URL: http://analytics-api:8000
+    ports:
+      - "5188:80"
+
+volumes:
+  analytics-db-data:
+  analytics-browser-data:
+
+

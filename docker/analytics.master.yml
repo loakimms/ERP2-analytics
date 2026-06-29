@@ -1,0 +1,96 @@
+name: analytics_master
+
+services:
+  analytics-db:
+    image: postgres:16-alpine
+    container_name: analytics-master-db
+    environment:
+      POSTGRES_USER: analytics
+      POSTGRES_PASSWORD: analytics_pw
+      POSTGRES_DB: analytics
+    ports:
+      - "5442:5432"
+    volumes:
+      - analytics-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analytics -d analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  analytics-api:
+    # SoT: lock 파일 --env-file 필수. 없으면 latest 폴백으로 UI 롤백 재발하므로 :? 로 막음.
+    image: analytics-analytics-api:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.master.lock with --env-file)}
+    container_name: analytics-master-api
+    depends_on:
+      analytics-db:
+        condition: service_healthy
+    environment:
+      # 증거(/version, /api/version) 용: lock 파일(단일 진실)에서 주입
+      ANALYTICS_IMAGE_TAG: ${ANALYTICS_IMAGE_TAG:?}
+      ANALYTICS_BUILD_TIME: ${ANALYTICS_BUILD_TIME:-}
+      ANALYTICS_GIT_SHA: ${ANALYTICS_GIT_SHA:-}
+
+      # 로컬에서도 실제 운영과 동일하게 테스트하려면 켤 수 있다(기본 OFF).
+      REQUIRE_FIREBASE_AUTH: ${REQUIRE_FIREBASE_AUTH:-0}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      # Clock skew 허용(WSL/Docker 시간 오차로 iat/nbf가 "not yet valid"로 보이는 문제 완화)
+      FIREBASE_AUTH_CLOCK_SKEW_SECONDS: ${FIREBASE_AUTH_CLOCK_SKEW_SECONDS:-120}
+
+      # Firebase Admin SDK (사용자관리: 목록/생성/권한/비활성화/비밀번호/삭제)
+      # - 값은 lock에 저장하지 않고, 호스트 환경변수로만 주입한다.
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+      FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID:-}
+      # 로컬/테스트에서만 사용: Firebase Admin SDK 없이도 사용자관리 화면을 검증할 수 있는 모드
+      # (운영에서는 절대 켜지지 않도록 기본값 0)
+      ADMIN_TEST_MODE: ${ADMIN_TEST_MODE:-0}
+
+      ANALYTICS_DB_URL: postgresql://analytics:analytics_pw@analytics-db:5432/analytics
+      API_SETTINGS_DB_ONLY: "1"
+      CORS_ORIGINS: "*"
+      # Host Agent background worker 인증 토큰.
+      # env가 없으면 API 프로세스마다 랜덤 생성되어 재배포 후 기존 Worker가 AUTH_EXPIRED로 고정될 수 있다.
+      ANALYTICS_COLLECTOR_TOKEN: ${ANALYTICS_COLLECTOR_TOKEN:-analytics-collector-worker-money-management-e380f}
+      # 수집 job 로그(print)가 docker logs에 바로 보이도록
+      PYTHONUNBUFFERED: "1"
+
+      # OpenAPI(shop.json) 기반 키워드 순위 수집 튜닝
+      # - 값은 env.analytics.local 등 외부 env-file에서 주입 가능
+      # - 기본값은 "429 완화 우선" (PARTIAL 빈도 높을 때 안전)
+      OPENAPI_RANK_CONCURRENCY: ${OPENAPI_RANK_CONCURRENCY:-1}
+      # 기본값: 속도 개선(429는 retry/backoff로 흡수)
+      OPENAPI_RANK_DELAY_MIN: ${OPENAPI_RANK_DELAY_MIN:-0.10}
+      OPENAPI_RANK_DELAY_MAX: ${OPENAPI_RANK_DELAY_MAX:-0.22}
+      OPENAPI_RANK_RETRY_MAX: ${OPENAPI_RANK_RETRY_MAX:-4}
+      OPENAPI_RANK_RETRY_BASE_SEC: ${OPENAPI_RANK_RETRY_BASE_SEC:-0.35}
+      OPENAPI_RANK_RETRY_MAX_SEC: ${OPENAPI_RANK_RETRY_MAX_SEC:-6.0}
+
+      PW_DEBUG_HOST_PORT: "19222"
+      USE_HOST_CHROME: "1"
+      REQUIRE_HOST_CDP: "0"
+      PW_CDP_URL: "http://host.docker.internal:9223"
+      SHOPPING_SEED_PRODUCT_URL: "https://smartstore.naver.com/thesujata/products/4743750201"
+    ports:
+      - "5189:8000"
+      - "19222:9222"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - analytics-browser-data:/data/playwright
+
+  analytics-web:
+    image: analytics-analytics-web:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.master.lock with --env-file)}
+    container_name: analytics-master-web
+    depends_on:
+      analytics-api:
+        condition: service_started
+    ports:
+      - "5188:80"
+
+volumes:
+  analytics-db-data:
+    name: analytics-master_analytics-db-data
+  analytics-browser-data:
+    name: analytics-master_analytics-browser-data
+

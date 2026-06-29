@@ -1,0 +1,84 @@
+name: analytics_nas
+
+services:
+  analytics-db:
+    image: postgres:16-alpine
+    container_name: analytics-nas-db
+    environment:
+      POSTGRES_USER: analytics
+      POSTGRES_PASSWORD: analytics_pw
+      POSTGRES_DB: analytics
+    ports:
+      - "6442:5432"
+    volumes:
+      - analytics-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analytics -d analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  analytics-api:
+    # IMPORTANT: 불변 태그 + lock(SoT) 강제.
+    # ANALYTICS_IMAGE_TAG가 없으면 'latest'로 흘러가 UI 롤백이 재발할 수 있으므로 fail-fast로 막는다.
+    image: analytics-analytics-api:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.*.lock with --env-file)}
+    container_name: analytics-nas-api
+    depends_on:
+      analytics-db:
+        condition: service_healthy
+    environment:
+      # 증거(/version, /api/version) 용: lock 파일(단일 진실)에서 주입
+      ANALYTICS_IMAGE_TAG: ${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.*.lock with --env-file)}
+      ANALYTICS_BUILD_TIME: ${ANALYTICS_BUILD_TIME:-}
+      ANALYTICS_GIT_SHA: ${ANALYTICS_GIT_SHA:-}
+      # NAS 운영: 토큰 인증 강제
+      REQUIRE_FIREBASE_AUTH: "1"
+      # Firebase 프로젝트 ID (ID token의 aud/iss 검증용)
+      # - ERP2-dev/env.web.local 의 VITE_FIREBASE_PROJECT_ID와 동일 값이어야 한다.
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-money-management-e380f}
+      # Clock skew 허용(서버/클라이언트 시간 오차로 iat/nbf가 "not yet valid"로 보이는 문제 완화)
+      FIREBASE_AUTH_CLOCK_SKEW_SECONDS: ${FIREBASE_AUTH_CLOCK_SKEW_SECONDS:-120}
+      # Firebase Admin SDK (사용자관리: 목록/생성/권한/비활성화/비밀번호/삭제)
+      # - 값은 lock에 저장하지 않고, NAS/호스트 환경변수로만 주입한다.
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+      FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID:-}
+      ANALYTICS_DB_URL: postgresql://analytics:analytics_pw@analytics-db:5432/analytics
+      API_SETTINGS_DB_ONLY: "1"
+      # Nginx(/api) 동일 오리진 프록시 사용을 기본으로 하므로, CORS는 최소로 두고 필요 시 제한한다.
+      CORS_ORIGINS: "*"
+      # NAS 스택은 local과 동시에 띄울 수 있으므로 디버그 포트 충돌 방지
+      PW_DEBUG_HOST_PORT: "29222"
+      USE_HOST_CHROME: "1"
+      # NAS에서 호스트(사용자 PC) Chrome 세션이 필수.
+      # 실패 시 내부 Chromium 폴백(조용히 "아무 반응 없음"처럼 보이는 문제) 대신 즉시 에러로 표면화한다.
+      REQUIRE_HOST_CDP: "1"
+      PW_CDP_URL: "http://host.docker.internal:9223"
+      SHOPPING_SEED_PRODUCT_URL: "https://smartstore.naver.com/thesujata/products/4743750201"
+    ports:
+      - "6189:8000"
+      - "29222:9222"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - analytics-browser-data:/data/playwright
+
+  analytics-web:
+    # IMPORTANT: 불변 태그 + lock(SoT) 강제 (see analytics-api above)
+    image: analytics-analytics-web:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.*.lock with --env-file)}
+    container_name: analytics-nas-web
+    depends_on:
+      analytics-api:
+        condition: service_started
+    ports:
+      - "6188:80"
+
+volumes:
+  # NAS 기존 DB 복구: 예전 배포에서 사용하던 볼륨명 사용 (analytics_analytics-db-data).
+  # compose project label 경고가 재발하지 않도록 외부 볼륨으로 고정한다.
+  # 신규 NAS는 배포 스크립트가 compose 실행 전에 이 볼륨을 생성한다.
+  analytics-db-data:
+    external: true
+    name: analytics_analytics-db-data
+  analytics-browser-data:
+    name: analytics-nas_analytics-browser-data

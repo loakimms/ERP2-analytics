@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+## Analytics 전용 “고정 문장” 실행 매핑 (삭제 금지)
+
+이 저장소(`C:\dev\ERP2-analytics`)는 **Analytics(광고/검색/쇼핑 분석)** 전용이다.
+ERP2-dev(회계/판매) 관련 실행은 이 워크스페이스에서 수행하지 않는다.
+
+### Analytics
+
+- **"analytics 로컬 기동해줘"**
+  - 실행: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\cmd-analytics-local.ps1`
+  - 기대 포트: web `5188`, api `5189`
+
+- **"analytics nas 기동해줘"**
+  - 실행: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\cmd-analytics-nas.ps1`
+  - 의미: “NAS 모드 구성”을 **로컬 Docker에서** 기동(검증/시뮬레이션)
+  - 기대 포트: web `6188`, api `6189`, debug `29222`
+
+- **"analytics nas 동기화 해줘"**
+  - 실행: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\cmd-analytics-nas-sync.ps1`
+
+### 재빌드·재기동 (로컬 표준 흐름만)
+
+- **"재빌드 해줘" / "재기동 해줘" / "재빌드, 재기동 해줘"**
+  - **항상** 불변 태그 → candidate 검증 → PASS 승격(또는 FAIL 롤백) 표준 흐름으로 수행한다.
+  - 실행: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\analytics_rebuild_and_verify.ps1`
+
+### 차단(교차 오염 방지)
+
+- 이 워크스페이스에서 아래 요청은 **실행하지 않는다**.
+  - `"erp2 로컬 기동해줘"`, `"erp2 nas 기동해줘"`, `"erp2 nas 동기화 해줘"`
+  - ERP2-dev 관련 포트/스택(5299/8086 등) 조작
+

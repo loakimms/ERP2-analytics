@@ -1,0 +1,20 @@
+{
+  "files.watcherExclude": {
+    "**/web/node_modules/**": true,
+    "**/_backups_full/**": true,
+    "**/artifacts/**": true,
+    "**/data/**": true,
+    "**/web/dist/**": true,
+    "**/docker_images/**": true
+  },
+  "search.exclude": {
+    "**/web/node_modules": true,
+    "**/_backups_full": true,
+    "**/artifacts": true,
+    "**/data": true,
+    "**/web/dist": true,
+    "**/docker_images": true,
+    "**/analytics_images_analytics_*.tar": true
+  },
+  "npm.autoDetect": "off"
+}

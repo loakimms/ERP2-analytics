@@ -1,0 +1,21 @@
+{
+  "exclude": [
+    "**/node_modules",
+    "**/.git",
+    "**/.venv",
+    "**/venv",
+    "**/__pycache__",
+    "**/dist",
+    "**/build",
+    "**/data",
+    "**/datasets",
+    "**/images",
+    "**/assets",
+    "**/uploads",
+    "**/*.csv",
+    "**/*.parquet",
+    "**/*.log",
+    "**/*.zip",
+    "**/*.pdf"
+  ]
+}

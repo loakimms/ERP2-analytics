@@ -1,0 +1,50 @@
+# 로컬 전용 env (운영/NAS에 배포되지 않음)
+docker/env.analytics.local
+docker/env.firebase.admin.local
+env.web.local
+
+# 로컬 데이터 (start-analytics-local.ps1 바인드 마운트)
+data/
+
+# Python / test cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / frontend build output
+node_modules/
+web/node_modules/
+web/dist/
+web/coverage/
+web/playwright-report/
+web/test-results/
+
+# Local artifacts / temporary files
+artifacts/
+upload_data/
+.tmp_sync/
+_debug/
+_backups_full/
+_from_erp2-dev/
+_moved_from_erp2-dev/
+_tmp*
+tmp_*.cmd
+$remote
+
+# Large deployment/image bundles generated locally
+*.tar
+*_host_bundle.zip
+
+# Local analysis attachments / scratch files
+*.docx
+*.csv
+*_extracted.txt
+revew.ini
+
+# Generated/local metadata
+manifest.txt
+openapi.json
+analytics-openapi.json
+CANONICAL_ROOT.txt

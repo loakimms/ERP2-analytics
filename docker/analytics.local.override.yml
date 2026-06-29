@@ -1,0 +1,14 @@
+# Analytics 로컬 오버라이드 (ERP2-dev docker-compose.local.override.yml 구조와 동일)
+# - CORS, 포트 등 로컬 개발 시 덮어쓸 값
+services:
+  analytics-db:
+    # 필요 시 포트 변경
+    # ports: []
+
+  analytics-api:
+    environment:
+      CORS_ORIGINS: http://localhost:5188,http://localhost:5299
+
+  analytics-web:
+    # 필요 시 포트 변경
+    # ports: []

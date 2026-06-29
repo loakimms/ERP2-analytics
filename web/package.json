@@ -1,0 +1,47 @@
+{
+  "name": "erp2-analytics-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port 5188",
+    "typecheck": "tsc --noEmit",
+    "build-host-launchers": "node scripts/build-ps1-launchers.mjs",
+    "pack-nas-bundle": "node scripts/pack-nas-host-bundle.mjs",
+    "prebuild": "npm run build-host-launchers && node scripts/pack-nas-host-bundle.mjs",
+    "build": "vite build",
+    "build:checked": "npm run typecheck && vite build",
+    "preview": "vite preview --port 5188",
+    "lint": "echo \"no lint configured\"",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ai-ops:smoke": "playwright test tests/ai-ops-smoke.e2e.spec.ts",
+    "test:e2e:ai-ops:live": "playwright test tests/ai-ops-live-smoke.e2e.spec.ts",
+    "test:e2e:ai-ops:mutations": "playwright test tests/ai-ops-mutations.e2e.spec.ts",
+    "test:e2e:ai-ops": "playwright test tests/ai-ops-smoke.e2e.spec.ts tests/ai-ops-mutations.e2e.spec.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "date-fns": "^4.1.0",
+    "react": "^18.3.1",
+    "react-datepicker": "^7.6.0",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.12.7",
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^25.6.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "archiver": "^7.0.1",
+    "jsdom": "^27.4.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.8",
+    "vitest": "^2.1.4"
+  }
+}
