@@ -18,6 +18,7 @@ from menu_sync_registry import (
     list_menu_sync_items,
     parse_and_validate_bundle,
 )
+from menu_sync_collection_status import reconcile_collection_jobs_after_menu_sync_import
 from schemas import (
     MenuSyncExportRequest,
     MenuSyncInventoryRequest,
@@ -116,6 +117,11 @@ def register_menu_sync_routes(app, *, get_db_dep) -> None:
             entries = _read_zip_entries(raw)
             manifest, validated_entries = parse_and_validate_bundle(entries)
             imported_tables = import_menu_sync_bundle(db, manifest, validated_entries)
+            collection_reconciled = reconcile_collection_jobs_after_menu_sync_import(
+                db,
+                manifest=manifest,
+                imported_tables=imported_tables,
+            )
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return MenuSyncImportResponse(
@@ -126,6 +132,7 @@ def register_menu_sync_routes(app, *, get_db_dep) -> None:
                 {
                     "generated_at": manifest.generated_at.isoformat(),
                     "menus": manifest.menus,
+                    "collection_reconciled": collection_reconciled,
                 },
                 ensure_ascii=False,
             ),

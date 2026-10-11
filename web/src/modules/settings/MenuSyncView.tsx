@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useMaybeAuth } from '../auth/AuthProvider';
+import { REQUIRED_HOST_AGENT_MANAGE_NO, REQUIRED_HOST_AGENT_VERSION } from '../hostAgentRelease';
 
 const HOST_AGENT_ORIGIN = 'http://127.0.0.1:9230';
 const HOST_AGENT_START_PROTOCOL_URL = 'erp2-analytics-host-agent://start';
+const HOST_AGENT_REPO_START_PROTOCOL_URL = 'erp2-analytics-host-agent://start?mode=repo';
 const COLLECTION_DATA_CHANGED_EVENT = 'erp2-analytics:collection-data-changed';
 const COLLECTION_DATA_CHANGED_STORAGE_KEY = 'erp2-analytics.collectionDataChangedAt';
 
@@ -76,6 +78,33 @@ type HostMenuSyncResponse = {
 	import_response?: {
 		imported_tables?: MenuSyncTableSummary[];
 	};
+	local_export_response?: {
+		imported_tables?: MenuSyncTableSummary[];
+	};
+	nas_import_response?: {
+		imported_tables?: MenuSyncTableSummary[];
+	};
+	nas_export_response?: {
+		imported_tables?: MenuSyncTableSummary[];
+	};
+	local_import_response?: {
+		imported_tables?: MenuSyncTableSummary[];
+	};
+};
+
+type HostAgentVersionInfo = {
+	ok?: boolean;
+	agentVersion?: string | null;
+	agentManageNo?: string | null;
+	collectorVersion?: string | null;
+	collectorManageNo?: string | null;
+	installMode?: string | null;
+	menuSyncSupported?: boolean | null;
+	capabilities?: {
+		menuSync?: boolean | null;
+		collector?: boolean | null;
+		hostChrome?: boolean | null;
+	} | null;
 };
 
 function stringifyUnknown(value: unknown): string | null {
@@ -107,12 +136,14 @@ function normalizeTableSummaryList(value: unknown): MenuSyncTableSummary[] {
 
 function normalizeHostMenuSyncResponse(value: unknown): HostMenuSyncResponse {
 	const row = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
-	const importResponse =
-		row.import_response && typeof row.import_response === 'object'
+	const nestedResponse = (key: string) => {
+		const value0 = row[key];
+		return value0 && typeof value0 === 'object'
 			? {
-					imported_tables: normalizeTableSummaryList((row.import_response as Record<string, unknown>).imported_tables),
+					imported_tables: normalizeTableSummaryList((value0 as Record<string, unknown>).imported_tables),
 				}
 			: undefined;
+	};
 	return {
 		ok: typeof row.ok === 'boolean' ? row.ok : undefined,
 		action: stringifyUnknown(row.action) ?? undefined,
@@ -144,7 +175,11 @@ function normalizeHostMenuSyncResponse(value: unknown): HostMenuSyncResponse {
 			  }).filter((item) => item.date && item.table_name)
 			: undefined,
 		imported_tables: normalizeTableSummaryList(row.imported_tables),
-		import_response: importResponse,
+		import_response: nestedResponse('import_response'),
+		local_export_response: nestedResponse('local_export_response'),
+		nas_import_response: nestedResponse('nas_import_response'),
+		nas_export_response: nestedResponse('nas_export_response'),
+		local_import_response: nestedResponse('local_import_response'),
 	};
 }
 
@@ -177,6 +212,28 @@ function isLocalHostName(hostname: string): boolean {
 	return h === 'localhost' || h === '127.0.0.1' || h === '::1' || h === '[::1]';
 }
 
+function normalizeManageNo(value: unknown): string {
+	return String(value ?? '').trim().replace(/[^0-9]/g, '');
+}
+
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function isRequiredHostAgentVersion(info: HostAgentVersionInfo | null): boolean {
+	if (!info) return false;
+	const version = String(info.agentVersion || '').trim();
+	const manageNo = normalizeManageNo(info.agentManageNo);
+	return version === REQUIRED_HOST_AGENT_VERSION && manageNo === normalizeManageNo(REQUIRED_HOST_AGENT_MANAGE_NO);
+}
+
+function supportsMenuSync(info: HostAgentVersionInfo | null): boolean {
+	if (!info) return false;
+	if (info.menuSyncSupported === true) return true;
+	if (info.capabilities?.menuSync === true) return true;
+	return String(info.installMode || '').trim() === 'repo';
+}
+
 function detectAccessMode(apiBaseUrl: string): 'local' | 'nas' | 'unknown' {
 	try {
 		const pageHost = window.location.hostname;
@@ -201,6 +258,10 @@ function importedTablesFromHostResult(result: HostMenuSyncResponse | null): Menu
 	return [];
 }
 
+function sumImportedRows(tables: MenuSyncTableSummary[]): number {
+	return tables.reduce((sum, table) => sum + Number(table.row_count || 0), 0);
+}
+
 function normalizeImportErrorMessage(status?: number, detail?: string | null): string {
 	const text = String(detail || '').trim();
 	if (status === 413 || /413 Request Entity Too Large/i.test(text)) {
@@ -209,30 +270,40 @@ function normalizeImportErrorMessage(status?: number, detail?: string | null): s
 	return text || `HTTP ${status || 500}`;
 }
 
-async function waitForRepoHostAgent(timeoutMs = 25_000): Promise<boolean> {
+async function readHostAgentVersion(): Promise<HostAgentVersionInfo> {
+	const res = await fetch(`${HOST_AGENT_ORIGIN}/version`, { cache: 'no-store' });
+	const data = (await res.json().catch(() => ({}))) as HostAgentVersionInfo;
+	if (!res.ok || data?.ok === false) throw new Error(String((data as any)?.error || `HTTP ${res.status}`));
+	return data;
+}
+
+async function waitForHostAgent(
+	predicate: (info: HostAgentVersionInfo) => boolean,
+	timeoutMs = 25_000,
+	intervalMs = 1000,
+): Promise<HostAgentVersionInfo | null> {
 	const started = Date.now();
 	while (Date.now() - started < timeoutMs) {
 		try {
-			const res = await fetch(`${HOST_AGENT_ORIGIN}/version`, { cache: 'no-store' });
-			const data = await res.json().catch(() => ({} as any));
-			if (res.ok && String(data?.installMode || '').trim() === 'repo') return true;
+			const data = await readHostAgentVersion();
+			if (predicate(data)) return data;
 		} catch {
 			// Host Agent may still be down or restarting.
 		}
-		await new Promise((resolve) => window.setTimeout(resolve, 1000));
+		await sleep(intervalMs);
 	}
-	return false;
+	return null;
 }
 
-async function restartHostAgentViaProtocol(): Promise<boolean> {
+async function restartHostAgentViaProtocol(): Promise<HostAgentVersionInfo | null> {
 	try {
 		await fetch(`${HOST_AGENT_ORIGIN}/shutdown`, { method: 'POST', cache: 'no-store' });
 	} catch {
 		// shutdown often closes the connection before the browser receives the full response.
 	}
-	await new Promise((resolve) => window.setTimeout(resolve, 1200));
-	window.location.href = HOST_AGENT_START_PROTOCOL_URL;
-	return waitForRepoHostAgent();
+	await sleep(1200);
+	window.location.href = HOST_AGENT_REPO_START_PROTOCOL_URL;
+	return waitForHostAgent((info) => supportsMenuSync(info), 25_000);
 }
 
 function formatImportTableSummary(table: MenuSyncTableSummary): string {
@@ -298,6 +369,7 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 	const [message, setMessage] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [hostResult, setHostResult] = useState<HostMenuSyncResponse | null>(null);
+	const [hostRunSteps, setHostRunSteps] = useState<string[]>([]);
 
 	const authHeaders = async (): Promise<Record<string, string>> => {
 		const token = await getIdToken({ forceRefresh: false });
@@ -530,6 +602,59 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 		}
 	};
 
+	const runHostAgentSelfUpdate = async (): Promise<HostAgentVersionInfo> => {
+		const installerUrl = new URL('/nas/Install-Analytics-HostAgent.ps1', window.location.origin).toString();
+		const res = await fetch(`${HOST_AGENT_ORIGIN}/self-update`, {
+			method: 'POST',
+			cache: 'no-store',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				installerUrl,
+				expectedVersion: REQUIRED_HOST_AGENT_VERSION,
+				expectedManageNo: REQUIRED_HOST_AGENT_MANAGE_NO,
+			}),
+		});
+		const data = await res.json().catch(() => ({} as any));
+		if (!res.ok || data?.ok === false) throw new Error(String(data?.error || `HTTP ${res.status}`));
+		const updated = await waitForHostAgent((info) => isRequiredHostAgentVersion(info), 35_000, 1500);
+		if (!updated) throw new Error('host_agent_update_timeout');
+		return updated;
+	};
+
+	const ensureMenuSyncHostAgent = async (): Promise<void> => {
+		let info: HostAgentVersionInfo | null = null;
+		try {
+			info = await readHostAgentVersion();
+		} catch {
+			setMessage('Host Agent가 실행되어 있지 않아 시작을 요청합니다. 외부 앱 열기 확인창이 뜨면 허용해 주세요.');
+			window.location.href = HOST_AGENT_START_PROTOCOL_URL;
+			info = await waitForHostAgent(() => true, 20_000);
+		}
+
+		if (!info) {
+			throw new Error('Host Agent를 시작할 수 없습니다. 먼저 설정 > 데이터 수집에서 Host Agent 상태확인/재시작을 실행한 뒤 다시 시도해 주세요.');
+		}
+
+		if (!isRequiredHostAgentVersion(info)) {
+			setMessage(`Host Agent 업데이트가 필요합니다. ${REQUIRED_HOST_AGENT_MANAGE_NO} 적용 후 메뉴 동기화를 재시도합니다.`);
+			try {
+				info = await runHostAgentSelfUpdate();
+			} catch (updateError: any) {
+				throw new Error(`Host Agent 업데이트 실패: ${String(updateError?.message || updateError || 'self_update_failed')}`);
+			}
+		}
+
+		if (supportsMenuSync(info)) return;
+
+		setMessage('수집용 Host Agent는 정상이나 메뉴 동기화 기능은 repo 기반 Agent가 필요합니다. repo Agent로 전환합니다. 외부 앱 열기 확인창이 뜨면 허용해 주세요.');
+		info = await restartHostAgentViaProtocol();
+		if (info && isRequiredHostAgentVersion(info) && supportsMenuSync(info)) return;
+
+		throw new Error(
+			'수집용 Host Agent는 정상이나 메뉴 동기화용 repo Agent 전환에 실패했습니다. 외부 앱 열기 확인창을 허용한 뒤 다시 시도하거나, 아래 PowerShell 대체 명령으로 실행해 주세요.',
+		);
+	};
+
 	const postHostAgent = async (path: string, payload: Record<string, unknown>): Promise<HostMenuSyncResponse> => {
 		const send = async (): Promise<{ res: Response; data: HostMenuSyncResponse }> => {
 			const res = await fetch(`${HOST_AGENT_ORIGIN}${path}`, {
@@ -543,14 +668,20 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 			return { res, data };
 		};
 
+		if (path.startsWith('/menu-sync/')) {
+			await ensureMenuSyncHostAgent();
+		}
+
 		let { res, data } = await send();
+		const hostAgentErrorText = `${String(data?.error || '')} ${String(data?.detail || '')} ${String(data?.message || '')}`;
 		const needsRepoRestart =
 			res.status === 404 ||
-			String(data?.error || '').includes('not_found');
+			hostAgentErrorText.includes('not_found') ||
+			hostAgentErrorText.includes('not_supported_in_standalone_host_agent');
 		if (needsRepoRestart && path.startsWith('/menu-sync/')) {
 			setMessage('메뉴동기화 기능이 없는 Host Agent가 감지되어 repo 기반 Agent로 재시작합니다. 외부 앱 열기 확인창이 뜨면 허용해 주세요.');
 			const restarted = await restartHostAgentViaProtocol();
-			if (restarted) {
+			if (restarted && supportsMenuSync(restarted)) {
 				({ res, data } = await send());
 			}
 		}
@@ -600,6 +731,12 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 		setHostReconcileLoading(true);
 		setError(null);
 		setMessage(null);
+		setHostRunSteps([
+			'1) 선택 메뉴와 기간을 기준으로 로컬/NAS DB 차이를 계산합니다.',
+			'2) 로컬 -> NAS 보강 번들을 생성하고 NAS에 import합니다.',
+			'3) NAS -> 로컬 보강 번들을 생성하고 로컬에 import합니다.',
+			'4) 반영 테이블과 반영 건수를 집계합니다.',
+		]);
 		try {
 			const token = await getFreshIdToken();
 			const data = await postHostAgent('/menu-sync/reconcile', {
@@ -616,7 +753,12 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 			const nasToLocal = String((data as any).nas_to_local_bundlePath || '').trim();
 			setHostImportBundleName(localToNas || nasToLocal || String(data.bundlePath || '').trim());
 			notifyCollectionDataChanged('menu_sync_reconcile');
-			setMessage('로컬 DB와 NAS DB 양방향 맞춤을 완료했습니다. 양쪽 누락분을 서로 보강했습니다.');
+			const totalRows = sumImportedRows(importedTablesFromHostResult(data));
+			setMessage(
+				totalRows > 0
+					? `로컬 DB와 NAS DB 양방향 맞춤을 완료했습니다. 반영 ${totalRows.toLocaleString()}건`
+					: '로컬 DB와 NAS DB 양방향 맞춤을 완료했습니다. 동기화할 누락 항목은 없었습니다.',
+			);
 		} catch (requestError: any) {
 			setHostResult({
 				ok: false,
@@ -748,6 +890,12 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 			setHostImportLoading(false);
 		}
 	};
+
+	const hostImportedTables = importedTablesFromHostResult(hostResult);
+	const isReconcileResult = hostResult?.action === 'menu-sync-db-reconcile';
+	const reconcileLocalToNasTables = hostResult?.nas_import_response?.imported_tables || [];
+	const reconcileNasToLocalTables = hostResult?.local_import_response?.imported_tables || [];
+	const reconcileTotalRows = sumImportedRows(hostImportedTables);
 
 	return (
 		<div style={{ maxWidth: 980, margin: '0 auto' }}>
@@ -935,6 +1083,14 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 							<div className="card-caption">
 								로컬에서 NAS로, NAS에서 로컬로 각각 번들을 생성해 import합니다. 서버 import 정책에 따라 기존 데이터는 보존하고 누락분을 보강합니다.
 							</div>
+							{hostReconcileLoading && hostRunSteps.length > 0 ? (
+								<div style={{ marginTop: 10, display: 'grid', gap: 4, fontSize: 13, color: '#bbf7d0' }}>
+									<strong>현재 진행 중</strong>
+									{hostRunSteps.map((step) => (
+										<div key={step}>{step}</div>
+									))}
+								</div>
+							) : null}
 						</div>
 						<div>
 							<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
@@ -1001,6 +1157,27 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 							<div><strong>최근 호스트 실행 상태:</strong> {hostResult.ok === false ? '실패' : '성공'}</div>
 							<div><strong>최근 호스트 실행:</strong> {hostResult.action || '-'}</div>
 							<div><strong>프로젝트 번들 경로:</strong> {hostResult.bundlePath || '-'}</div>
+							{isReconcileResult ? (
+								<div style={{ marginTop: 10, padding: 10, borderRadius: 8, border: '1px solid rgba(34,197,94,0.25)', backgroundColor: 'rgba(34,197,94,0.06)' }}>
+									<div style={{ fontWeight: 800, marginBottom: 8 }}>양방향 DB 맞춤 결과</div>
+									<div>선택 메뉴: {selectedLabels.length > 0 ? selectedLabels.join(', ') : (hostResult.menus || []).join(', ') || '-'}</div>
+									{requiresDateScope ? <div>대상 기간: {hostResult.date_from || dateFrom || '-'} ~ {hostResult.date_to || dateTo || '-'}</div> : null}
+									<div>{'로컬 -> NAS 번들'}: {hostResult.local_to_nas_bundlePath || '-'}</div>
+									<div>{'NAS -> 로컬 번들'}: {hostResult.nas_to_local_bundlePath || '-'}</div>
+									<div style={{ marginTop: 6 }}>
+										<strong>총 반영:</strong> {reconcileTotalRows.toLocaleString()}건
+										{reconcileTotalRows === 0 ? ' (동기화할 누락 항목 없음)' : ''}
+									</div>
+								</div>
+							) : null}
+							{hostRunSteps.length > 0 && (hostReconcileLoading || isReconcileResult) ? (
+								<div style={{ marginTop: 10, display: 'grid', gap: 4 }}>
+									<strong>진행 과정</strong>
+									{hostRunSteps.map((step) => (
+										<div key={step}>{step}</div>
+									))}
+								</div>
+							) : null}
 							{hostResult.error ? <div><strong>오류:</strong> {hostResult.error}</div> : null}
 							{hostResult.detail ? <div><strong>상세:</strong> {hostResult.detail}</div> : null}
 							{typeof hostResult.missing_date_count === 'number' && hostResult.action?.includes('tracking-gap') ? (
@@ -1023,10 +1200,37 @@ export function MenuSyncView({ apiBaseUrl }: { apiBaseUrl: string }): JSX.Elemen
 									{hostResult.gap_items.length > 12 ? <div>... 외 {hostResult.gap_items.length - 12}건</div> : null}
 								</div>
 							) : null}
-							{importedTablesFromHostResult(hostResult).length > 0 ? (
+							{isReconcileResult ? (
+								<div style={{ marginTop: 10, display: 'grid', gap: 10 }}>
+									<div style={{ display: 'grid', gap: 6 }}>
+										<strong>{'로컬 -> NAS 반영 항목'}</strong>
+										{reconcileLocalToNasTables.length > 0 ? (
+											reconcileLocalToNasTables.map((table) => (
+												<div key={`l2n-${table.table_name}`}>
+													{formatImportTableSummary(table)}
+												</div>
+											))
+										) : (
+											<div>반영할 항목 없음</div>
+										)}
+									</div>
+									<div style={{ display: 'grid', gap: 6 }}>
+										<strong>{'NAS -> 로컬 반영 항목'}</strong>
+										{reconcileNasToLocalTables.length > 0 ? (
+											reconcileNasToLocalTables.map((table) => (
+												<div key={`n2l-${table.table_name}`}>
+													{formatImportTableSummary(table)}
+												</div>
+											))
+										) : (
+											<div>반영할 항목 없음</div>
+										)}
+									</div>
+								</div>
+							) : hostImportedTables.length > 0 ? (
 								<div style={{ marginTop: 10, display: 'grid', gap: 6 }}>
 									<strong>최근 NAS 반영 건수</strong>
-									{importedTablesFromHostResult(hostResult).map((table) => (
+									{hostImportedTables.map((table) => (
 										<div key={table.table_name}>
 											{formatImportTableSummary(table)}
 										</div>

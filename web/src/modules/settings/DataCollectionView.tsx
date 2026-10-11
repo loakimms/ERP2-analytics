@@ -48,6 +48,7 @@ type CollectionTask = {
 	schedule_time?: string | null;
 	description?: string | null;
 	runnable: boolean;
+	supports_retry_incomplete?: boolean;
 	latest_job?: CollectionJob | null;
 	latest_success_job?: CollectionJob | null;
 	pending_collection?: {
@@ -73,6 +74,12 @@ type CollectionTask = {
 			> | null;
 		} | null;
 		has_pending?: boolean | null;
+		expected_search_keyword_count?: number | null;
+		collected_search_keyword_count?: number | null;
+		expected_keyword_count?: number | null;
+		collected_keyword_count?: number | null;
+		missing_keyword_count?: number | null;
+		exposed_keyword_count?: number | null;
 	} | null;
 };
 
@@ -88,15 +95,30 @@ type CollectionJobsResponse = {
 	jobs: CollectionJob[];
 };
 
+type CollectionJobEvent = {
+	event_id?: string | null;
+	job_id?: string | null;
+	status?: string | null;
+	detail?: {
+		collector_event?: CollectorEvent | null;
+	} | null;
+	created_at?: string | null;
+};
+
 type CollectorStatus = {
 	running?: boolean;
 	state?: string;
 	agentReachable?: boolean;
 	apiBaseUrl?: string;
+	deviceId?: string;
 	jobId?: string;
 	url?: string;
 	reason?: string;
 	attempt?: number;
+	progress?: number;
+	total?: number;
+	keyword?: string;
+	condition?: string;
 	error?: string;
 	updated_at?: string;
 	healthTime?: string;
@@ -105,6 +127,9 @@ type CollectorStatus = {
 	agentManageNo?: string;
 	collectorVersion?: string;
 	collectorManageNo?: string;
+	chromeUserDataDir?: string;
+	chromeProfileDir?: string;
+	chromeProfileLabel?: string;
 };
 
 type CollectorEvent = {
@@ -116,6 +141,18 @@ type CollectorEvent = {
 	time?: string | null;
 };
 
+function collectorEventTimeMs(event?: CollectorEvent | null): number {
+	const raw = String(event?.time || '').trim();
+	const ms = raw ? new Date(raw).getTime() : 0;
+	return Number.isFinite(ms) ? ms : 0;
+}
+
+function collectorEventFromJobEvent(event?: CollectionJobEvent | null): CollectorEvent | null {
+	const collectorEvent = event?.detail?.collector_event || null;
+	if (!collectorEvent || typeof collectorEvent !== 'object') return null;
+	return collectorEvent;
+}
+
 type CollectorJobPublic = {
 	job_id?: string | null;
 	status?: string | null;
@@ -123,12 +160,32 @@ type CollectorJobPublic = {
 	target_date?: string | null;
 	date_from?: string | null;
 	date_to?: string | null;
+	params?: {
+		plan?: {
+			retry?: boolean | null;
+			retry_scope?: string | null;
+			retry_unit_count?: number | null;
+			retry_cell_count?: number | null;
+		} | null;
+		resume_skipped_keywords?: number | null;
+		pending_plan_keywords?: number | null;
+		total_plan_keywords?: number | null;
+		total_targets?: number | null;
+		completed_offset?: number | null;
+		selected_targets?: number | null;
+	} | null;
 	created_by_device_id?: string | null;
 	claimed_by?: string | null;
 	results_count?: number | null;
 	error?: string | null;
 	last_event?: CollectorEvent | null;
 	retry_count?: number | null;
+};
+
+type AdRankRetryPreview = {
+	target_date?: string | null;
+	retry_cell_count?: number | null;
+	retry_unit_count?: number | null;
 };
 
 type TaskProgress = {
@@ -174,6 +231,15 @@ function getOrCreateCollectorDeviceId(): string {
 	}
 }
 
+function getCollectorWorkerDeviceId(): string {
+	try {
+		const host = String(window.location.hostname || 'unknown').replace(/[^A-Za-z0-9_.:-]+/g, '-').slice(0, 48);
+		return `settings-data-collection:${host}`.slice(0, 80);
+	} catch {
+		return 'settings-data-collection';
+	}
+}
+
 const sourceLabel: Record<string, string> = {
 	server_api: 'NAS API',
 	server_batch: 'NAS 배치',
@@ -186,6 +252,8 @@ const runtimeLabel: Record<string, string> = {
 	collector_pc: '24시간 PC Collector',
 	web_manual: '웹 수동',
 };
+
+const activeCollectionStatuses = new Set(['STARTED', 'RUNNING', 'POLLING', 'QUEUED', 'CLAIMED']);
 
 function normalizeManageNo(value: unknown): string {
 	return String(value ?? '').replace(/[^0-9A-Za-z_.:-]+/g, '').trim();
@@ -202,7 +270,18 @@ const manualImportItems = [
 ];
 
 function errToMsg(e: any): string {
-	return String(e?.response?.data?.detail ?? e?.response?.data?.message ?? e?.message ?? e ?? '요청 실패');
+	const detail = e?.response?.data?.detail;
+	if (detail && typeof detail === 'object') {
+		const msg = String(detail.message || detail.error || e?.response?.data?.message || '요청 실패');
+		const remaining = Number(detail.remaining_seconds || 0);
+		const wait =
+			remaining > 0
+				? `\n남은 대기 시간: ${Math.ceil(remaining / 3600)}시간 이내 (${Math.ceil(remaining / 60)}분)`
+				: '';
+		const cache = detail.cache_guidance ? `\n조치: ${String(detail.cache_guidance)}` : '';
+		return `${msg}${wait}${cache}`;
+	}
+	return String(detail ?? e?.response?.data?.message ?? e?.message ?? e ?? '요청 실패');
 }
 
 async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit = {}, timeoutMs = HOST_AGENT_FETCH_TIMEOUT_MS): Promise<Response> {
@@ -338,7 +417,9 @@ function statusTone(status?: string | null): BadgeTone {
 }
 
 function isTerminalCollectorStatus(status?: string | null): boolean {
-	return ['DONE', 'SUCCESS', 'FAILED', 'PARTIAL', 'CANCELLED'].includes(String(status || '').toUpperCase());
+	// SKIPPED: scheduler marked stuck collector jobs so later schedules can continue.
+	// Treat as terminal or the UI keeps "백그라운드 진행 중" + 중단 버튼 forever.
+	return ['DONE', 'SUCCESS', 'FAILED', 'PARTIAL', 'CANCELLED', 'SKIPPED'].includes(String(status || '').toUpperCase());
 }
 
 function formatCollectorNote(note?: string | null, maxLength = 220): string {
@@ -363,6 +444,158 @@ function collectorProgressMessage(job?: CollectorJobPublic | null, event?: Colle
 	if (status === 'DONE' || status === 'SUCCESS') return '완료되었습니다.';
 	if (local?.running && local?.state) return `Collector 상태: ${local.state}${local.reason ? ` · ${local.reason}` : ''}`;
 	return '상태 확인 중입니다.';
+}
+
+type CollectionProgressCount = { current: number; total: number; remaining: number; label: string; remainingLabel: string };
+
+function formatProgressCount(current: number, total: number): CollectionProgressCount | null {
+	if (!Number.isFinite(current) || !Number.isFinite(total) || current < 0 || total <= 0 || current > total) return null;
+	const width = Math.max(4, String(Math.trunc(total)).length);
+	const fmt = (value: number) => String(Math.max(0, Math.trunc(value))).padStart(width, '0');
+	const remaining = Math.max(0, total - current);
+	return { current, total, remaining, label: `${fmt(current)}/${fmt(total)}`, remainingLabel: fmt(remaining) };
+}
+
+function formatProgressDisplay(progress: CollectionProgressCount, prefix = '진행'): string {
+	return progress.remaining > 0 ? `${prefix} ${progress.label} · 남은 ${progress.remainingLabel}` : `${prefix} ${progress.label}`;
+}
+
+function isRetryIncompleteCollectorJob(job?: CollectorJobPublic | null, event?: CollectorEvent | null, local?: CollectorStatus | null): boolean {
+	const plan = job?.params?.plan || null;
+	if (plan?.retry === true || String(plan?.retry_scope || '').toLowerCase() === 'incomplete') return true;
+	const raw = [event?.note, job?.last_event?.note, local?.reason, local?.condition]
+		.map((value) => String(value || '').toLowerCase())
+		.filter(Boolean)
+		.join(' ');
+	return raw.includes('(retry)') || raw.includes('retry_incomplete') || raw.includes('retry_incomplete_cells');
+}
+
+function collectorProgressCount(job?: CollectorJobPublic | null, event?: CollectorEvent | null, local?: CollectorStatus | null): CollectionProgressCount | null {
+	const localCurrent = Number(local?.progress || 0);
+	const localTotal = Number(local?.total || 0);
+	if (Number.isFinite(localCurrent) && Number.isFinite(localTotal) && localCurrent >= 0 && localTotal > 0) {
+		return formatProgressCount(localCurrent, localTotal);
+	}
+	const raw = [
+		event?.note,
+		job?.last_event?.note,
+		job?.error,
+	]
+		.map((value) => String(value || '').trim())
+		.filter(Boolean)
+		.join(' ');
+	const match = raw.match(/(?:^|[\s:])(\d{1,7})\s*\/\s*(\d{1,7})(?=$|[\s:),])/);
+	if (!match) {
+		const jobTotalTargets = Number(job?.params?.total_targets || job?.params?.selected_targets || 0);
+		if (Number.isFinite(jobTotalTargets) && jobTotalTargets > 0) {
+			const completedOffset = Number(job?.params?.completed_offset || 0);
+			return formatProgressCount(Math.min(Math.max(0, completedOffset), jobTotalTargets), jobTotalTargets);
+		}
+		return null;
+	}
+	const current = Number(match[1] || 0);
+	const total = Number(match[2] || 0);
+	if (!Number.isFinite(current) || !Number.isFinite(total) || current < 0 || total <= 0 || current > total) return null;
+	return formatProgressCount(current, total);
+}
+
+function collectionProgressFromJob(job?: CollectionJob | null): CollectionProgressCount | null {
+	const detail = job?.detail || {};
+	const persisted = detail?.db_persistence || {};
+	const reason = String(detail?.reason || job?.error || '').trim();
+	const status = String(job?.status || '').toUpperCase();
+	const completionVerified = persisted?.completion_verified === true;
+	const isComplete = (status === 'SUCCESS' || status === 'DONE') && completionVerified;
+
+	const replyBackfillTotal = Number(
+		detail?.collector_job?.params?.total_targets ??
+		detail?.total_targets ??
+		detail?.pending_targets ??
+		detail?.collector_job?.params?.selected_targets ??
+		0,
+	);
+	if (Number.isFinite(replyBackfillTotal) && replyBackfillTotal > 0) {
+		const replyBackfillOffset = Number(detail?.completed_offset ?? detail?.collector_job?.params?.completed_offset ?? 0);
+		const replyBackfillCurrent = replyBackfillOffset + Number(detail?.partial_saved ?? detail?.saved ?? 0);
+		return formatProgressCount(Math.min(Math.max(0, replyBackfillCurrent), replyBackfillTotal), replyBackfillTotal);
+	}
+
+	const adTotal = Number(persisted.ad_rank_expected_cells || 0);
+	if (Number.isFinite(adTotal) && adTotal > 0) {
+		const searchUnitTotal = Number(persisted.ad_rank_expected_search_units || 0);
+		if (Number.isFinite(searchUnitTotal) && searchUnitTotal > 0) {
+			const okSearchUnits = Number(persisted.ad_rank_ok_search_units || 0);
+			return formatProgressCount(isComplete ? searchUnitTotal : Math.max(0, okSearchUnits), searchUnitTotal);
+		}
+		const products = Array.isArray(detail?.collector_job?.params?.plan?.products) ? detail.collector_job.params.plan.products.length : 0;
+		const okCells = Number(persisted.ad_rank_ok_cells ?? 0);
+		const savedCells = Number(persisted.ad_rank_saved_cells ?? 0);
+		const failedCells = Number(persisted.ad_rank_failed_cells ?? 0);
+		if (Number.isFinite(products) && products > 0) {
+			const totalUnits = Math.ceil(adTotal / products);
+			const okUnits = Math.floor(Math.max(0, Number.isFinite(okCells) && okCells > 0 ? okCells : savedCells - failedCells) / products);
+			return formatProgressCount(isComplete ? totalUnits : okUnits, totalUnits);
+		}
+		const current = isComplete ? adTotal : Number.isFinite(okCells) && okCells > 0 ? okCells : Math.max(0, savedCells - failedCells);
+		return formatProgressCount(current, adTotal);
+	}
+
+	const rankTotal = Number(persisted.expected_keyword_count || 0);
+	if (Number.isFinite(rankTotal) && rankTotal > 0) {
+		const missing = Number(persisted.missing_keyword_count || 0);
+		return formatProgressCount(isComplete ? rankTotal : Math.max(0, rankTotal - missing), rankTotal);
+	}
+
+	const requiredDates = Number(persisted.required_date_count || 0);
+	if (Number.isFinite(requiredDates) && requiredDates > 0) {
+		const missingDates = Number(persisted.missing_date_count || 0);
+		return formatProgressCount(isComplete ? requiredDates : Math.max(0, requiredDates - missingDates), requiredDates);
+	}
+
+	const reasonMatch = reason.match(/(?:^|[=\s:])(\d{1,7})\s*\/\s*(\d{1,7})(?=$|[\s:),])/);
+	if (reasonMatch) {
+		return formatProgressCount(Number(reasonMatch[1] || 0), Number(reasonMatch[2] || 0));
+	}
+
+	const collectorJob = (detail?.collector_job || null) as CollectorJobPublic | null;
+	return collectorProgressCount(collectorJob, collectorJob?.last_event || null, null);
+}
+
+function formatCollectionProgressText(job?: CollectionJob | null): string {
+	if (job?.task_id === 'review_reply_backfill') {
+		const detail = job.detail || {};
+		const total = Number(detail?.collector_job?.params?.total_targets ?? detail?.total_targets ?? detail?.pending_targets ?? 0);
+		if (Number.isFinite(total) && total > 0) {
+			const offset = Number(detail?.completed_offset ?? detail?.collector_job?.params?.completed_offset ?? 0) || 0;
+			const saved = Math.min(Math.max(0, offset + Number(detail?.partial_saved ?? detail?.saved ?? 0)), total);
+			const processed = Math.min(Math.max(saved, offset + Number(detail?.partial_processed_targets ?? 0)), total);
+			const progress = formatProgressCount(processed, total);
+			const savedFmt = String(Math.trunc(saved)).padStart(Math.max(4, String(Math.trunc(total)).length), '0');
+			const remainingFmt = String(Math.max(0, Math.trunc(total - saved))).padStart(Math.max(4, String(Math.trunc(total)).length), '0');
+			return progress
+				? `수집 진행개수 ${progress.label}, 저장개수 ${savedFmt}, 남은 ${remainingFmt}`
+				: `수집현황 확인중/전체미확인`;
+		}
+	}
+	const progress = collectionProgressFromJob(job);
+	if (!progress) return '수집현황 확인중/전체미확인';
+	return formatProgressDisplay(progress, '수집현황');
+}
+
+function collectionProgressFromTaskSavedRows(task?: CollectionTask | null): CollectionProgressCount | null {
+	if (task?.task_id !== 'rank_openapi') return null;
+	const pending = task.pending_collection || null;
+	if (!pending) return null;
+	const total = Number(pending.expected_search_keyword_count || pending.expected_keyword_count || 0);
+	const saved = Number(pending.collected_search_keyword_count || pending.collected_keyword_count || 0);
+	return formatProgressCount(saved, total);
+}
+
+function collectorStatusForJob(local: CollectorStatus | null | undefined, jobId?: string | null): CollectorStatus | null {
+	const localJobId = String(local?.jobId || '').trim();
+	const targetJobId = String(jobId || '').trim();
+	if (!local || !localJobId || !targetJobId || localJobId !== targetJobId) return null;
+	return local;
 }
 
 function formatCollectorDateRange(job?: CollectorJobPublic | null): string | null {
@@ -391,6 +624,15 @@ function formatSavedByDate(job?: CollectionJob | null): string | null {
 
 function formatPendingCollection(task?: CollectionTask | null): string | null {
 	const pending = task?.pending_collection;
+	if (task?.task_id === 'rank_openapi' && pending?.has_pending) {
+		const total = Number(pending.expected_search_keyword_count || pending.expected_keyword_count || 0);
+		const collected = Number(pending.collected_search_keyword_count || pending.collected_keyword_count || 0);
+		const missing = Number.isFinite(total) && Number.isFinite(collected) ? Math.max(0, total - collected) : 0;
+		if (missing > 0 && total > 0) {
+			const progress = formatProgressCount(collected, total);
+			return progress ? `남은 키워드 ${missing.toLocaleString()}개 · ${formatProgressDisplay(progress, '수집현황')}` : `남은 키워드 ${missing.toLocaleString()}개`;
+		}
+	}
 	const count = Number(pending?.missing_date_count || 0);
 	if (!pending?.has_pending || count <= 0) return null;
 	const unitSummary = pending.missing_unit_summary && typeof pending.missing_unit_summary === 'object' ? pending.missing_unit_summary : null;
@@ -471,6 +713,18 @@ function formatJobDateRange(job?: CollectionJob | null): string | null {
 	return from || to;
 }
 
+function localYmd(date = new Date()): string {
+	const y = date.getFullYear();
+	const m = String(date.getMonth() + 1).padStart(2, '0');
+	const d = String(date.getDate()).padStart(2, '0');
+	return `${y}-${m}-${d}`;
+}
+
+function isBeforeTodayYmd(value?: string | null): boolean {
+	const raw = String(value || '').trim();
+	return /^\d{4}-\d{2}-\d{2}$/.test(raw) && raw < localYmd();
+}
+
 function sumPersistedRows(detail: any): number {
 	const rows = detail?.db_persistence?.rows_by_table;
 	if (!rows || typeof rows !== 'object') return Number(detail?.db_persistence?.rows_total || 0);
@@ -514,6 +768,36 @@ function pendingReplyTargetCount(detail: any): number {
 	return Number(detail?.db_persistence?.pending_targets_remaining || 0);
 }
 
+function humanizePartialCollectionReason(job: CollectionJob, reason: string): string {
+	const taskId = String(job.task_id || '').trim();
+	const detail = job.detail || {};
+	const persisted = detail?.db_persistence || {};
+	if (taskId === 'ad_rank_diagnosis_cdp' && /ad_rank_(cells|search_units)_incomplete/i.test(reason)) {
+		const products = Array.isArray(detail?.collector_job?.params?.plan?.products) ? detail.collector_job.params.plan.products.length : 0;
+		const failedRows = Number(persisted.ad_rank_failed_cells || 0);
+		const missingRows = Number(persisted.ad_rank_missing_cells || 0);
+		const failedUnits0 = Number(persisted.ad_rank_failed_search_units || 0);
+		const missingUnits0 = Number(persisted.ad_rank_missing_search_units || 0);
+		const failedUnits = failedUnits0 > 0 ? failedUnits0 : products > 0 ? Math.ceil(failedRows / products) : 0;
+		const missingUnits = missingUnits0 > 0 ? missingUnits0 : products > 0 ? Math.ceil(missingRows / products) : 0;
+		const parts: string[] = [];
+		if (failedUnits > 0) parts.push(`실패 검색 ${failedUnits.toLocaleString()}회`);
+		if (missingUnits > 0) parts.push(`미수집 검색 ${missingUnits.toLocaleString()}회`);
+		const suffix = failedRows > 0 ? ` 실패 row ${failedRows.toLocaleString()}건 제외.` : '';
+		return `광고 순위 검색 미완료${parts.length ? `: ${parts.join(' · ')}` : ''}.${suffix}`;
+	}
+	return `필요한 일자까지 완료되지 않았습니다: ${reason}`;
+}
+
+function formatInlineCollectionError(job?: CollectionJob | null): string | null {
+	const raw = String(job?.error || '').trim();
+	if (!raw) return null;
+	if (String(job?.task_id || '') === 'ad_rank_diagnosis_cdp' && /ad_rank_(cells|search_units)_incomplete/i.test(raw)) {
+		return null;
+	}
+	return raw;
+}
+
 function isAlreadyStoredSkip(reason: string, detail: any): boolean {
 	const status = String(detail?.status || '').toUpperCase();
 	const normalizedReason = String(reason || detail?.reason || '').trim();
@@ -538,11 +822,47 @@ function sameJobRange(a?: CollectionJob | null, b?: CollectionJob | null): boole
 	return a.task_id === b.task_id && aFrom === bFrom && aTo === bTo;
 }
 
+function ymdTime(value?: string | null): number | null {
+	const raw = String(value || '').trim();
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+	const n = new Date(`${raw}T00:00:00Z`).getTime();
+	return Number.isFinite(n) ? n : null;
+}
+
+function jobRangeBounds(job?: CollectionJob | null): { from: number; to: number } | null {
+	if (!job) return null;
+	const from = ymdTime(job.date_from || job.target_date);
+	const to = ymdTime(job.date_to || job.target_date);
+	if (from == null || to == null) return null;
+	return { from: Math.min(from, to), to: Math.max(from, to) };
+}
+
+function successCoversJobRange(job?: CollectionJob | null, success?: CollectionJob | null): boolean {
+	if (!job || !success || job.task_id !== success.task_id) return false;
+	const failedRange = jobRangeBounds(job);
+	const successRange = jobRangeBounds(success);
+	if (!failedRange || !successRange) return false;
+	return successRange.from <= failedRange.from && successRange.to >= failedRange.to;
+}
+
+function persistenceRangeMismatch(job?: CollectionJob | null): boolean {
+	const detail = job?.detail || {};
+	const dbPersistence = detail?.db_persistence || {};
+	const collectorJob = detail?.collector_job || {};
+	const expectedFrom = String(collectorJob.date_from || job?.date_from || job?.target_date || '').trim();
+	const expectedTo = String(collectorJob.date_to || job?.date_to || job?.target_date || '').trim();
+	const actualFrom = String(dbPersistence.date_from || '').trim();
+	const actualTo = String(dbPersistence.date_to || '').trim();
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(expectedFrom) || !/^\d{4}-\d{2}-\d{2}$/.test(expectedTo)) return false;
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(actualFrom) || !/^\d{4}-\d{2}-\d{2}$/.test(actualTo)) return false;
+	return actualFrom > expectedFrom || actualTo < expectedTo;
+}
+
 function isRecoveredBySuccess(job?: CollectionJob | null, success?: CollectionJob | null): boolean {
 	if (!job || !success) return false;
 	const status = String(job.status || '').toUpperCase();
 	if (!['FAILED', 'PARTIAL'].includes(status)) return false;
-	if (!sameJobRange(job, success)) return false;
+	if (!sameJobRange(job, success) && !successCoversJobRange(job, success)) return false;
 	return jobTimeMs(success) > jobTimeMs(job);
 }
 
@@ -556,6 +876,9 @@ function humanizeCollectionFailure(job?: CollectionJob | null, reasonText?: stri
 	const note = String(lastEvent?.note || '').trim();
 	const raw = [reason, collectorError, note].filter(Boolean).join(' · ');
 	if (reason === 'no_db_rows_saved') {
+		if (String(detail?.error || '').trim() === 'api_restart') {
+			return 'API 재시작/재빌드 중 실행 중이던 Collector 작업이 중단되어 저장 검증 행이 0건으로 남았습니다. 현재 Collector가 POLLING이면 같은 작업을 다시 실행하면 됩니다.';
+		}
 		if (taskId === 'purchase_keywords') {
 			return 'Collector가 구매 키워드 화면 작업을 실행했지만 DB 저장 행이 0건입니다. 보통 스마트스토어 화면에서 엑셀 다운로드/업로드가 실패했거나, 다운로드 파일이 비어 있을 때 발생합니다.';
 		}
@@ -582,6 +905,9 @@ type CollectorBridgeCommand = {
 	bearerToken?: string;
 	collectorToken?: string;
 	deviceId?: string;
+	chromeUserDataDir?: string;
+	chromeProfileDir?: string;
+	chromeProfileLabel?: string;
 	installerUrl?: string;
 	expectedVersion?: string;
 	expectedManageNo?: string;
@@ -601,6 +927,7 @@ function formatCollectionResult(job?: CollectionJob | null, latestSuccess?: Coll
 		};
 	}
 	const status = String(job.status || '').toUpperCase();
+	const taskId = String(job.task_id || '').trim();
 	const detail = job.detail || {};
 	const reason = String(detail.reason || job.error || '').trim();
 	const range = formatJobDateRange(job);
@@ -611,8 +938,37 @@ function formatCollectionResult(job?: CollectionJob | null, latestSuccess?: Coll
 	const completionVerified = detail.db_persistence?.completion_verified === true;
 	const missingSummary = persistenceMissingSummary(detail);
 	const pendingReplies = pendingReplyTargetCount(detail);
+	const progressText = formatCollectionProgressText(job);
+	const isStaleAdRankResult = taskId === 'ad_rank_diagnosis_cdp' && isBeforeTodayYmd(job.target_date || job.date_to || job.date_from);
+	const isSearchwordPersistenceMismatch = taskId === 'ads_searchword_daily' && persistenceRangeMismatch(job);
 
-	if (detail.skipped || String(detail.status || '').toUpperCase() === 'SKIPPED' || reason === 'no_missing_ads_dates') {
+	if (
+		status === 'SKIPPED' ||
+		detail.skipped === true ||
+		String(detail.status || '').toUpperCase() === 'SKIPPED' ||
+		reason === 'no_missing_ads_dates'
+	) {
+		if (/collector_job_stuck/i.test(reason) || detail.scheduler_skip === true) {
+			return {
+				tone: 'warn',
+				title: '수집 중단(시간초과)',
+				detail: `${range ? `${range} · ` : ''}${progressText}. 15분 이상 응답이 없어 스케줄러가 작업을 건너뛰었습니다. 이어받기로 남은 조건만 다시 수집하세요.`,
+			};
+		}
+		if (isStaleAdRankResult) {
+			return {
+				tone: 'warn',
+				title: '오늘 수집 필요',
+				detail: `${range ? `${range} 기준 ` : ''}이전 날짜 결과입니다. 광고 상품 순위는 오늘(${localYmd()}) 기준으로 다시 수집해야 합니다.`,
+			};
+		}
+		if (reason === 'no_source_review_metrics') {
+			return {
+				tone: 'warn',
+				title: '원천 값 없음',
+				detail: `${range ? `${range} 기준 ` : ''}상품 상세 메트릭에 평점·리뷰 수가 없어 리뷰 일간 데이터를 채우지 못했습니다. 상품 상세 메트릭(CDP) 수집 결과를 확인해 주세요.`,
+			};
+		}
 		if (isAlreadyStoredSkip(reason, detail)) {
 			return {
 				tone: 'muted',
@@ -622,18 +978,38 @@ function formatCollectionResult(job?: CollectionJob | null, latestSuccess?: Coll
 		}
 		return {
 			tone: 'muted',
-			title: '수집 대상 없음',
+			title: '수집 완료',
 			detail: `${range ? `${range} 기준 ` : ''}이번 실행에서 새로 수집할 대상이 없습니다.`,
 		};
 	}
 	if (status === 'SUCCESS' || status === 'DONE') {
+		if (isSearchwordPersistenceMismatch) {
+			const dbRange = formatJobDateRange({
+				...job,
+				date_from: detail.db_persistence?.date_from || null,
+				date_to: detail.db_persistence?.date_to || null,
+				target_date: detail.db_persistence?.date_from || null,
+			});
+			return {
+				tone: 'warn',
+				title: '날짜 불일치',
+				detail: `${range ? `${range} 요청 ` : ''}검색어 보고서를 수집했지만 저장 검증 날짜가 ${dbRange || '요청 기간 밖'}입니다. 추가 수집 필요 날짜를 다시 수집해야 합니다.`,
+			};
+		}
+		if (isStaleAdRankResult) {
+			return {
+				tone: 'warn',
+				title: '오늘 수집 필요',
+				detail: `${range ? `${range} 기준 ` : ''}이전 날짜 저장 결과입니다. 광고 상품 순위는 오늘(${localYmd()}) 기준 데이터가 있어야 분석 화면에 표시됩니다.`,
+			};
+		}
 		if (!completionVerified) {
 			return {
 				tone: 'warn',
 				title: savedCount > 0 ? '추가 수집 필요' : '저장 검증 대기',
 				detail: missingSummary
-					? `${range ? `${range} · ` : ''}${missingSummary}. 필요한 기간 전체 저장 검증이 끝나야 완료로 표시됩니다.`
-					: `${range ? `${range} · ` : ''}${hasPersistence ? '저장 결과 검증이 아직 완료되지 않았습니다.' : '수집은 끝났지만 저장 검증 결과가 없습니다.'}`,
+					? `${range ? `${range} · ` : ''}${progressText}. ${missingSummary}. 필요한 기간 전체 저장 검증이 끝나야 완료로 표시됩니다.`
+					: `${range ? `${range} · ` : ''}${progressText}. ${hasPersistence ? '저장 결과 검증이 아직 완료되지 않았습니다.' : '수집은 끝났지만 저장 검증 결과가 없습니다.'}`,
 			};
 		}
 		return {
@@ -643,21 +1019,30 @@ function formatCollectionResult(job?: CollectionJob | null, latestSuccess?: Coll
 		};
 	}
 	if (status === 'PARTIAL') {
+		if (taskId === 'rank_openapi' && reason.startsWith('rank_exposure_anomaly')) {
+			return {
+				tone: 'warn',
+				title: '순위 매칭 이상',
+				detail:
+					`${range ? `${range} · ` : ''}${progressText}. 네이버 차단으로 판단하지 않습니다. ` +
+					'검색 결과 카드는 수집됐지만 추적 상품 노출 순위가 0건으로 검증되어, 상품 ID/카드 필터/매칭 기준 확인 또는 재수집이 필요합니다.',
+			};
+		}
 		return {
 			tone: 'warn',
 			title: pendingReplies > 0 ? '추가 수집 필요' : '일부 데이터 수집',
 			detail: missingSummary
-				? `${range ? `${range} · ` : ''}${missingSummary}. 추가 수집이 필요합니다.`
+				? `${range ? `${range} · ` : ''}${progressText}. ${missingSummary}. 추가 수집이 필요합니다.`
 				: reason
-					? `필요한 일자까지 완료되지 않았습니다: ${reason}`
-					: '수집은 진행됐지만 필요한 기간 전체 저장 검증을 통과하지 못했습니다.',
+					? `${range ? `${range} · ` : ''}${progressText}. ${humanizePartialCollectionReason(job, reason)}`
+					: `${range ? `${range} · ` : ''}${progressText}. 수집은 진행됐지만 필요한 기간 전체 저장 검증을 통과하지 못했습니다.`,
 		};
 	}
 	if (status === 'FAILED') {
 		return {
 			tone: 'danger',
 			title: '수집 실패',
-			detail: humanizeCollectionFailure(job, reason),
+			detail: `${progressText}. ${humanizeCollectionFailure(job, reason)}`,
 		};
 	}
 	if (status === 'CANCELLED') {
@@ -694,6 +1079,8 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 	const [error, setError] = useState<string | null>(null);
 	const [collectorStatus, setCollectorStatus] = useState<CollectorStatus | null>(null);
 	const [collectorEvents, setCollectorEvents] = useState<CollectorEvent[]>([]);
+	const [collectionJobEventsByJobId, setCollectionJobEventsByJobId] = useState<Record<string, CollectionJobEvent[]>>({});
+	const [adRankRetryPreview, setAdRankRetryPreview] = useState<AdRankRetryPreview | null>(null);
 	const [collectorBusy, setCollectorBusy] = useState(false);
 	const [collectorAutoUpdating, setCollectorAutoUpdating] = useState(false);
 	const collectorAutoUpdateAttemptedRef = useRef(false);
@@ -703,6 +1090,7 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 	const [gfaBusy, setGfaBusy] = useState(false);
 	const [gfaMessage, setGfaMessage] = useState<string | null>(null);
 	const collectorDeviceId = useMemo(() => getOrCreateCollectorDeviceId(), []);
+	const collectorWorkerDeviceId = useMemo(() => getCollectorWorkerDeviceId(), []);
 	const accessMode = useMemo(() => detectAccessMode(apiBaseUrl), [apiBaseUrl]);
 	const accessModeLabel = accessMode === 'local' ? '로컬 접속' : accessMode === 'nas' ? 'NAS 접속' : '접속 환경 확인 불가';
 	const collectorAgentVersion = String(collectorStatus?.agentVersion || '').trim();
@@ -711,10 +1099,17 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 	const collectorWorkerManageNo = normalizeManageNo(collectorStatus?.collectorManageNo || collectorStatus?.agentManageNo || '');
 	const expectedCollectorApiBaseUrl = absoluteApiBaseUrl(apiBaseUrl);
 	const collectorApiBaseUrl = String(collectorStatus?.apiBaseUrl || '').trim();
+	const collectorStatusDeviceId = String(collectorStatus?.deviceId || '').trim();
+	const isCollectorWorkerDeviceMatched =
+		!collectorStatus?.running ||
+		!collectorStatusDeviceId ||
+		collectorStatusDeviceId === collectorWorkerDeviceId;
 	const isCollectorWorkerTargetMatched =
 		!collectorStatus?.running ||
-		!collectorApiBaseUrl ||
-		collectorApiBaseUrl.replace(/\/$/, '') === expectedCollectorApiBaseUrl.replace(/\/$/, '');
+		(
+			(!collectorApiBaseUrl || collectorApiBaseUrl.replace(/\/$/, '') === expectedCollectorApiBaseUrl.replace(/\/$/, '')) &&
+			isCollectorWorkerDeviceMatched
+		);
 	const requiredHostAgentManageNo = normalizeManageNo(REQUIRED_HOST_AGENT_MANAGE_NO);
 	const isCollectorAgentLatest =
 		collectorAgentVersion === REQUIRED_HOST_AGENT_VERSION && collectorAgentManageNo === requiredHostAgentManageNo;
@@ -949,21 +1344,45 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 		}
 	};
 
-	const load = async () => {
-		setLoading(true);
+	const load = async (opts: { lightweight?: boolean; background?: boolean } = {}) => {
+		if (!opts.background) setLoading(true);
 		setError(null);
 		try {
 			const headers = await authHeaders();
-			const [taskRes, jobRes, eventRes] = await Promise.all([
-				axios.get<CollectionTasksResponse>(`${apiBaseUrl}/collection/tasks`, { headers }),
+			const taskParams = opts.lightweight ? { include_pending: false, include_coverage: false } : undefined;
+			const [taskRes, jobRes, eventRes, adRankRetryPreviewRes] = await Promise.all([
+				axios.get<CollectionTasksResponse>(`${apiBaseUrl}/collection/tasks`, { headers, params: taskParams }),
 				axios.get<CollectionJobsResponse>(`${apiBaseUrl}/collection/jobs`, { headers, params: { limit: 30 } }),
 				axios.get<{ ok: boolean; events: CollectorEvent[] }>(`${apiBaseUrl}/search-rank/page-metrics/local-collector/events`, { headers, params: { limit: 20 } }),
+				axios.get<AdRankRetryPreview>(`${apiBaseUrl}/collection/tasks/ad_rank_diagnosis_cdp/retry-preview`, { headers }).catch(() => null),
 			]);
 			const loadedTasks = taskRes.data.tasks || [];
 			setTasks(loadedTasks);
-			setCoverage(taskRes.data.coverage || {});
+			if (!opts.lightweight) setCoverage(taskRes.data.coverage || {});
 			setJobs(jobRes.data.jobs || []);
 			setCollectorEvents(Array.isArray(eventRes.data?.events) ? eventRes.data.events : []);
+			setAdRankRetryPreview(adRankRetryPreviewRes?.data || null);
+			const persistedEventJobIds = loadedTasks
+				.filter((task) => (task.task_id === 'ad_rank_diagnosis_cdp' || task.task_id === 'review_reply_backfill') && task.latest_job?.job_id)
+				.map((task) => String(task.latest_job?.job_id || '').trim())
+				.filter(Boolean);
+			if (persistedEventJobIds.length > 0) {
+				const eventEntries = await Promise.all(
+					persistedEventJobIds.map(async (jobId) => {
+						try {
+							const res = await axios.get<{ ok: boolean; events: CollectionJobEvent[] }>(`${apiBaseUrl}/collection/jobs/${encodeURIComponent(jobId)}/events`, {
+								headers,
+							});
+							return [jobId, Array.isArray(res.data?.events) ? res.data.events : []] as const;
+						} catch {
+							return [jobId, []] as const;
+						}
+					})
+				);
+				setCollectionJobEventsByJobId(Object.fromEntries(eventEntries));
+			} else {
+				setCollectionJobEventsByJobId({});
+			}
 			setTaskProgress((prev) => {
 				const next = { ...prev };
 				for (const task of loadedTasks) {
@@ -1018,7 +1437,7 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 		} catch (e) {
 			setError(errToMsg(e));
 		} finally {
-			setLoading(false);
+			if (!opts.background) setLoading(false);
 		}
 	};
 
@@ -1052,6 +1471,9 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 				agentManageNo: String(health?.agentManageNo || background?.agentManageNo || ''),
 				collectorVersion: String(health?.collectorVersion || background?.collectorVersion || health?.agentVersion || ''),
 				collectorManageNo: String(health?.collectorManageNo || background?.collectorManageNo || health?.agentManageNo || ''),
+				chromeUserDataDir: String(background?.chromeUserDataDir || health?.chromeUserDataDir || ''),
+				chromeProfileDir: String(background?.chromeProfileDir || health?.chromeProfileDir || ''),
+				chromeProfileLabel: String(background?.chromeProfileLabel || health?.chromeProfileLabel || ''),
 				healthTime: String(health?.time || health?.updated_at || ''),
 				checkedAt: new Date().toLocaleString(),
 			};
@@ -1075,7 +1497,7 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 				apiBaseUrl: absoluteApiBaseUrl(apiBaseUrl),
 				bearerToken: token || '',
 				collectorToken,
-				deviceId: collectorDeviceId,
+				deviceId: collectorWorkerDeviceId,
 			});
 		} else {
 			const res = await fetch(`${HOST_AGENT_LOCAL_ORIGIN}/collector/background/start`, {
@@ -1086,7 +1508,7 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 					apiBaseUrl: absoluteApiBaseUrl(apiBaseUrl),
 					bearerToken: token || '',
 					collectorToken,
-					deviceId: collectorDeviceId,
+					deviceId: collectorWorkerDeviceId,
 				}),
 			});
 			const data = await res.json().catch(() => ({} as any));
@@ -1237,8 +1659,10 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 	};
 
 	useEffect(() => {
-		void load();
+		void load({ lightweight: true });
+		const detailTimer = window.setTimeout(() => void load({ background: true }), 250);
 		void refreshCollectorStatus();
+		return () => window.clearTimeout(detailTimer);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [apiBaseUrl]);
 
@@ -1300,7 +1724,9 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 	const hostAgentStartDownload = hostSetupDownloads.find((item) => item.path.includes('Run-Start-Analytics-HostAgent'));
 	const otherHostSetupDownloads = hostSetupDownloads.filter((item) => item !== hostAgentStartDownload);
 
-	const runTask = async (task: CollectionTask) => {
+	const runTask = async (task: CollectionTask, opts?: { retryIncomplete?: boolean; force?: boolean }) => {
+		const retryIncomplete = Boolean(opts?.retryIncomplete);
+		const forceRecollect = (task.task_id === 'rank_openapi' && !retryIncomplete) || Boolean(opts?.force);
 		const existingProgress = taskProgress[task.task_id];
 		const existingStatus = String(existingProgress?.collectorJob?.status || '').toUpperCase();
 		if (task.source_type === 'host_cdp' && existingProgress?.collectorJobId && !isTerminalCollectorStatus(existingStatus)) {
@@ -1323,7 +1749,17 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 				...(prev[task.task_id] || {}),
 				message:
 					task.source_type === 'host_cdp'
-						? 'Collector 작업을 생성하는 중입니다.'
+						? forceRecollect && task.task_id === 'review_reply_backfill'
+							? '기존 답글 본문 보강 상태를 초기화하고 처음부터 새로 수집합니다.'
+							: retryIncomplete
+							? task.task_id === 'rank_openapi'
+								? '저장된 당일 오가닉 순위 데이터를 보존하고 누락 조합만 이어서 수집합니다.'
+								: '누락/실패 셀만 재시도하는 Collector 작업을 생성하는 중입니다.'
+							: task.task_id === 'review_reply_backfill'
+								? '이미 저장된 답글 본문을 보존하고 남은 대상만 이어서 수집합니다.'
+							: task.task_id === 'rank_openapi'
+								? '당일 오가닉 순위 데이터를 삭제하고 처음부터 수집하는 Collector 작업을 생성하는 중입니다.'
+								: 'Collector 작업을 생성하는 중입니다.'
 						: accessMode === 'local'
 							? '로컬 DB에 저장하는 중입니다.'
 							: 'NAS DB에 저장하는 중입니다.',
@@ -1334,16 +1770,42 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 			const headers = { ...(await authHeaders()), ...(task.source_type === 'host_cdp' ? await hostCdpHeaders() : {}) };
 			const res = await axios.post(
 				`${apiBaseUrl}/collection/tasks/${encodeURIComponent(task.task_id)}/run`,
-				{ mode: 'manual', collector_device_id: collectorDeviceId },
+				{
+					mode: retryIncomplete ? 'retry_incomplete' : 'manual',
+					force: forceRecollect,
+					retry_incomplete: retryIncomplete,
+					collector_device_id: collectorDeviceId,
+				},
 				{ headers: { ...headers, 'X-ERP2-Collector-Device-Id': collectorDeviceId } },
 			);
-			const collectorJob = (res.data?.result?.collector_job || res.data?.job?.detail?.collector_job || null) as CollectorJobPublic | null;
+			const result = res.data?.result || {};
+			if (String(result?.status || '').toUpperCase() === 'SKIPPED' && result?.reason === 'ad_rank_no_incomplete_cells') {
+				setTaskProgress((prev) => ({
+					...prev,
+					[task.task_id]: {
+						...(prev[task.task_id] || {}),
+						message: '누락/실패 셀이 없어 재시도할 항목이 없습니다.',
+						createdAt: Date.now(),
+					},
+				}));
+				await load();
+				return;
+			}
+			const collectorJob = (result?.collector_job || res.data?.job?.detail?.collector_job || null) as CollectorJobPublic | null;
+			const retryCells = Number(result?.retry_cell_count || 0);
+			const retryUnits = Number(result?.retry_unit_count || 0);
+			const retryHint =
+				retryIncomplete && collectorJob?.job_id
+					? ` · 재시도 ${retryCells.toLocaleString()}셀 / ${retryUnits.toLocaleString()}단위`
+					: '';
 			setTaskProgress((prev) => ({
 				...prev,
 				[task.task_id]: {
 					collectorJobId: collectorJob?.job_id || null,
 					collectorJob,
-					message: collectorJob?.job_id ? `Collector 작업 생성됨: ${collectorJob.job_id}` : '작업 생성 요청이 완료되었습니다.',
+					message: collectorJob?.job_id
+						? `Collector 작업 생성됨: ${collectorJob.job_id}${retryHint}`
+						: '작업 생성 요청이 완료되었습니다.',
 					createdAt: Date.now(),
 				},
 			}));
@@ -1406,6 +1868,43 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 			} else {
 				setError(`Collector 중단 실패: ${msg}`);
 			}
+		} finally {
+			setCancellingTasks((prev) => {
+				const next = { ...prev };
+				delete next[task.task_id];
+				return next;
+			});
+		}
+	};
+
+	const cancelRankOpenapiTask = async (task: CollectionTask) => {
+		const categoryJobId =
+			String(task.latest_job?.detail?.analytics_job_id || '').trim() ||
+			String(task.latest_job?.detail?.detail?.job_id || '').trim();
+		setCancellingTasks((prev) => ({ ...prev, [task.task_id]: true }));
+		setError(null);
+		try {
+			const headers = await authHeaders();
+			if (categoryJobId) {
+				await axios.post(
+					`${apiBaseUrl}/search-rank/crawl/category/cancel`,
+					{ job_id: categoryJobId },
+					{ headers },
+				);
+			} else {
+				await axios.post(`${apiBaseUrl}/search-rank/crawl/category/cancel-active`, {}, { headers });
+			}
+			setTaskProgress((prev) => ({
+				...prev,
+				[task.task_id]: {
+					...(prev[task.task_id] || {}),
+					message: '검색/쇼핑 순위 수집을 사용자 요청으로 중단했습니다.',
+					createdAt: Date.now(),
+				},
+			}));
+			await load();
+		} catch (e) {
+			setError(`검색/쇼핑 순위 수집 중단 실패: ${errToMsg(e)}`);
 		} finally {
 			setCancellingTasks((prev) => {
 				const next = { ...prev };
@@ -1577,6 +2076,21 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 							) : null}
 						</div>
 					</div>
+					<div style={{ display: 'grid', gap: 8, border: '1px solid rgba(148, 163, 184, 0.22)', borderRadius: 12, padding: 12, background: 'rgba(15, 23, 42, 0.38)' }}>
+						<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+							<div style={{ fontSize: 12, fontWeight: 900, color: '#94a3b8' }}>CDP 브라우저 환경</div>
+							<span style={badgeStyle('muted')}>기본 CDP 프로필 사용</span>
+						</div>
+						<div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>
+							계정별 Chrome 프로필 선택은 사용하지 않습니다. Collector는 Host Agent의 기본 CDP 브라우저 환경으로 실행되며,
+							필요한 로그인 세션은 해당 기본 CDP 창에 유지됩니다.
+						</div>
+						{collectorStatus?.chromeUserDataDir ? (
+							<div style={{ fontSize: 12, color: '#64748b' }}>
+								실행 CDP 경로: {collectorStatus.chromeUserDataDir} · {collectorStatus?.chromeProfileDir || 'Default'}
+							</div>
+						) : null}
+					</div>
 					<div style={{ display: 'grid', gap: 6 }}>
 						<div style={{ fontSize: 12, fontWeight: 900, color: '#94a3b8' }}>동작</div>
 						<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -1653,7 +2167,10 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 						</div>
 					) : null}
 					{collectorStatus?.running && !isCollectorWorkerTargetMatched ? (
-						<div>Worker API: 현재 {collectorApiBaseUrl} · 필요 {expectedCollectorApiBaseUrl}</div>
+						<div>
+							Worker API: 현재 {collectorApiBaseUrl || '미확인'} · 필요 {expectedCollectorApiBaseUrl}
+							{!isCollectorWorkerDeviceMatched ? ` · Worker Device: 현재 ${collectorStatusDeviceId || '미확인'} · 필요 ${collectorWorkerDeviceId}` : ''}
+						</div>
 					) : null}
 					<div>
 						{collectorStatus?.healthTime ? `Agent health 시각: ${collectorStatus.healthTime}` : ''}
@@ -1662,7 +2179,7 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 					</div>
 					<br />
 					{!isCollectorWorkerTargetMatched
-						? 'Worker가 현재 접속 환경과 다른 API에 연결되어 있습니다. 백그라운드 시작을 누르면 올바른 API로 재시작합니다.'
+						? 'Worker가 현재 접속 환경과 다른 API 또는 브라우저 device id에 연결되어 있습니다. 백그라운드 시작을 누르면 현재 브라우저 기준으로 재시작합니다.'
 						: isWorkerAuthError
 							? 'Worker가 NAS API 인증에 실패했습니다. 중지 후 화면을 새로고침하거나 다시 로그인한 뒤 백그라운드 시작을 눌러 주세요.'
 						: isWorkerTransientAuthRetry
@@ -1744,15 +2261,63 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 						const transientProgress = taskProgress[task.task_id] || null;
 						const latestStartedAt = latest?.started_at ? new Date(latest.started_at).getTime() : 0;
 						const transientStartedAt = transientProgress?.createdAt || 0;
-						const progress =
+						let progress =
 							transientProgress && (!latestStartedAt || transientStartedAt >= latestStartedAt)
 								? transientProgress
 								: latestCollector
 									? { collectorJob: latestCollector, collectorJobId: latestCollector.job_id }
 									: transientProgress;
-						const lastProgressEvent = progress?.collectorJob?.last_event || collectorEvents.filter((event) => event.job_id && event.job_id === progress?.collectorJobId).slice(-1)[0] || null;
-						const progressStatus = progress?.collectorJob?.status || lastProgressEvent?.status || null;
-						const progressMessage = progress?.message || (progress ? collectorProgressMessage(progress.collectorJob, lastProgressEvent, collectorStatus) : null);
+						if (
+							latestCollector?.job_id &&
+							progress?.collectorJobId &&
+							latestCollector.job_id !== progress.collectorJobId
+						) {
+							progress = { collectorJob: latestCollector, collectorJobId: latestCollector.job_id };
+						}
+						const persistedCollectorEvents = (collectionJobEventsByJobId[latest?.job_id || ''] || [])
+							.map(collectorEventFromJobEvent)
+							.filter(Boolean) as CollectorEvent[];
+						const collectorEventsForJob = [
+							...collectorEvents.filter((event) => event.job_id && event.job_id === progress?.collectorJobId),
+							...persistedCollectorEvents,
+						].sort((a, b) => collectorEventTimeMs(a) - collectorEventTimeMs(b));
+						const newestCollectorEvent = progress?.collectorJob?.last_event || collectorEventsForJob.slice(-1)[0] || null;
+						const eventWithProgress = [progress?.collectorJob?.last_event || null, ...collectorEventsForJob]
+							.filter(Boolean)
+							.reverse()
+							.find((event) => collectorProgressCount(null, event as CollectorEvent, null)) as CollectorEvent | undefined;
+						const lastProgressEvent = newestCollectorEvent;
+						const scopedCollectorStatus = collectorStatusForJob(collectorStatus, progress?.collectorJobId || null);
+						const resultSummary = formatCollectionResult(latest, task.latest_success_job || latestSuccessByTask.get(task.task_id) || null);
+						const savedRankProgressCount = collectionProgressFromTaskSavedRows(task);
+						const isTerminalHostCollectorJob = task.source_type === 'host_cdp' && isTerminalCollectorStatus(latestStatus);
+						const terminalProgressCount = isTerminalHostCollectorJob ? collectionProgressFromJob(latest) : null;
+						const terminalProgressMessage = isTerminalHostCollectorJob ? resultSummary.detail : null;
+						const progressStatus = isTerminalHostCollectorJob
+							? latestStatus
+							: progress?.collectorJob?.status || lastProgressEvent?.status || (task.source_type === 'host_cdp' ? latestStatus : null);
+						const progressMessage = isTerminalHostCollectorJob
+							? terminalProgressMessage
+							: progress?.message || (progress ? collectorProgressMessage(progress.collectorJob, lastProgressEvent, scopedCollectorStatus) : null) || terminalProgressMessage;
+						const liveProgressCount =
+							collectorProgressCount(progress?.collectorJob || null, lastProgressEvent, scopedCollectorStatus) ||
+							(eventWithProgress ? collectorProgressCount(null, eventWithProgress, null) : null);
+						const organicRankResumeBase = Number(
+							progress?.collectorJob?.params?.resume_skipped_keywords ??
+							latest?.detail?.collector_job?.params?.resume_skipped_keywords ??
+							savedRankProgressCount?.current ??
+							0,
+						);
+						const combinedOrganicRankProgressCount =
+							savedRankProgressCount && liveProgressCount && task.task_id === 'rank_openapi'
+								? formatProgressCount(organicRankResumeBase + liveProgressCount.current, savedRankProgressCount.total)
+								: savedRankProgressCount;
+						const progressCount =
+							combinedOrganicRankProgressCount ||
+							terminalProgressCount ||
+							liveProgressCount;
+						const isRetryProgress = isRetryIncompleteCollectorJob(progress?.collectorJob || null, lastProgressEvent || eventWithProgress || null, scopedCollectorStatus);
+						const progressDisplayPrefix = combinedOrganicRankProgressCount && liveProgressCount ? '수집진행' : savedRankProgressCount ? '수집완료' : isRetryProgress ? '이어받기 대상' : '수집현황';
 						const collectorDateRange = formatCollectorDateRange(progress?.collectorJob || latestCollector);
 						const savedDateSummary = formatSavedByDate(latest);
 						const pendingCollectionSummary = formatPendingCollection(task);
@@ -1760,7 +2325,6 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 						const isSaving = savingTaskId === task.task_id;
 						const isRunning = Boolean(runningTasks[task.task_id]);
 						const isCancelling = Boolean(cancellingTasks[task.task_id]);
-						const resultSummary = formatCollectionResult(latest, task.latest_success_job || latestSuccessByTask.get(task.task_id) || null);
 						const isNasRuntimeTask = String(task.preferred_runtime || '') === 'nas';
 						const canRunInCurrentAccess = task.runnable && (!isNasRuntimeTask || accessMode === 'local' || accessMode === 'nas');
 						const canEditScheduleInCurrentAccess = accessMode === 'local' || accessMode === 'nas';
@@ -1773,13 +2337,26 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 									: undefined;
 						const isCollectorTask = task.source_type === 'host_cdp';
 						const isCollectorActive = isCollectorTask && Boolean(progress?.collectorJobId) && !isTerminalCollectorStatus(progressStatus);
-						const displayResultSummary = isCollectorActive
+						const isRankOpenapiServerActive =
+							task.task_id === 'rank_openapi' &&
+							activeCollectionStatuses.has(latestStatus);
+						const canCancelActiveTask = isCollectorActive || isRankOpenapiServerActive;
+						const supportsRetryIncomplete = Boolean(task.supports_retry_incomplete) || task.task_id === 'ad_rank_diagnosis_cdp';
+						const hasAdRankResumeTargets = task.task_id === 'ad_rank_diagnosis_cdp' && Number(adRankRetryPreview?.retry_unit_count || 0) > 0;
+						const prefersResumeRun = task.task_id === 'ad_rank_diagnosis_cdp' && supportsRetryIncomplete && hasAdRankResumeTargets;
+						const isReviewReplyBackfillTask = task.task_id === 'review_reply_backfill';
+						const isOrganicRankTask = task.task_id === 'rank_openapi';
+						const showRetryIncompleteButton = supportsRetryIncomplete && !canCancelActiveTask && (task.task_id !== 'ad_rank_diagnosis_cdp' || hasAdRankResumeTargets);
+						const inlineError = formatInlineCollectionError(latest);
+						const displayResultSummary = canCancelActiveTask
 							? {
 								tone: 'warn' as const,
 								title: '백그라운드 진행 중',
-								detail: collectorDateRange
-									? `${collectorDateRange} 데이터를 백그라운드에서 수집 중입니다. 완료 후 저장 검증을 진행합니다.`
-									: 'Collector PC가 백그라운드에서 수집 중입니다. 완료 후 저장 검증을 진행합니다.',
+								detail: isRankOpenapiServerActive
+									? '검색/쇼핑 순위 수집이 서버에서 진행 중입니다. 중단 버튼으로 현재 작업을 취소할 수 있습니다.'
+									: collectorDateRange
+										? `${collectorDateRange} 데이터를 백그라운드에서 수집 중입니다. 완료 후 저장 검증을 진행합니다.`
+										: 'Collector PC가 백그라운드에서 수집 중입니다. 완료 후 저장 검증을 진행합니다.',
 							}
 							: resultSummary;
 						return (
@@ -1891,34 +2468,71 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 									/>
 									<button
 										type="button"
-										className={isCollectorActive ? 'btn-ghost' : 'btn-primary'}
-										disabled={isCollectorActive ? isCancelling : !canRunInCurrentAccess || isRunning}
+										className={canCancelActiveTask ? 'btn-ghost' : 'btn-primary'}
+										disabled={canCancelActiveTask ? isCancelling : !canRunInCurrentAccess || isRunning}
 										onClick={() => {
 											if (isCollectorActive) {
 												void cancelCollectorTask(task, progress);
+											} else if (isRankOpenapiServerActive) {
+												void cancelRankOpenapiTask(task);
 											} else {
-												void runTask(task);
+												void runTask(task, { retryIncomplete: prefersResumeRun });
 											}
 										}}
 										style={{
 											flex: '0 0 auto',
 											whiteSpace: 'nowrap',
-											...(isCollectorActive ? { borderColor: 'rgba(248, 113, 113, 0.55)', color: '#fecaca' } : {}),
+											...(canCancelActiveTask ? { borderColor: 'rgba(248, 113, 113, 0.55)', color: '#fecaca' } : {}),
 										}}
-										title={isCollectorActive ? '현재 Collector 작업을 중단합니다.' : runDisabledReason}
+										title={canCancelActiveTask ? '현재 수집 작업을 중단합니다.' : runDisabledReason}
 									>
-										{isCollectorActive ? (isCancelling ? '중단 중' : '작업 중단') : isRunning ? '실행 중' : task.source_type === 'host_cdp' ? 'Collector 작업 생성' : '지금 실행'}
+										{canCancelActiveTask
+											? isCancelling
+												? '중단 중'
+												: '작업 중단'
+											: isRunning
+												? '실행 중'
+												: prefersResumeRun
+													? '이어서 수집'
+													: isReviewReplyBackfillTask
+														? '이어서 수집'
+													: isOrganicRankTask
+														? '새로 시작'
+													: task.source_type === 'host_cdp'
+														? 'Collector 작업 생성'
+														: '지금 실행'}
 									</button>
+									{showRetryIncompleteButton ? (
+										<button
+											type="button"
+											className="btn-ghost"
+											disabled={!canRunInCurrentAccess || isRunning}
+											onClick={() => void runTask(task, isReviewReplyBackfillTask ? { force: true } : { retryIncomplete: !prefersResumeRun })}
+											style={{ flex: '0 0 auto', whiteSpace: 'nowrap' }}
+											title={
+												isReviewReplyBackfillTask
+													? '기존 답글 본문 보강 상태를 초기화하고 답글 있음 대상 전체를 처음부터 다시 수집합니다.'
+													:
+												isOrganicRankTask
+													? '저장된 당일 오가닉 순위 데이터를 유지하고, 아직 저장되지 않은 keyword×상품 조합만 이어서 수집합니다.'
+													: prefersResumeRun
+													? '기존 정상 저장 데이터도 다시 지나가며 전체 조건을 처음부터 재수집합니다.'
+													: '누락(missing) 또는 조회실패(failed) 셀만 다시 수집합니다. 전체 재수집이 아닙니다.'
+											}
+										>
+											{isReviewReplyBackfillTask ? '새로 수집' : isOrganicRankTask ? '이어서 시작' : prefersResumeRun ? '처음부터 재수집' : '누락/실패만 재시도'}
+										</button>
+									) : null}
 								</div>
 								{runDisabledReason ? <div style={{ fontSize: 12, color: accessMode === 'local' && isNasRuntimeTask ? '#fbbf24' : '#94a3b8' }}>{runDisabledReason}</div> : null}
 
 								<div style={{ fontSize: 12, color: '#cbd5e1', display: 'flex', gap: 8, flexWrap: 'wrap', lineHeight: 1.5, alignItems: 'center' }}>
 									<span style={badgeStyle(displayResultSummary.tone)}>{displayResultSummary.title}</span>
-									<span>{displayResultSummary.detail}</span>
+									<span style={{ flex: '1 1 520px', minWidth: 0, overflowWrap: 'anywhere' }}>{displayResultSummary.detail}</span>
 									{latest ? (
 										<>
 											<span>{latest.started_at ? new Date(latest.started_at).toLocaleString() : ''}</span>
-											{latest.error ? <span style={{ color: '#b91c1c' }}>{latest.error}</span> : null}
+											{inlineError ? <span style={{ color: '#b91c1c' }}>{inlineError}</span> : null}
 										</>
 									) : (
 										<span>최근 실행 없음</span>
@@ -1939,11 +2553,17 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 										<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
 											<span style={{ fontWeight: 900 }}>Collector 진행 상황</span>
 											<span style={badgeStyle(statusTone(progressStatus))}>{progressStatus || '대기/없음'}</span>
+											{progressCount ? <span style={badgeStyle('ok')}>{formatProgressDisplay(progressCount, progressDisplayPrefix)}</span> : null}
 											{progress?.collectorJobId ? <span style={{ color: '#94a3b8' }}>job: {progress.collectorJobId}</span> : null}
 											{progress?.collectorJob?.claimed_by ? <span style={{ color: '#94a3b8' }}>PC: {progress.collectorJob.claimed_by}</span> : null}
 											{progress?.collectorJob?.created_by_device_id ? <span style={{ color: '#94a3b8' }}>생성 PC: {progress.collectorJob.created_by_device_id}</span> : null}
 										</div>
-										<div style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.5 }}>
+										{isRetryProgress ? (
+											<div style={{ fontSize: 12, color: '#fbbf24', lineHeight: 1.5 }}>
+												이어받기는 이미 정상 저장된 조건을 제외하고 누락/실패 조건만 새 작업으로 다시 수집합니다.
+											</div>
+										) : null}
+										<div style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.5, overflowWrap: 'anywhere' }}>
 											{progressMessage || '아직 생성된 Collector 작업이 없습니다. 버튼을 누르면 진행 상태가 여기에 표시됩니다.'}
 										</div>
 										{collectorDateRange ? (
@@ -1966,12 +2586,21 @@ export function DataCollectionView(props: { apiBaseUrl: string }): JSX.Element {
 												ADVoost 미운영 기간: {nonOperatingCollectionNote}
 											</div>
 										) : null}
-										{collectorStatus?.running ? (
+										{scopedCollectorStatus?.running ? (
 											<div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>
-												로컬 Collector: {collectorStatus.state || 'UNKNOWN'}
+												로컬 Collector: {scopedCollectorStatus.state || 'UNKNOWN'}
+												{scopedCollectorStatus.jobId ? ` · 현재 job ${scopedCollectorStatus.jobId}` : ''}
+												{scopedCollectorStatus.reason ? ` · ${scopedCollectorStatus.reason}` : ''}
+												{scopedCollectorStatus.attempt ? ` · ${scopedCollectorStatus.attempt}회차` : ''}
+											</div>
+										) : collectorStatus?.running && collectorStatus.jobId ? (
+											<div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>
+												로컬 Collector: 다른 Collector 작업 진행 중
 												{collectorStatus.jobId ? ` · 현재 job ${collectorStatus.jobId}` : ''}
-												{collectorStatus.reason ? ` · ${collectorStatus.reason}` : ''}
-												{collectorStatus.attempt ? ` · ${collectorStatus.attempt}회차` : ''}
+											</div>
+										) : collectorStatus?.running ? (
+											<div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.5 }}>
+												로컬 Collector: {collectorStatus.state || 'POLLING'}
 											</div>
 										) : (
 											<div style={{ fontSize: 12, color: '#fca5a5' }}>로컬 Collector가 실행 중이 아닙니다. 위의 “백그라운드 시작”을 먼저 눌러주세요.</div>

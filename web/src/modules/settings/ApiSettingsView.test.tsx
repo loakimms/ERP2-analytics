@@ -20,6 +20,7 @@ describe('ApiSettingsView', () => {
 			data: {
 				AD_CUST_ID: '1053378',
 				OPENAI_API_KEY: '********',
+				GEMINI_API_KEY: '********',
 				NAVER_COMMERCE_CLIENT_SECRET: '********',
 			},
 		});
@@ -38,6 +39,7 @@ describe('ApiSettingsView', () => {
 		const payload = (axiosAny.put as any).mock.calls[0][1] as Record<string, unknown>;
 		expect(payload.AD_CUST_ID).toBe('1053378');
 		expect('OPENAI_API_KEY' in payload).toBe(false);
+		expect('GEMINI_API_KEY' in payload).toBe(false);
 		expect('NAVER_COMMERCE_CLIENT_SECRET' in payload).toBe(false);
 	});
 });

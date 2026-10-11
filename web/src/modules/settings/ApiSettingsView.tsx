@@ -12,6 +12,7 @@ type ApiSettings = {
 	NAVER_COMMERCE_CLIENT_ID: string;
 	NAVER_COMMERCE_CLIENT_SECRET: string;
 	OPENAI_API_KEY: string;
+	GEMINI_API_KEY: string;
 };
 
 type ApiValidateResult = {
@@ -32,6 +33,7 @@ const EMPTY: ApiSettings = {
 	NAVER_COMMERCE_CLIENT_ID: '',
 	NAVER_COMMERCE_CLIENT_SECRET: '',
 	OPENAI_API_KEY: '',
+	GEMINI_API_KEY: '',
 };
 
 const MASKED_API_SETTING_VALUE = '********';
@@ -45,6 +47,7 @@ const SENSITIVE_API_KEYS = new Set<ApiKeyName>([
 	'NAVER_COMMERCE_CLIENT_ID',
 	'NAVER_COMMERCE_CLIENT_SECRET',
 	'OPENAI_API_KEY',
+	'GEMINI_API_KEY',
 ]);
 
 function normalize(v: unknown): string {
@@ -84,6 +87,7 @@ function mergeSettings(raw: any): ApiSettings {
 		NAVER_COMMERCE_CLIENT_ID: normalize(o.NAVER_COMMERCE_CLIENT_ID),
 		NAVER_COMMERCE_CLIENT_SECRET: normalize(o.NAVER_COMMERCE_CLIENT_SECRET),
 		OPENAI_API_KEY: normalize(o.OPENAI_API_KEY),
+		GEMINI_API_KEY: normalize(o.GEMINI_API_KEY),
 	};
 }
 
@@ -209,7 +213,9 @@ export function ApiSettingsView(props: { apiBaseUrl: string }): JSX.Element {
 		}
 	};
 
-	const validate = async (service: 'naver-openapi' | 'naver-commerce' | 'searchad' | 'naver-client' | 'openai') => {
+	const validate = async (
+		service: 'naver-openapi' | 'naver-commerce' | 'searchad' | 'naver-client' | 'openai' | 'gemini',
+	) => {
 		setError(null);
 		setValidating((p) => ({ ...p, [service]: true }));
 		try {
@@ -227,6 +233,8 @@ export function ApiSettingsView(props: { apiBaseUrl: string }): JSX.Element {
 				patch = buildApiSettingsPayload(form, ['NAVER_COMMERCE_CLIENT_ID', 'NAVER_COMMERCE_CLIENT_SECRET']);
 			} else if (service === 'openai') {
 				patch = buildApiSettingsPayload(form, ['OPENAI_API_KEY']);
+			} else if (service === 'gemini') {
+				patch = buildApiSettingsPayload(form, ['GEMINI_API_KEY']);
 			}
 			try {
 				if (Object.keys(patch).length > 0) {
@@ -514,6 +522,37 @@ export function ApiSettingsView(props: { apiBaseUrl: string }): JSX.Element {
 						locked={Boolean(savedSnapshot.OPENAI_API_KEY)}
 						editing={Boolean(editMode.OPENAI_API_KEY) || !Boolean(savedSnapshot.OPENAI_API_KEY)}
 						onToggleEdit={() => setEditMode((p) => ({ ...p, OPENAI_API_KEY: !p.OPENAI_API_KEY }))}
+					/>
+				</div>
+			</div>
+
+			<div className="card">
+				<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+					<div className="card-title" style={{ marginBottom: 0 }}>
+						6. Gemini
+					</div>
+					<div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+						<ValidateBadge r={validateResult['gemini'] ?? null} />
+						<button
+							type="button"
+							className="btn-ghost"
+							onClick={() => validate('gemini')}
+							disabled={Boolean(validating['gemini']) || saving || loading}
+						>
+							{validating['gemini'] ? '검사 중…' : '유효성 검사'}
+						</button>
+					</div>
+				</div>
+				<div className="card-caption">Gemini Vision/텍스트 분석 확장용 API 키를 저장합니다.</div>
+				<div style={{ display: 'grid', gap: 12 }}>
+					<MaskedInput
+						label="GEMINI_API_KEY"
+						value={form.GEMINI_API_KEY}
+						onChange={(v) => setForm((p) => ({ ...p, GEMINI_API_KEY: v }))}
+						placeholder="예) AIza..."
+						locked={Boolean(savedSnapshot.GEMINI_API_KEY)}
+						editing={Boolean(editMode.GEMINI_API_KEY) || !Boolean(savedSnapshot.GEMINI_API_KEY)}
+						onToggleEdit={() => setEditMode((p) => ({ ...p, GEMINI_API_KEY: !p.GEMINI_API_KEY }))}
 					/>
 				</div>
 			</div>

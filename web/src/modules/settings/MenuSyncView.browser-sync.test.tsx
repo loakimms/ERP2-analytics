@@ -9,6 +9,20 @@ import {
 	renderMenuSyncView,
 } from './MenuSyncView.testUtils';
 
+function hostAgentVersionResponse() {
+	return {
+		ok: true,
+		json: vi.fn().mockResolvedValue({
+			ok: true,
+			agentVersion: '2026.08.18-menu-sync-agent-repo-protocol',
+			agentManageNo: '20260818-0097',
+			installMode: 'repo',
+			menuSyncSupported: true,
+			capabilities: { menuSync: true },
+		}),
+	};
+}
+
 describe('MenuSyncView browser sync', () => {
 	registerMenuSyncTestLifecycle();
 
@@ -48,6 +62,7 @@ describe('MenuSyncView browser sync', () => {
 							: null,
 				},
 			})
+			.mockResolvedValueOnce(hostAgentVersionResponse())
 			.mockResolvedValueOnce({
 				ok: true,
 				json: vi.fn().mockResolvedValue({
