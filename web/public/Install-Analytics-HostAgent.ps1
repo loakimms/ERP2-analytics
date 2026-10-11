@@ -220,7 +220,7 @@ function Start-HostChrome([int]$port, [string]$startUrl, [string]$profileDir) {
   $args = @(
     "--new-window",
     "--remote-debugging-port=$port",
-    "--remote-debugging-address=0.0.0.0",
+    "--remote-debugging-address=127.0.0.1",
     "--remote-allow-origins=*",
     ("--user-data-dir=`"$UserDataDir`""),
     ("--profile-directory=`"$profileDir`""),
