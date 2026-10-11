@@ -18,6 +18,7 @@ node_modules/
 web/node_modules/
 web/dist/
 web/coverage/
+*.tsbuildinfo
 web/playwright-report/
 web/test-results/
 
@@ -48,3 +49,20 @@ manifest.txt
 openapi.json
 analytics-openapi.json
 CANONICAL_ROOT.txt
+
+# Local snapshots and evidence. Not source. Do not commit.
+releases/
+calibration/
+backups/
+tmp-local-edit-qa/
+%LOCALAPPDATA%/
+
+# Scratch outputs
+$dst
+tmp_*.py
+/*.pdf
+docs/ChatGPT Image *.png
+
+# Per-tag compose/lock copies. Current SoT locks stay tracked.
+docker/*.analytics_*.yml
+docker/*.analytics_*.lock
