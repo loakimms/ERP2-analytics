@@ -42,6 +42,34 @@ describe('AppShell primary routes', () => {
 		expect(await screen.findByRole('button', { name: '오가닉 A-1 보기' })).toBeTruthy();
 	});
 
+	it('AI 콘텐츠 센터 경로에서는 오늘의 콘텐츠 화면을 렌더링한다', async () => {
+		const axiosAny = mockedAxios;
+		axiosAny.post.mockResolvedValue({ data: { ok: true } });
+		axiosAny.patch.mockResolvedValue({ data: { ok: true } });
+		axiosAny.get.mockImplementation((url: string) => {
+			const u = String(url || '');
+			if (u.includes('/content/sku-scope')) {
+				return Promise.resolve({ data: { ok: true, items: [{ sku_id: '4743750201', title: '수자타 헤나 염색약', product_group: 'henna', phase1_enabled: true }] } });
+			}
+			if (u.includes('/content/appeals')) {
+				return Promise.resolve({ data: { ok: true, items: [{ appeal_id: 'AP-001', sku_id: '4743750201', label: '반복 새치 관리 부담', appeal_text: '반복되는 새치 관리의 부담', status: 'ACTIVE', scores: { overall: 83 }, evidence_count: 3 }] } });
+			}
+			if (u.includes('/content/today')) {
+				return Promise.resolve({ data: { ok: true, data_ready: { ready: true }, items: [] } });
+			}
+			if (u.includes('/content/artifacts')) return Promise.resolve({ data: { ok: true, items: [] } });
+			if (u.includes('/content/learning')) return Promise.resolve({ data: { ok: true, counts: { OBSERVE: 1 }, items: [] } });
+			return Promise.resolve({ data: { ok: true, items: [] } });
+		});
+
+		await renderAppShell('/analytics/content/today');
+		await flushReactEffects();
+
+		expect(screen.getAllByText('AI 콘텐츠 센터').length).toBeGreaterThan(0);
+		expect(await screen.findByTestId('content-center-react')).toBeTruthy();
+		expect(await screen.findByText('오늘의 콘텐츠 큐')).toBeTruthy();
+	});
+
 	it('오가닉 A-1 전용 경로에서는 상품 중심 A-1 화면을 직접 렌더링한다', async () => {
 		const axiosAny = mockedAxios;
 		axiosAny.post.mockResolvedValue({ data: { ok: true, products: [] } });

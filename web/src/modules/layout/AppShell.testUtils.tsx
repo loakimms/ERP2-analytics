@@ -10,6 +10,7 @@ vi.mock('axios', () => {
 		default: {
 			get: vi.fn(),
 			post: vi.fn(),
+			patch: vi.fn(),
 			put: vi.fn(),
 		},
 	};
@@ -29,6 +30,9 @@ export const mockedAxios = axios as any;
 
 export function registerAppShellTestLifecycle(): void {
 	beforeEach(() => {
+		if (!HTMLElement.prototype.scrollTo) {
+			HTMLElement.prototype.scrollTo = vi.fn();
+		}
 		window.localStorage.setItem('analytics:collect_modal:auto_open_v1', '0');
 		window.localStorage.setItem('analytics:page_metrics:auto_sync_v1', '0');
 	});

@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -132,6 +132,16 @@ class CreativeInventoryItem(BaseModel):
     status_collected_at: datetime | None = None
     is_active: bool | None = None
     image_url: str | None = None
+    detail_collected_at: datetime | None = None
+    detail_last_error: str | None = None
+    creative_type: str | None = None
+    profile_name: str | None = None
+    profile_image_url: str | None = None
+    primary_text: str | None = None
+    headline: str | None = None
+    description: str | None = None
+    cta: str | None = None
+    landing_url: str | None = None
     ad_type: str | None = None
 
 
@@ -176,6 +186,16 @@ class CreativeDaily(BaseModel):
     display_keyword: str | None = None
     product_title: str | None = None
     image_url: str | None = None
+    detail_collected_at: datetime | None = None
+    detail_last_error: str | None = None
+    creative_type: str | None = None
+    profile_name: str | None = None
+    profile_image_url: str | None = None
+    primary_text: str | None = None
+    headline: str | None = None
+    description: str | None = None
+    cta: str | None = None
+    landing_url: str | None = None
     current_bid: int | None = None
     quality_index: float | None = None
     avg_rank: float | None = None
@@ -1661,6 +1681,7 @@ class AutoTrackedKeywordItem(BaseModel):
 class AutoTrackedKeywordReplaceRequest(BaseModel):
     product_url: str
     items: List[AutoTrackedKeywordItem]
+    allow_empty_core: bool = False
 
 
 class AutoTrackedKeywordRead(BaseModel):
@@ -1725,9 +1746,115 @@ class TrackedProductKeywordCreate(BaseModel):
     keywords: List[str]
 
 
+class AdTrackedKeywordRead(BaseModel):
+    id: int
+    product_url: str
+    keyword: str
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class AdTrackedKeywordInput(BaseModel):
+    keyword: str
+    is_active: bool = True
+
+
+class AdTrackedProductRead(BaseModel):
+    product_url: str
+    name: str
+    campaign_label: str | None = None
+    organic_title: str | None = None
+    image_url: str | None = None
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+    keywords: List[AdTrackedKeywordRead] = []
+
+    class Config:
+        from_attributes = True
+
+
+class AdTrackedProductCreate(BaseModel):
+    product_url: str
+    name: str | None = None
+    campaign_label: str | None = None
+    keywords: List[Union[str, AdTrackedKeywordInput]] = []
+
+
+class AdTrackedProductUpdate(BaseModel):
+    name: str | None = None
+    campaign_label: str | None = None
+    keywords: List[Union[str, AdTrackedKeywordInput]] | None = None
+
+
+class AdRankDiagnosisPresetRead(BaseModel):
+    condition_id: str
+    gender: str
+    age_band: str
+    placement: str
+    target_rank: int = 20
+    scope: str
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
+class AdRankDiagnosisPresetUpdate(BaseModel):
+    target_rank: int = Field(20, ge=1, le=20)
+    scope: str | None = None
+    is_active: bool | None = None
+
+
+class AdRankKeywordTargetRead(BaseModel):
+    keyword: str
+    gender: str
+    age_band: str
+    placement: str
+    condition_id: str
+    target_rank: int = 20
+    source: str = "preset"
+
+
+class AdRankKeywordTargetUpdate(BaseModel):
+    keyword: str
+    gender: str
+    age_band: str
+    placement: str
+    target_rank: int = Field(20, ge=1, le=20)
+
+
+class AdRankDiagnosisDailyRead(BaseModel):
+    date: date
+    time_slot: str
+    product_url: str
+    keyword: str
+    gender: str
+    age_band: str
+    placement: str
+    visible: bool
+    rank: int | None = None
+    competitor_count_above: int | None = None
+    ad_type: str | None = None
+    status: str
+    page_url: str | None = None
+    raw_text_sample: str | None = None
+    screenshot_path: str | None = None
+    error: str | None = None
+    collected_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+
+
 class ProductRankPoint(BaseModel):
     date: date
     rank: int
+    status: str | None = None
 
 
 class ProductRankSeries(BaseModel):
@@ -1749,6 +1876,7 @@ class ProductRankHistory(BaseModel):
 
     dates: List[date]
     series: List[ProductRankSeries]
+    failed_dates: List[date] = Field(default_factory=list)
 
 
 # -----------------------------
@@ -2025,13 +2153,13 @@ class CategoryCrawlRequest(BaseModel):
     product_url: str = Field(..., description="기준 상품 URL(이 상품의 카테고리를 기준으로 동일 카테고리 상품을 함께 크롤링)")
     scope: Literal["product", "category"] = Field("category", description="product: 단일 상품, category: 동일 카테고리 상품(최대 max_products) 함께")
     target_date: date | None = Field(None, alias="date", description="저장 일자(미입력 시 오늘)")
-    # OpenAPI(shop.json) 기반 수집은 최대 1000까지(페이징) 가능하므로 schema 상한을 넓힌다.
-    # 실제 상한은 backend에서 method/scope에 따라 별도로 제한한다.
+    # 쇼핑 OpenAPI 종료 이후 기본 수집은 CDP 1페이지(광고 제외 40개) 기준으로 제한한다.
+    # 상한은 수동 검증/레거시 호환을 위해 열어두되, 중앙 자동 수집은 40을 사용한다.
     limit: int = Field(
-        500,
+        40,
         ge=10,
         le=1000,
-        description="TOP N까지 검색(기본 500). OpenAPI는 최대 1000까지 페이징 가능",
+        description="TOP N까지 검색(기본 40). CDP 수집은 1페이지 광고 제외 상품 기준을 권장",
     )
     max_products: int = Field(10, ge=1, le=10, description="category 스코프일 때 함께 크롤링할 최대 상품 수(기본 10)")
     category_id: str | None = Field(None, description="선택: 네이버 쇼핑 카테고리 ID(숫자). 없으면 Playwright 기반 추론을 시도")
@@ -2055,10 +2183,10 @@ class CategoryCrawlResponse(BaseModel):
 
 
 class CategoryCrawlBatchByKeywordRequest(BaseModel):
-    """동일 키워드는 1회만 OpenAPI 호출 후 해당 키워드를 가진 모든 상품에 동시 적용."""
+    """동일 키워드는 1회만 CDP 수집 후 해당 키워드를 가진 모든 상품에 동시 적용."""
     product_urls: List[str] = Field(..., min_length=1, max_length=20, description="수집 대상 상품 URL 목록")
     target_date: date | None = Field(None, alias="date", description="저장 일자(미입력 시 오늘)")
-    limit: int = Field(500, ge=10, le=1000, description="TOP N까지 검색")
+    limit: int = Field(40, ge=10, le=1000, description="TOP N까지 검색(기본 40, 쇼핑 1페이지 기준)")
 
     class Config:
         populate_by_name = True
