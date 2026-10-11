@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP2 Analytics - AI 콘텐츠 센터</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Noto Sans KR -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar styling for slick UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .tab-active {
+            border-bottom: 2px solid #2563eb;
+            color: #2563eb;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between flex-shrink-0 z-20">
+        <div>
+            <!-- Logo Section -->
+            <div class="h-14 px-5 flex items-center justify-between border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <span class="text-blue-600 font-extrabold text-xl tracking-tight">ERP2</span>
+                    <span class="text-slate-600 font-semibold text-sm">Analytics</span>
+                </div>
+                <button class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-3 space-y-1 text-sm font-medium">
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-brain text-slate-400 w-5"></i>
+                    <span>AI 운영 센터</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-chart-line text-slate-400 w-5"></i>
+                    <span>키워드 분석</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-bullseye text-slate-400 w-5"></i>
+                    <span>SA 광고분석</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-[#6366f1] text-indigo-500 w-5"></i>
+                    <span>GFA 광고분석</span>
+                </a>
+                
+                <!-- Active Nav: AI 콘텐츠 센터 -->
+                <a href="#" onclick="switchView('main'); return false;" id="nav-ai-center" class="flex items-center gap-3 px-3 py-2.5 text-blue-600 bg-blue-50/70 border border-blue-200 rounded-xl font-semibold transition-all">
+                    <i class="fa-solid fa-wand-magic-sparkles text-blue-600 w-5"></i>
+                    <span>AI 콘텐츠 센터</span>
+                </a>
+
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-[#059669] text-emerald-600 w-5"></i>
+                    <span>검색·쇼핑 순위</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-chart-pie text-slate-400 w-5"></i>
+                    <span>판매 분석</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-[#d97706] text-amber-600 w-5"></i>
+                    <span>리뷰 Q&A</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 w-5"></i>
+                    <span>SEO 분석</span>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <i class="fa-solid fa-gear text-slate-400 w-5"></i>
+                    <span>설정</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-3 border-t border-slate-100">
+            <a href="#" class="flex items-center justify-between p-2.5 text-xs text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-lg">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-headset text-slate-500 text-sm"></i>
+                    <span>고객지원</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        <!-- TOP HEADER BAR -->
+        <header class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between flex-shrink-0">
+            <!-- Breadcrumb & Nav View Switcher Pills for standard UI navigation -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <span class="hover:text-slate-800 cursor-pointer" onclick="switchView('main')">AI 콘텐츠 센터</span>
+                    <span id="breadcrumb-sub" class="hidden">/ <span class="font-medium text-slate-800" id="breadcrumb-title">에디터</span></span>
+                </div>
+                <!-- View Selector Pills to switch between mock views -->
+                <div class="ml-4 flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-medium text-slate-600">
+                    <button onclick="switchView('main')" id="btn-view-main" class="px-3 py-1 rounded-md bg-white shadow-sm text-blue-600">메인</button>
+                    <button onclick="switchView('editor')" id="btn-view-editor" class="px-3 py-1 rounded-md hover:text-slate-900">에디터</button>
+                    <button onclick="switchView('generator')" id="btn-view-generator" class="px-3 py-1 rounded-md hover:text-slate-900">콘텐츠 생성</button>
+                </div>
+            </div>
+
+            <!-- Top Right Badges & User Profile -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 text-xs bg-blue-50 text-blue-600 rounded-full font-medium border border-blue-100 flex items-center gap-1.5">
+                        <i class="fa-regular fa-clock text-xs"></i> 07:20 자동 실행
+                    </span>
+                    <span class="px-2.5 py-1 text-xs bg-emerald-50 text-emerald-600 rounded-full font-medium border border-emerald-100 flex items-center gap-1.5">
+                        <i class="fa-regular fa-circle-check text-xs"></i> Review Ready
+                    </span>
+                    <span class="px-2.5 py-1 text-xs bg-purple-50 text-purple-600 rounded-full font-medium border border-purple-100 flex items-center gap-1.5">
+                        <i class="fa-regular fa-hourglass-half text-xs"></i> GFA Learning Active
+                    </span>
+                </div>
+
+                <div class="h-4 w-px bg-slate-200 mx-1"></div>
+
+                <div class="flex items-center gap-3 text-slate-500">
+                    <button class="hover:text-slate-700 relative">
+                        <i class="fa-regular fa-bell text-base"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button class="hover:text-slate-700">
+                        <i class="fa-regular fa-circle-question text-base"></i>
+                    </button>
+                    
+                    <div class="flex items-center gap-2 ml-1 cursor-pointer">
+                        <div class="w-7 h-7 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                            AD
+                        </div>
+                        <div class="text-xs text-left">
+                            <p class="font-semibold text-slate-800 leading-tight">관리자</p>
+                            <p class="text-[10px] text-slate-400 leading-tight">admin@example.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- VIEW 1: AI 콘텐츠 센터 메인 (MAIN DASHBOARD VIEW) -->
+        <main id="view-main" class="flex-1 overflow-y-auto p-6 space-y-5">
+            <!-- Header Title Row -->
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-xl font-bold text-slate-900">AI 콘텐츠 센터</h1>
+                        <button class="text-slate-400 hover:text-amber-400"><i class="fa-regular fa-star text-sm"></i></button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">매일 아침 데이터 기반 콘텐츠를 자동 준비</p>
+                </div>
+            </div>
+
+            <!-- Page Tabs -->
+            <div class="border-b border-slate-200 flex gap-6 text-sm font-medium text-slate-500">
+                <button class="pb-2.5 border-b-2 border-blue-600 text-blue-600 font-semibold">오늘의 콘텐츠</button>
+                <button class="pb-2.5 hover:text-slate-800">고객·시장 인사이트</button>
+                <button class="pb-2.5 hover:text-slate-800">소구 포인트</button>
+                <button class="pb-2.5 hover:text-slate-800">검수·승인</button>
+                <button class="pb-2.5 hover:text-slate-800">게시·성과 추적</button>
+                <button class="pb-2.5 hover:text-slate-800">학습 현황</button>
+            </div>
+
+            <!-- 6 KPI Metric Cards -->
+            <div class="grid grid-cols-6 gap-3">
+                <!-- Card 1 -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">오늘 생성 초안</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">28</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                        <span>어제 대비</span> <i class="fa-solid fa-caret-up text-[10px]"></i> 16%
+                    </p>
+                    <div class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500">
+                        <i class="fa-regular fa-file-lines text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">검수 대기</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">12</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                        <span>어제 대비</span> <i class="fa-solid fa-caret-up text-[10px]"></i> 8%
+                    </p>
+                    <div class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500">
+                        <i class="fa-regular fa-user text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">게시 대기</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">9</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                        <span>어제 대비</span> <i class="fa-solid fa-caret-up text-[10px]"></i> 12%
+                    </p>
+                    <div class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-cyan-50 flex items-center justify-center text-cyan-500">
+                        <i class="fa-regular fa-paper-plane text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">DIRECT 성과 연결</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">37</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                        <span>전일 대비</span> <i class="fa-solid fa-caret-up text-[10px]"></i> 21%
+                    </p>
+                    <div class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500">
+                        <i class="fa-solid fa-link text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">PROMOTE 후보</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">18</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-rose-500 mt-2 font-medium flex items-center gap-1">
+                        <span>전일 대비</span> <i class="fa-solid fa-caret-down text-[10px]"></i> 14%
+                    </p>
+                    <div class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500">
+                        <i class="fa-solid fa-arrow-trend-up text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">REVISE 후보</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">7</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-rose-500 mt-2 font-medium flex items-center gap-1">
+                        <span>전일 대비</span> <i class="fa-solid fa-caret-down text-[10px]"></i> 5%
+                    </p>
+                    <div class="absolute top-3.5 right-3.5 w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500">
+                        <i class="fa-solid fa-arrows-rotate text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE SECTION: 3 Columns -->
+            <div class="grid grid-cols-12 gap-4">
+                
+                <!-- Col 1: 오늘의 콘텐츠 큐 (5 cols) -->
+                <div class="col-span-5 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-1.5">
+                                <h2 class="font-bold text-sm text-slate-800">오늘의 콘텐츠 큐</h2>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                            </div>
+                            <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                                전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <!-- 4 Content Cards Grid -->
+                        <div class="grid grid-cols-4 gap-2.5">
+                            <!-- Item 1: Blog -->
+                            <div class="border border-slate-200 rounded-lg p-2 bg-slate-50/50 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
+                                            <span class="w-3.5 h-3.5 bg-emerald-500 text-white rounded flex items-center justify-center text-[9px]">N</span> Blog
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-medium">검수 대기</span>
+                                        <span class="text-xs font-bold text-slate-700">8개</span>
+                                    </div>
+                                    <!-- Image SVG representation -->
+                                    <div class="w-full h-20 bg-amber-100/60 rounded overflow-hidden relative mb-2 flex items-center justify-center">
+                                        <div class="text-center p-1">
+                                            <i class="fa-solid fa-mortar-pestle text-amber-700 text-lg opacity-60"></i>
+                                            <p class="text-[9px] text-amber-900 font-medium mt-1">녹차 케어 팩</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="switchView('editor')" class="w-full py-1 text-[11px] bg-white border border-blue-200 text-blue-600 font-medium rounded hover:bg-blue-50">
+                                    검수하기
+                                </button>
+                            </div>
+
+                            <!-- Item 2: Instagram -->
+                            <div class="border border-slate-200 rounded-lg p-2 bg-slate-50/50 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-[11px] font-bold text-rose-500 flex items-center gap-1">
+                                            <i class="fa-brands fa-instagram text-xs"></i> Instagram
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">초안 생성</span>
+                                        <span class="text-xs font-bold text-slate-700">6개</span>
+                                    </div>
+                                    <div class="w-full h-20 bg-slate-200 rounded overflow-hidden relative mb-2 flex items-center justify-center">
+                                        <i class="fa-solid fa-user-astronaut text-slate-400 text-xl"></i>
+                                    </div>
+                                </div>
+                                <button onclick="switchView('editor')" class="w-full py-1 text-[11px] bg-white border border-blue-200 text-blue-600 font-medium rounded hover:bg-blue-50">
+                                    검수하기
+                                </button>
+                            </div>
+
+                            <!-- Item 3: YouTube Shorts -->
+                            <div class="border border-slate-200 rounded-lg p-2 bg-slate-50/50 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-[11px] font-bold text-red-500 flex items-center gap-1">
+                                            <i class="fa-brands fa-youtube text-xs"></i> YouTube Shorts
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">검수 대기</span>
+                                        <span class="text-xs font-bold text-slate-700">7개</span>
+                                    </div>
+                                    <div class="w-full h-20 bg-amber-900/10 rounded overflow-hidden relative mb-2 p-1.5 flex flex-col justify-end">
+                                        <p class="text-[9px] font-bold text-slate-800 leading-tight">새치, 더 미올까? 1분 케어 루틴</p>
+                                    </div>
+                                </div>
+                                <button onclick="switchView('editor')" class="w-full py-1 text-[11px] bg-white border border-blue-200 text-blue-600 font-medium rounded hover:bg-blue-50">
+                                    검수하기
+                                </button>
+                            </div>
+
+                            <!-- Item 4: GFA -->
+                            <div class="border border-slate-200 rounded-lg p-2 bg-slate-50/50 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <span class="text-[11px] font-bold text-indigo-600 flex items-center gap-1">
+                                            <span class="w-3.5 h-3.5 bg-indigo-600 text-white rounded flex items-center justify-center text-[9px]">G</span> GFA
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">서브 페이지 이동</span>
+                                        <span class="text-xs font-bold text-slate-700">7개</span>
+                                    </div>
+                                    <div class="w-full h-20 bg-slate-100 rounded overflow-hidden relative mb-2 p-1.5 flex flex-col justify-end">
+                                        <p class="text-[9px] font-bold text-slate-800 leading-tight">새치, 더 미올까?</p>
+                                    </div>
+                                </div>
+                                <button onclick="switchView('editor')" class="w-full py-1 text-[11px] bg-white border border-slate-200 text-slate-600 font-medium rounded hover:bg-slate-100">
+                                    열기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 2: 핵심 소구 포인트 (4 cols) -->
+                <div class="col-span-4 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="font-bold text-sm text-slate-800">핵심 소구 포인트</h2>
+                            <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                                전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2.5">
+                            <!-- Row 1 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                                        <i class="fa-solid fa-leaf"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-800">반복 새치관리</p>
+                                        <div class="flex gap-1.5 mt-0.5 text-[10px] text-slate-400">
+                                            <span>리뷰 <strong class="text-slate-600">4.8k</strong></span>
+                                            <span>Q&A <strong class="text-slate-600">1.2k</strong></span>
+                                            <span>구매키워드 <strong class="text-slate-600">2.1k</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border-2 border-emerald-500 flex items-center justify-center text-xs font-extrabold text-emerald-600 bg-emerald-50/30">
+                                    86<span class="text-[9px] font-normal">점</span>
+                                </div>
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                        <i class="fa-solid fa-users"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-800">부모님 새치관리</p>
+                                        <div class="flex gap-1.5 mt-0.5 text-[10px] text-slate-400">
+                                            <span>리뷰 <strong class="text-slate-600">3.6k</strong></span>
+                                            <span>Q&A <strong class="text-slate-600">982</strong></span>
+                                            <span>구매키워드 <strong class="text-slate-600">1.4k</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border-2 border-blue-500 flex items-center justify-center text-xs font-extrabold text-blue-600 bg-blue-50/30">
+                                    79<span class="text-[9px] font-normal">점</span>
+                                </div>
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
+                                        <i class="fa-solid fa-palette"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-800">자연스러운 컬러</p>
+                                        <div class="flex gap-1.5 mt-0.5 text-[10px] text-slate-400">
+                                            <span>리뷰 <strong class="text-slate-600">3.2k</strong></span>
+                                            <span>Q&A <strong class="text-slate-600">876</strong></span>
+                                            <span>구매키워드 <strong class="text-slate-600">1.3k</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border-2 border-amber-500 flex items-center justify-center text-xs font-extrabold text-amber-600 bg-amber-50/30">
+                                    74<span class="text-[9px] font-normal">점</span>
+                                </div>
+                            </div>
+
+                            <!-- Row 4 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-sm">
+                                        <i class="fa-regular fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-800">잦은 염색 부담</p>
+                                        <div class="flex gap-1.5 mt-0.5 text-[10px] text-slate-400">
+                                            <span>리뷰 <strong class="text-slate-600">2.6k</strong></span>
+                                            <span>Q&A <strong class="text-slate-600">641</strong></span>
+                                            <span>구매키워드 <strong class="text-slate-600">1.0k</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-10 h-10 rounded-full border-2 border-orange-500 flex items-center justify-center text-xs font-extrabold text-orange-600 bg-orange-50/30">
+                                    61<span class="text-[9px] font-normal">점</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 3: Evidence Snapshot (3 cols) -->
+                <div class="col-span-3 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-1.5">
+                            <h2 class="font-bold text-sm text-slate-800">Evidence Snapshot</h2>
+                            <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                        </div>
+                        <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                            전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs">
+                        <!-- Stat 1 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-regular fa-clock text-slate-400"></i>
+                                <span class="text-slate-600">Review</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-slate-800">12,842</span>
+                                <span class="text-[11px] text-emerald-600 font-medium">▲ 18%</span>
+                                <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                    <path d="M0 12 L10 10 L20 14 L30 4 L40 2" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Stat 2 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-regular fa-comment text-slate-400"></i>
+                                <span class="text-slate-600">Q&A</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-slate-800">3,921</span>
+                                <span class="text-[11px] text-emerald-600 font-medium">▲ 11%</span>
+                                <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                    <path d="M0 14 L10 8 L20 12 L30 6 L40 3" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Stat 3 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-bezier-curve text-slate-400"></i>
+                                <span class="text-slate-600">구매 키워드</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-slate-800">6,238</span>
+                                <span class="text-[11px] text-emerald-600 font-medium">▲ 22%</span>
+                                <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                    <path d="M0 10 L10 12 L20 4 L30 8 L40 1" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Stat 4 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-pen-nib text-slate-400"></i>
+                                <span class="text-slate-600">광고 검색어</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-slate-800">4,517</span>
+                                <span class="text-[11px] text-emerald-600 font-medium">▲ 9%</span>
+                                <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                    <path d="M0 12 L10 6 L20 10 L30 8 L40 4" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Stat 5 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-regular fa-image text-slate-400"></i>
+                                <span class="text-slate-600">GFA 성과</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-slate-800">2,104</span>
+                                <span class="text-[11px] text-emerald-600 font-medium">▲ 27%</span>
+                                <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                    <path d="M0 14 L10 10 L20 6 L30 12 L40 2" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTTOM SECTION: Operational flow, Learning status, Attribution -->
+            <div class="grid grid-cols-12 gap-4">
+                
+                <!-- Flowchart Card (5 cols) -->
+                <div class="col-span-5 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm">
+                    <div class="flex items-center gap-1.5 mb-4">
+                        <h2 class="font-bold text-sm text-slate-800">운영 흐름 (데이터 → 학습)</h2>
+                        <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                    </div>
+
+                    <div class="flex items-center justify-between text-center px-1">
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">데이터 수집</span>
+                            <span class="text-[9px] text-slate-400">자동 수집</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-regular fa-lightbulb"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">인사이트</span>
+                            <span class="text-[9px] text-slate-400">AI 분석</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                        <!-- Step 3 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-solid fa-crosshair"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">소구 도출</span>
+                            <span class="text-[9px] text-slate-400">포인트 추출</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                        <!-- Step 4 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-regular fa-file-code"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">초안 생성</span>
+                            <span class="text-[9px] text-slate-400">채널별 생성</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                        <!-- Step 5 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-regular fa-user"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">검수 대기</span>
+                            <span class="text-[9px] text-slate-400">리뷰/승인</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                        <!-- Step 6 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-cyan-50 text-cyan-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-regular fa-paper-plane"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">게시</span>
+                            <span class="text-[9px] text-slate-400">자동/수동</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                        <!-- Step 7 -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center text-xs mb-1">
+                                <i class="fa-solid fa-brain"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-slate-700">학습</span>
+                            <span class="text-[9px] text-slate-400">성과 반영</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Status (4 cols) -->
+                <div class="col-span-4 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-1.5">
+                            <h2 class="font-bold text-sm text-slate-800">학습 현황 (성과 기반 자동 분류)</h2>
+                            <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                        </div>
+                        <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                            전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <!-- PROMOTE -->
+                        <div class="bg-emerald-50/50 p-2 rounded-lg border border-emerald-100">
+                            <span class="text-[10px] font-bold text-emerald-700">PROMOTE</span>
+                            <p class="text-base font-extrabold text-slate-800 mt-1">18</p>
+                            <p class="text-[10px] text-slate-500">28%</p>
+                            <!-- Bar chart representation -->
+                            <div class="flex items-end justify-center gap-0.5 h-6 mt-2">
+                                <span class="w-1 bg-emerald-400 h-2 rounded-t"></span>
+                                <span class="w-1 bg-emerald-500 h-4 rounded-t"></span>
+                                <span class="w-1 bg-emerald-600 h-6 rounded-t"></span>
+                                <span class="w-1 bg-emerald-400 h-3 rounded-t"></span>
+                            </div>
+                        </div>
+
+                        <!-- MAINTAIN -->
+                        <div class="bg-blue-50/50 p-2 rounded-lg border border-blue-100">
+                            <span class="text-[10px] font-bold text-blue-700">MAINTAIN</span>
+                            <p class="text-base font-extrabold text-slate-800 mt-1">24</p>
+                            <p class="text-[10px] text-slate-500">37%</p>
+                            <div class="flex items-end justify-center gap-0.5 h-6 mt-2">
+                                <span class="w-1 bg-blue-400 h-4 rounded-t"></span>
+                                <span class="w-1 bg-blue-500 h-5 rounded-t"></span>
+                                <span class="w-1 bg-blue-600 h-4 rounded-t"></span>
+                                <span class="w-1 bg-blue-400 h-6 rounded-t"></span>
+                            </div>
+                        </div>
+
+                        <!-- REVISE -->
+                        <div class="bg-amber-50/50 p-2 rounded-lg border border-amber-100">
+                            <span class="text-[10px] font-bold text-amber-700">REVISE</span>
+                            <p class="text-base font-extrabold text-slate-800 mt-1">7</p>
+                            <p class="text-[10px] text-slate-500">11%</p>
+                            <div class="flex items-end justify-center gap-0.5 h-6 mt-2">
+                                <span class="w-1 bg-amber-400 h-2 rounded-t"></span>
+                                <span class="w-1 bg-amber-500 h-5 rounded-t"></span>
+                                <span class="w-1 bg-amber-600 h-3 rounded-t"></span>
+                                <span class="w-1 bg-amber-400 h-2 rounded-t"></span>
+                            </div>
+                        </div>
+
+                        <!-- OBSERVE -->
+                        <div class="bg-purple-50/50 p-2 rounded-lg border border-purple-100">
+                            <span class="text-[10px] font-bold text-purple-700">OBSERVE</span>
+                            <p class="text-base font-extrabold text-slate-800 mt-1">16</p>
+                            <p class="text-[10px] text-slate-500">24%</p>
+                            <div class="flex items-end justify-center gap-0.5 h-6 mt-2">
+                                <span class="w-1 bg-purple-400 h-3 rounded-t"></span>
+                                <span class="w-1 bg-purple-500 h-6 rounded-t"></span>
+                                <span class="w-1 bg-purple-600 h-4 rounded-t"></span>
+                                <span class="w-1 bg-purple-400 h-5 rounded-t"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GFA Attribution Diagram (3 cols) -->
+                <div class="col-span-3 bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-1.5">
+                                <h2 class="font-bold text-sm text-slate-800">GFA 성과 연결 (Direct Attribution)</h2>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                            </div>
+                            <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                                전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-around text-center py-2">
+                            <div>
+                                <span class="text-[10px] font-bold text-purple-600">Artifact</span>
+                                <div class="w-9 h-9 mx-auto rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center my-1">
+                                    <i class="fa-solid fa-layer-group text-sm"></i>
+                                </div>
+                                <span class="text-[10px] text-slate-500">콘텐츠 원본</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-600">Creative ID</span>
+                                <div class="w-9 h-9 mx-auto rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center my-1">
+                                    <i class="fa-regular fa-pen-to-square text-sm"></i>
+                                </div>
+                                <span class="text-[10px] text-slate-500">creative_id 매칭</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                            <div>
+                                <span class="text-[10px] font-bold text-emerald-600">Performance</span>
+                                <div class="w-9 h-9 mx-auto rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center my-1">
+                                    <i class="fa-solid fa-chart-user text-sm"></i>
+                                </div>
+                                <span class="text-[10px] text-slate-500">성과 수집/연결</span>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
+
+                            <div>
+                                <span class="text-[10px] font-bold text-teal-600">Decision</span>
+                                <div class="w-9 h-9 mx-auto rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center my-1">
+                                    <i class="fa-solid fa-sliders text-sm"></i>
+                                </div>
+                                <span class="text-[10px] text-slate-500">PROMOTE/REVISE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 p-2 bg-emerald-50/60 rounded-lg border border-emerald-100 flex items-center gap-1.5 text-[11px] text-emerald-700">
+                        <i class="fa-solid fa-check text-xs text-emerald-600"></i>
+                        <span>creative_id 매칭 시에만 DIRECT 성과 연결이 적용됩니다.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBPAGE SHORTCUTS -->
+            <div class="bg-white rounded-xl border border-slate-200/80 p-4 shadow-sm">
+                <h2 class="font-bold text-sm text-slate-800 mb-3">서브 페이지 바로가기</h2>
+                <div class="grid grid-cols-4 gap-4">
+                    <!-- Link 1 -->
+                    <button onclick="switchView('generator')" class="p-3 border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 rounded-xl flex items-center justify-between transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-slate-800">콘텐츠 생성</p>
+                                <p class="text-[11px] text-slate-400">AI 기반 초안 자동 생성</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                    </button>
+
+                    <!-- Link 2 -->
+                    <button onclick="switchView('editor')" class="p-3 border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 rounded-xl flex items-center justify-between transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i class="fa-solid fa-pen"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-slate-800">에디터</p>
+                                <p class="text-[11px] text-slate-400">상세 편집 및 템플릿</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                    </button>
+
+                    <!-- Link 3 -->
+                    <button onclick="alert('GFA 성과 연결 설정 페이지로 이동합니다.');" class="p-3 border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 rounded-xl flex items-center justify-between transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                                <i class="fa-solid fa-link"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-slate-800">GFA 성과 연결</p>
+                                <p class="text-[11px] text-slate-400">creative_id 매칭 관리</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                    </button>
+
+                    <!-- Link 4 -->
+                    <button onclick="alert('게시 URL 연결 관리 페이지로 이동합니다.');" class="p-3 border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 rounded-xl flex items-center justify-between transition-all group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-slate-800">게시 URL 연결</p>
+                                <p class="text-[11px] text-slate-400">게시 채널 및 URL 관리</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+
+        <!-- VIEW 2: AI 콘텐츠 센터 - 콘텐츠 에디터 (CONTENT EDITOR VIEW) -->
+        <main id="view-editor" class="hidden flex-1 overflow-hidden flex flex-col">
+            <!-- Header for Editor Screen -->
+            <div class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between flex-shrink-0">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg font-bold text-slate-900">콘텐츠 에디터</h1>
+                        <button class="text-slate-400 hover:text-amber-400"><i class="fa-regular fa-star text-sm"></i></button>
+                    </div>
+                    <p class="text-xs text-slate-500">검수자가 초안을 다듬고 최종 콘텐츠를 게시하기 전까지 완성도를 높일 수 있습니다.</p>
+                </div>
+
+                <!-- Action Controls Top Right -->
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full font-medium flex items-center gap-1">
+                        <i class="fa-regular fa-clock"></i> 검수 대기
+                    </span>
+                    <span class="px-2.5 py-1 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-medium flex items-center gap-1">
+                        <i class="fa-regular fa-circle-check"></i> Review Ready
+                    </span>
+                    <button class="px-3 py-1.5 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-medium border border-blue-200">
+                        <i class="fa-regular fa-floppy-disk mr-1"></i> 임시 저장
+                    </button>
+                    <button class="px-3 py-1.5 text-xs bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium shadow-sm">
+                        <i class="fa-solid fa-paper-plane mr-1"></i> 검수 승인
+                    </button>
+                    <button class="px-3 py-1.5 text-xs bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">
+                        <i class="fa-regular fa-eye mr-1"></i> 미리보기
+                    </button>
+                    <button class="px-3 py-1.5 text-xs bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-lg font-medium">
+                        <i class="fa-solid fa-link mr-1"></i> 게시 URL 연결
+                    </button>
+                </div>
+            </div>
+
+            <!-- Editor Workspace Layout: 3 Columns -->
+            <div class="flex-1 flex overflow-hidden">
+                
+                <!-- Left Sidebar Column: Generated Content List (width: 280px) -->
+                <div class="w-72 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+                    <div class="p-3 border-b border-slate-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-slate-800">생성된 콘텐츠 <span class="text-slate-400 font-normal">(24)</span></span>
+                        </div>
+                        <div class="relative">
+                            <input type="text" placeholder="콘텐츠 검색" class="w-full pl-7 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500">
+                            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+                        </div>
+
+                        <!-- Category Filters -->
+                        <div class="flex items-center gap-1 mt-2.5 overflow-x-auto text-[11px] font-medium pb-1">
+                            <button class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded font-semibold whitespace-nowrap">전체</button>
+                            <button class="px-2 py-0.5 hover:bg-slate-100 text-slate-600 rounded whitespace-nowrap">Blog <span class="text-slate-400">8</span></button>
+                            <button class="px-2 py-0.5 hover:bg-slate-100 text-slate-600 rounded whitespace-nowrap">Instagram <span class="text-slate-400">6</span></button>
+                            <button class="px-2 py-0.5 hover:bg-slate-100 text-slate-600 rounded whitespace-nowrap">Shorts <span class="text-slate-400">7</span></button>
+                            <button class="px-2 py-0.5 hover:bg-slate-100 text-slate-600 rounded whitespace-nowrap">GFA <span class="text-slate-400">3</span></button>
+                        </div>
+                    </div>
+
+                    <!-- Items List -->
+                    <div class="flex-1 overflow-y-auto p-2 space-y-2">
+                        <!-- List Item 1 -->
+                        <div class="p-2.5 border border-slate-200 rounded-xl hover:border-slate-300 bg-white cursor-pointer flex gap-2">
+                            <div class="w-12 h-12 bg-amber-100 rounded-lg flex-shrink-0 overflow-hidden flex items-center justify-center">
+                                <i class="fa-solid fa-spray-can text-amber-700"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-rose-500 font-bold flex items-center gap-1"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1 rounded">검수 대기</span>
+                                </div>
+                                <p class="font-bold text-slate-800 truncate mt-0.5">세라, 더 예뻐? 1분 케어 루틴</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 14:25</p>
+                            </div>
+                        </div>
+
+                        <!-- List Item 2 -->
+                        <div class="p-2.5 border border-slate-200 rounded-xl hover:border-slate-300 bg-white cursor-pointer flex gap-2">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                <i class="fa-solid fa-pump-soap text-emerald-700"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1"><span class="w-3 h-3 bg-emerald-500 text-white rounded text-[8px] flex items-center justify-center">N</span> Blog</span>
+                                    <span class="text-[9px] bg-emerald-100 text-emerald-700 px-1 rounded">검수 완료</span>
+                                </div>
+                                <p class="font-bold text-slate-800 truncate mt-0.5">여름철 두피 케어 가이드</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 13:50</p>
+                            </div>
+                        </div>
+
+                        <!-- List Item 3 -->
+                        <div class="p-2.5 border border-slate-200 rounded-xl hover:border-slate-300 bg-white cursor-pointer flex gap-2">
+                            <div class="w-12 h-12 bg-slate-200 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                <i class="fa-solid fa-circle-play text-slate-500"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-red-500 font-bold flex items-center gap-1"><i class="fa-brands fa-youtube"></i> YouTube Shorts</span>
+                                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1 rounded">검수 대기</span>
+                                </div>
+                                <p class="font-bold text-slate-800 truncate mt-0.5">세라 1분 루틴! Before & After</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 13:20</p>
+                            </div>
+                        </div>
+
+                        <!-- List Item 4 (SELECTED ACTIVE ITEM: GFA 세라 딥클렌징 폼) -->
+                        <div class="p-2.5 border-2 border-blue-500 bg-blue-50/30 rounded-xl cursor-pointer flex gap-2 relative shadow-sm">
+                            <div class="w-12 h-12 bg-amber-200/60 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                <i class="fa-solid fa-bottle-droplet text-amber-800"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-indigo-600 font-bold flex items-center gap-1"><span class="w-3 h-3 bg-indigo-600 text-white rounded text-[8px] flex items-center justify-center">G</span> GFA</span>
+                                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1 rounded font-medium">검수 대기</span>
+                                </div>
+                                <p class="font-bold text-slate-900 truncate mt-0.5">세라 딥클렌징 폼</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 12:40</p>
+                            </div>
+                            <div class="absolute right-2 bottom-2 w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center text-[10px]">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                        </div>
+
+                        <!-- List Item 5 -->
+                        <div class="p-2.5 border border-slate-200 rounded-xl hover:border-slate-300 bg-white cursor-pointer flex gap-2">
+                            <div class="w-12 h-12 bg-rose-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                <i class="fa-solid fa-spa text-rose-500"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-rose-500 font-bold flex items-center gap-1"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                                    <span class="text-[9px] bg-rose-100 text-rose-700 px-1 rounded">수정 요청</span>
+                                </div>
+                                <p class="font-bold text-slate-800 truncate mt-0.5">나만의 여름 모습 루틴</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 11:55</p>
+                            </div>
+                        </div>
+
+                        <!-- List Item 6 -->
+                        <div class="p-2.5 border border-slate-200 rounded-xl hover:border-slate-300 bg-white cursor-pointer flex gap-2">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                <i class="fa-solid fa-droplet text-emerald-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1"><span class="w-3 h-3 bg-emerald-500 text-white rounded text-[8px] flex items-center justify-center">N</span> Blog</span>
+                                    <span class="text-[9px] bg-blue-100 text-blue-700 px-1 rounded">임시 저장</span>
+                                </div>
+                                <p class="font-bold text-slate-800 truncate mt-0.5">두피 타입별 샴푸 선택법</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 10:30</p>
+                            </div>
+                        </div>
+
+                        <!-- List Item 7 -->
+                        <div class="p-2.5 border border-slate-200 rounded-xl hover:border-slate-300 bg-white cursor-pointer flex gap-2">
+                            <div class="w-12 h-12 bg-slate-200 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                <i class="fa-solid fa-hand-dots text-slate-600"></i>
+                            </div>
+                            <div class="flex-1 min-w-0 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-red-500 font-bold flex items-center gap-1"><i class="fa-brands fa-youtube"></i> YouTube Shorts</span>
+                                    <span class="text-[9px] bg-emerald-100 text-emerald-700 px-1 rounded">검수 완료</span>
+                                </div>
+                                <p class="font-bold text-slate-800 truncate mt-0.5">두피 마사지 3단계</p>
+                                <p class="text-[10px] text-slate-400">생성일 07-18 09:45</p>
+                            </div>
+                        </div>
+
+                        <button class="w-full py-2 text-center text-xs text-slate-500 hover:text-slate-800">
+                            더보기 <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Center Workspace Column (Flex 1) -->
+                <div class="flex-1 bg-slate-50 flex flex-col overflow-y-auto p-5 space-y-4">
+                    
+                    <!-- Top Channel Selector Tabs -->
+                    <div class="flex items-center gap-6 border-b border-slate-200 pb-2 text-sm font-semibold">
+                        <button class="text-slate-400 hover:text-slate-700 flex items-center gap-1.5"><span class="w-4 h-4 bg-emerald-500 text-white rounded text-[10px] flex items-center justify-center">N</span> Blog</button>
+                        <button class="text-slate-400 hover:text-slate-700 flex items-center gap-1.5"><i class="fa-brands fa-instagram text-rose-500"></i> Instagram</button>
+                        <button class="text-slate-400 hover:text-slate-700 flex items-center gap-1.5"><i class="fa-brands fa-youtube text-red-500"></i> YouTube Shorts</button>
+                        <button class="text-blue-600 border-b-2 border-blue-600 pb-2 flex items-center gap-1.5"><span class="w-4 h-4 bg-indigo-600 text-white rounded text-[10px] flex items-center justify-center">G</span> GFA</button>
+                    </div>
+
+                    <!-- Inner Section Tabs -->
+                    <div class="flex gap-6 text-xs border-b border-slate-200 pb-2 text-slate-500 font-medium">
+                        <button class="text-blue-600 border-b-2 border-blue-600 pb-2 font-semibold">헤드라인/이미지</button>
+                        <button class="hover:text-slate-800">설명</button>
+                        <button class="hover:text-slate-800">확장 타겟팅</button>
+                        <button class="hover:text-slate-800">링크/CTA</button>
+                    </div>
+
+                    <!-- Main Preview Banner Card -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">세라 딥클렌징 폼</h2>
+                        <p class="text-sm font-semibold text-slate-700 mt-1">미세 거품으로 모공 속까지 딥클렌징!</p>
+
+                        <div class="grid grid-cols-12 gap-6 mt-5 items-center">
+                            <!-- Product Image Graphic -->
+                            <div class="col-span-7 bg-[#ded8ce]/40 border border-slate-200 rounded-xl p-4 relative overflow-hidden flex items-center justify-center min-h-[220px]">
+                                <!-- Discount Badge -->
+                                <div class="absolute top-4 right-4 w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-black text-sm shadow-md">
+                                    30%
+                                </div>
+                                <!-- Mock Product Tube -->
+                                <div class="flex items-center gap-4">
+                                    <div class="w-24 h-40 bg-gradient-to-b from-stone-100 to-amber-100 rounded-t-2xl rounded-b-md border border-stone-300 shadow-md p-2 flex flex-col justify-between text-center relative">
+                                        <span class="text-[8px] font-bold text-amber-900 uppercase">CERA</span>
+                                        <div class="my-auto">
+                                            <p class="text-[7px] font-extrabold text-amber-950">Deep Cleansing Foam</p>
+                                        </div>
+                                        <div class="w-full h-2 bg-stone-300 rounded-sm"></div>
+                                    </div>
+                                    <!-- Foam texture graphics -->
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-16 h-16 bg-white rounded-full shadow-inner border border-stone-100 flex items-center justify-center opacity-90">
+                                            <i class="fa-solid fa-cloud text-slate-200 text-2xl"></i>
+                                        </div>
+                                        <span class="text-[10px] text-slate-400 mt-1">*자사 테스트 기준</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Product Info List -->
+                            <div class="col-span-5 space-y-3 text-xs">
+                                <div>
+                                    <span class="text-[11px] text-slate-400">브랜드</span>
+                                    <p class="font-bold text-slate-800">CERA</p>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-slate-400">핵심 혜택</span>
+                                    <p class="font-bold text-slate-900">모공 속 노폐물 99% 제거*</p>
+                                    <p class="font-bold text-slate-900">저자극 약산성 포뮬라</p>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] text-slate-400">추천 대상</span>
+                                    <p class="font-bold text-slate-800">민감성 · 지성 피부</p>
+                                </div>
+                                <div class="pt-2">
+                                    <span class="text-[11px] text-slate-400">CTA 버튼</span>
+                                    <div class="mt-1">
+                                        <button class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow flex items-center justify-center gap-1">
+                                            지금 구매하기 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-slate-400 font-mono mt-1">creativo_kr_0718_001 <i class="fa-regular fa-copy cursor-pointer hover:text-slate-600"></i></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Images / Visuals Thumbnails Row -->
+                    <div>
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <h3 class="text-xs font-bold text-slate-800">이미지/비주얼</h3>
+                            <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="grid grid-cols-4 gap-3">
+                            <!-- Selected Main Image -->
+                            <div class="border-2 border-blue-500 rounded-xl p-1 bg-white relative">
+                                <div class="h-20 bg-amber-100/50 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <i class="fa-solid fa-pump-medical text-amber-700"></i>
+                                </div>
+                                <span class="text-[10px] text-blue-600 font-bold block text-center mt-1">메인 이미지</span>
+                                <div class="absolute top-2 right-2 w-4 h-4 bg-blue-500 text-white rounded-full flex items-center justify-center text-[9px]">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+
+                            <!-- Alternative A -->
+                            <div class="border border-slate-200 rounded-xl p-1 bg-white hover:border-slate-300 cursor-pointer">
+                                <div class="h-20 bg-stone-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <i class="fa-solid fa-box-open text-stone-400"></i>
+                                </div>
+                                <span class="text-[10px] text-slate-500 block text-center mt-1">대안 이미지 A</span>
+                            </div>
+
+                            <!-- Alternative B -->
+                            <div class="border border-slate-200 rounded-xl p-1 bg-white hover:border-slate-300 cursor-pointer">
+                                <div class="h-20 bg-stone-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                    <i class="fa-solid fa-vial text-stone-400"></i>
+                                </div>
+                                <span class="text-[10px] text-slate-500 block text-center mt-1">대안 이미지 B</span>
+                            </div>
+
+                            <!-- Add Button -->
+                            <div class="border border-dashed border-slate-300 rounded-xl p-1 bg-slate-50 flex flex-col items-center justify-center hover:bg-slate-100 cursor-pointer h-[112px]">
+                                <i class="fa-solid fa-plus text-slate-400 text-base"></i>
+                                <span class="text-[10px] text-slate-400 mt-1">추가</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Insights Row in Editor (Evidence, Hint, Recommended Action) -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <!-- Evidence Snapshot -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold text-slate-800">Evidence Snapshot</span>
+                                    <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                                </div>
+                                <span class="text-[10px] text-blue-600 font-medium cursor-pointer">자세히 보기 ></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-400">전환율</span>
+                                    <p class="font-bold text-slate-900">6.02% <span class="text-[10px] text-emerald-600">▲ 18%</span></p>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">클릭률</span>
+                                    <p class="font-bold text-slate-900">3.21% <span class="text-[10px] text-emerald-600">▲ 11%</span></p>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">구매 전환수</span>
+                                    <p class="font-bold text-slate-900">6,238 <span class="text-[10px] text-emerald-600">▲ 22%</span></p>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-400">광고 효율(ROAS)</span>
+                                    <p class="font-bold text-slate-900">4,517 <span class="text-[10px] text-emerald-600">▲ 9%</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Learning Hint -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold text-slate-800">Learning Hint</span>
+                                    <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                                </div>
+                                <span class="text-[10px] text-blue-600 font-medium cursor-pointer">자세히 보기 ></span>
+                            </div>
+                            <div class="space-y-1.5 text-[11px]">
+                                <div class="flex items-center justify-between text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
+                                    <span>⚡ 유지 (PROMOTE)</span>
+                                </div>
+                                <p class="text-[10px] text-slate-600">모공 속 노폐물 제거 <span class="text-emerald-600">↑</span></p>
+                                <p class="text-[10px] text-slate-600">미세 거품 비주얼 <span class="text-emerald-600">↑</span></p>
+                                
+                                <div class="flex items-center justify-between text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded mt-1">
+                                    <span>수정 (REVISE)</span>
+                                </div>
+                                <p class="text-[10px] text-slate-600">민감성 키워드 보강 <span class="text-rose-500">↓</span></p>
+                                <p class="text-[10px] text-slate-600">혜택 수치 강조 개선 <span class="text-rose-500">↓</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Recommended Action -->
+                        <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-1 mb-2">
+                                    <span class="text-xs font-bold text-slate-800">추천 액션</span>
+                                    <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                                </div>
+                                <div class="space-y-1.5 text-[10px]">
+                                    <div class="flex gap-2 items-start">
+                                        <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded">PROMOTE</span>
+                                        <p class="text-slate-600">현재 구성으로 검수 승인 후 A/B 테스트 진행</p>
+                                    </div>
+                                    <div class="flex gap-2 items-start">
+                                        <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 font-bold rounded">REVISE</span>
+                                        <p class="text-slate-600">민감성 대상 카피 보강 및 혜택 수치 강조</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="w-full py-1.5 mt-2 bg-slate-50 border border-slate-200 text-blue-600 hover:bg-blue-50 font-semibold text-xs rounded-lg flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-shuffle text-[10px]"></i> A/B 테스트 생성하기 <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Inspector Panel (width: 320px) -->
+                <div class="w-80 bg-white border-l border-slate-200 p-4 overflow-y-auto space-y-4 flex-shrink-0 text-xs">
+                    
+                    <!-- Appeal Point Section -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold text-slate-800">Appeal Point</span>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                            </div>
+                            <span class="text-blue-600 cursor-pointer font-medium">제추천 ></span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md font-medium">딥클렌징</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md font-medium">모공케어</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md font-medium">저자극</span>
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 rounded-md font-medium">약산성</span>
+                            <button class="px-2 py-1 border border-slate-200 rounded-md hover:bg-slate-50 text-slate-400">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Evidence Summary -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold text-slate-800">Evidence 요약</span>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                            </div>
+                            <span class="text-blue-600 cursor-pointer font-medium">편집 ></span>
+                        </div>
+                        <ul class="space-y-1 text-slate-600 text-[11px] list-disc list-inside">
+                            <li>모공 속 노폐물 99% 제거* (자사 테스트 기준)</li>
+                            <li>민감성 피부 1차 자극 테스트 완료</li>
+                        </ul>
+                    </div>
+
+                    <!-- Title / Hook Field -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold text-slate-800">제목/훅 (헤드라인)</span>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                            </div>
+                            <span class="text-slate-400 font-mono text-[10px]">12 / 40</span>
+                        </div>
+                        <input type="text" value="세라 딥클렌징 폼" class="w-full p-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <!-- Benefit Field -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-1">
+                                <span class="font-bold text-slate-800">혜택 (Benefit)</span>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                            </div>
+                            <span class="text-slate-400 font-mono text-[10px]">28 / 80</span>
+                        </div>
+                        <textarea rows="2" class="w-full p-2 border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-blue-500">미세 거품으로 모공 속까지 딥클렌징!</textarea>
+                    </div>
+
+                    <!-- CTA Dropdowns -->
+                    <div>
+                        <span class="font-bold text-slate-800 block mb-1">CTA</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select class="w-full p-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs">
+                                <option>지금 구매하기</option>
+                            </select>
+                            <select class="w-full p-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs">
+                                <option>웹사이트 방문</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tone & Manner / Target -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <div class="flex items-center gap-1 mb-1">
+                                <span class="font-bold text-slate-800">톤앤매너</span>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                            </div>
+                            <select class="w-full p-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs">
+                                <option>친근한</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1 mb-1">
+                                <span class="font-bold text-slate-800">타겟</span>
+                                <i class="fa-regular fa-circle-question text-slate-400 text-[10px]"></i>
+                            </div>
+                            <select class="w-full p-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-xs">
+                                <option>20~35 여성/지성·복합성</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Inspection Checklist -->
+                    <div class="pt-2 border-t border-slate-100">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="font-bold text-slate-800">검수 체크리스트</span>
+                            <span class="text-emerald-600 font-bold font-mono">5 / 5</span>
+                        </div>
+                        <div class="space-y-1.5 text-[11px] text-slate-700">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="accent-emerald-500 rounded">
+                                <span>광고 입력 가이드 준수</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="accent-emerald-500 rounded">
+                                <span>민감 표현/과장 표현 없음</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="accent-emerald-500 rounded">
+                                <span>브랜드/제품명 표기 확인</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="accent-emerald-500 rounded">
+                                <span>CTA/랜딩 일치 확인</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" checked class="accent-emerald-500 rounded">
+                                <span>이미지 저작권/정책 검토</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Readiness Bar -->
+                    <div class="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold">
+                            <span class="text-slate-800">게시 준비도</span>
+                            <span class="text-emerald-600 font-mono">92%</span>
+                        </div>
+                        <div class="w-full h-2 bg-emerald-200/60 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full" style="width: 92%;"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[10px]">
+                            <span class="text-emerald-700 font-medium">게시 준비가 완료되었습니다.</span>
+                            <span class="text-blue-600 font-medium cursor-pointer">가이드 보기</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+
+        <!-- VIEW 3: AI 콘텐츠 센터 - 콘텐츠 생성 (CONTENT GENERATOR VIEW) -->
+        <main id="view-generator" class="hidden flex-1 overflow-y-auto p-6 space-y-5">
+            <!-- Header for Generator Screen -->
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900">콘텐츠 생성</h1>
+                    <p class="text-xs text-slate-500 mt-1">일일 데이터를 기반으로 AI가 채널별 콘텐츠 초안을 생성합니다.</p>
+                </div>
+            </div>
+
+            <!-- Top Summary KPI Cards (4 Cards) -->
+            <div class="grid grid-cols-4 gap-4">
+                <!-- Card 1 -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">오늘 계획</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">28</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                        <span>어제 대비</span> <i class="fa-solid fa-caret-up text-[10px]"></i> 16%
+                    </p>
+                    <div class="absolute top-4 right-4 w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500">
+                        <i class="fa-regular fa-calendar-check text-base"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">생성 준비</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">24</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                        <span>어제 대비</span> <i class="fa-solid fa-caret-up text-[10px]"></i> 12%
+                    </p>
+                    <div class="absolute top-4 right-4 w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500">
+                        <i class="fa-regular fa-circle-check text-base"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm relative">
+                    <p class="text-xs text-slate-500 font-medium">스킵 항목</p>
+                    <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-extrabold text-slate-900">4</span>
+                        <span class="text-xs text-slate-500">개</span>
+                    </div>
+                    <p class="text-[11px] text-rose-500 mt-2 font-medium flex items-center gap-1">
+                        <span>어제 대비</span> <i class="fa-solid fa-caret-down text-[10px]"></i> 20%
+                    </p>
+                    <div class="absolute top-4 right-4 w-9 h-9 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500">
+                        <i class="fa-solid fa-filter-circle-xmark text-base"></i>
+                    </div>
+                </div>
+
+                <!-- Card 4: Channel Mix Breakdown -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+                    <p class="text-xs text-slate-500 font-medium mb-2">채널 믹스</p>
+                    <div class="grid grid-cols-4 gap-1 text-center text-xs">
+                        <div>
+                            <span class="text-[10px] text-emerald-600 font-bold block"><i class="fa-solid fa-square text-[8px]"></i> Blog</span>
+                            <span class="font-extrabold text-slate-800">29%</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-rose-500 font-bold block"><i class="fa-solid fa-square text-[8px]"></i> Instagram</span>
+                            <span class="font-extrabold text-slate-800">29%</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-red-500 font-bold block"><i class="fa-solid fa-square text-[8px]"></i> Shorts</span>
+                            <span class="font-extrabold text-slate-800">25%</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-indigo-600 font-bold block"><i class="fa-solid fa-square text-[8px]"></i> GFA</span>
+                            <span class="font-extrabold text-slate-800">17%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Options Bar -->
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between text-xs">
+                <div class="flex items-center gap-4 flex-wrap">
+                    <!-- SKU Select -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-500 font-medium">SKU 선택</span>
+                        <select class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-semibold focus:outline-none">
+                            <option>더마 리릴프 크림 100ml</option>
+                        </select>
+                    </div>
+
+                    <!-- Appeal Point -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-500 font-medium">어필 포인트</span>
+                        <div class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-medium flex items-center gap-1.5">
+                            <span>진정·보습</span>
+                            <i class="fa-solid fa-xmark text-[10px] cursor-pointer hover:text-emerald-900"></i>
+                        </div>
+                    </div>
+
+                    <!-- Channel Selection -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-500 font-medium">채널 선택</span>
+                        <div class="flex gap-1.5">
+                            <span class="px-2 py-1 bg-slate-100 rounded-md font-medium text-slate-700 flex items-center gap-1"><i class="fa-solid fa-circle-check text-blue-600"></i> Blog</span>
+                            <span class="px-2 py-1 bg-slate-100 rounded-md font-medium text-slate-700 flex items-center gap-1"><i class="fa-solid fa-circle-check text-blue-600"></i> Instagram</span>
+                            <span class="px-2 py-1 bg-slate-100 rounded-md font-medium text-slate-700 flex items-center gap-1"><i class="fa-solid fa-circle-check text-blue-600"></i> YouTube Shorts</span>
+                            <span class="px-2 py-1 bg-slate-100 rounded-md font-medium text-slate-700 flex items-center gap-1"><i class="fa-solid fa-circle-check text-blue-600"></i> GFA <i class="fa-solid fa-xmark text-[10px]"></i></span>
+                        </div>
+                    </div>
+
+                    <!-- Date & Status -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-500 font-medium">기간</span>
+                        <div class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium flex items-center gap-1">
+                            <i class="fa-regular fa-calendar text-slate-400"></i>
+                            <span>2024-05-22 (오늘)</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-slate-500 font-medium">상태</span>
+                        <select class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none">
+                            <option>전체</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="px-3 py-1.5 text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1">
+                    필터 초기화 <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Main Content Area: Target Cards Grid + Evidence Brief -->
+            <div class="grid grid-cols-12 gap-5">
+                
+                <!-- Left Section: Today's Generation Targets (7 cols) -->
+                <div class="col-span-7 space-y-4">
+                    <div class="flex items-center gap-1.5">
+                        <h2 class="font-bold text-sm text-slate-800">오늘 생성 대상</h2>
+                        <i class="fa-regular fa-circle-question text-slate-400 text-xs"></i>
+                    </div>
+
+                    <!-- 4 Target Cards Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- Target 1: Blog -->
+                        <div class="bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><span class="w-3.5 h-3.5 bg-emerald-500 text-white rounded text-[9px] flex items-center justify-center">N</span> Blog</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded font-medium">진정·보습 <i class="fa-solid fa-xmark text-[9px]"></i></span>
+                                </div>
+
+                                <div class="h-28 bg-stone-100 rounded-lg flex items-center justify-center overflow-hidden mb-2 relative">
+                                    <div class="w-16 h-20 bg-emerald-800/10 rounded-xl border border-emerald-200 flex flex-col items-center justify-center p-1">
+                                        <i class="fa-solid fa-jar text-emerald-700 text-xl"></i>
+                                        <span class="text-[8px] font-bold text-emerald-900 mt-1">더마 리릴프</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-1 text-[11px] text-slate-500 mb-3">
+                                    <p class="font-medium text-slate-700">근거 데이터</p>
+                                    <div class="flex items-center justify-between text-[10px] bg-slate-50 p-1.5 rounded">
+                                        <span>Review <strong class="text-slate-800">128</strong></span>
+                                        <span>Q&A <strong class="text-slate-800">64</strong></span>
+                                        <span>구매키워드 <strong class="text-slate-800">2.6k</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="switchView('editor')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm transition-colors">
+                                초안 생성
+                            </button>
+                        </div>
+
+                        <!-- Target 2: Instagram -->
+                        <div class="bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-rose-500 flex items-center gap-1"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded font-medium">호듬·밀착 <i class="fa-solid fa-xmark text-[9px]"></i></span>
+                                </div>
+
+                                <div class="h-28 bg-slate-200 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+                                    <i class="fa-solid fa-user-circle text-slate-400 text-3xl"></i>
+                                </div>
+
+                                <div class="space-y-1 text-[11px] text-slate-500 mb-3">
+                                    <p class="font-medium text-slate-700">근거 데이터</p>
+                                    <div class="flex items-center justify-between text-[10px] bg-slate-50 p-1.5 rounded">
+                                        <span>Review <strong class="text-slate-800">96</strong></span>
+                                        <span>Q&A <strong class="text-slate-800">41</strong></span>
+                                        <span>구매키워드 <strong class="text-slate-800">1.8k</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="switchView('editor')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm transition-colors">
+                                초안 생성
+                            </button>
+                        </div>
+
+                        <!-- Target 3: YouTube Shorts -->
+                        <div class="bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-red-500 flex items-center gap-1"><i class="fa-brands fa-youtube"></i> YouTube Shorts</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded font-medium">여드름 케어 <i class="fa-solid fa-xmark text-[9px]"></i></span>
+                                </div>
+
+                                <div class="h-28 bg-stone-200 rounded-lg flex items-center justify-center overflow-hidden mb-2 relative">
+                                    <i class="fa-solid fa-pump-soap text-stone-500 text-2xl"></i>
+                                    <span class="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1 rounded font-mono">0:15</span>
+                                </div>
+
+                                <div class="space-y-1 text-[11px] text-slate-500 mb-3">
+                                    <p class="font-medium text-slate-700">근거 데이터</p>
+                                    <div class="flex items-center justify-between text-[10px] bg-slate-50 p-1.5 rounded">
+                                        <span>Review <strong class="text-slate-800">151</strong></span>
+                                        <span>Q&A <strong class="text-slate-800">73</strong></span>
+                                        <span>구매키워드 <strong class="text-slate-800">1.8k</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="switchView('editor')" class="w-full py-2 bg-white border border-blue-300 text-blue-600 hover:bg-blue-50 font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-arrows-rotate text-[10px]"></i> 다시 생성
+                            </button>
+                        </div>
+
+                        <!-- Target 4: GFA -->
+                        <div class="bg-white border border-slate-200/80 rounded-xl p-3 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-indigo-600 flex items-center gap-1"><span class="w-3.5 h-3.5 bg-indigo-600 text-white rounded text-[9px] flex items-center justify-center">G</span> GFA</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 bg-teal-50 text-teal-700 border border-teal-200 rounded font-medium">성분·안전성 <i class="fa-solid fa-xmark text-[9px]"></i></span>
+                                </div>
+
+                                <div class="h-28 bg-blue-50 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+                                    <i class="fa-solid fa-droplet text-blue-400 text-2xl"></i>
+                                </div>
+
+                                <div class="space-y-1 text-[11px] text-slate-500 mb-3">
+                                    <p class="font-medium text-slate-700">근거 데이터</p>
+                                    <div class="flex items-center justify-between text-[10px] bg-slate-50 p-1.5 rounded">
+                                        <span>Review <strong class="text-slate-800">151</strong></span>
+                                        <span>Q&A <strong class="text-slate-800">33</strong></span>
+                                        <span>구매키워드 <strong class="text-slate-800">3.1k</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="switchView('editor')" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm transition-colors">
+                                초안 생성
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generation Rules Box -->
+                    <div class="bg-white border border-slate-200/80 rounded-xl p-3.5 shadow-sm">
+                        <span class="text-xs font-bold text-slate-800 block mb-2.5">생성 규칙 <span class="text-[10px] text-slate-400 font-normal">(Generation Rules)</span></span>
+                        
+                        <div class="grid grid-cols-5 gap-2 text-center text-[10px]">
+                            <!-- Rule 1 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex flex-col items-center justify-between">
+                                <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs mb-1">
+                                    <i class="fa-regular fa-file-lines"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">리뷰 근거 필수</span>
+                                <span class="text-slate-400 text-[9px]">근거 없는 표현 금지</span>
+                            </div>
+
+                            <!-- Rule 2 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex flex-col items-center justify-between">
+                                <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs mb-1">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">자동 발행 금지</span>
+                                <span class="text-slate-400 text-[9px]">검수 후 발행 필수</span>
+                            </div>
+
+                            <!-- Rule 3 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex flex-col items-center justify-between">
+                                <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs mb-1">
+                                    <i class="fa-solid fa-bullseye"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">GFA는 DIRECT만</span>
+                                <span class="text-slate-400 text-[9px]">간접 표현 사용 금지</span>
+                            </div>
+
+                            <!-- Rule 4 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex flex-col items-center justify-between">
+                                <div class="w-7 h-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-xs mb-1">
+                                    <i class="fa-regular fa-comment-dots"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">톤 & 형식 준수</span>
+                                <span class="text-slate-400 text-[9px]">채널별 가이드 적용</span>
+                            </div>
+
+                            <!-- Rule 5 -->
+                            <div class="p-2 border border-slate-100 rounded-lg bg-slate-50/50 flex flex-col items-center justify-between">
+                                <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center text-xs mb-1">
+                                    <i class="fa-regular fa-heart"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">민감 표현 필터링</span>
+                                <span class="text-slate-400 text-[9px]">과장/의학적 표현 제외</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section: Evidence Brief & Generation Result Queue (5 cols) -->
+                <div class="col-span-5 space-y-4">
+                    
+                    <!-- Evidence Brief Card -->
+                    <div class="bg-white border border-slate-200/80 rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-1.5">
+                                <h2 class="font-bold text-sm text-slate-800">Evidence Brief <span class="text-xs text-slate-400 font-normal">(생성 근거 요약)</span></h2>
+                            </div>
+                            <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                                전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-3 text-xs">
+                            <!-- Metric 1 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-regular fa-comment text-slate-400"></i>
+                                    <span class="text-slate-600">리뷰 언급량</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-slate-800">12,842</span>
+                                    <span class="text-[11px] text-emerald-600 font-medium">▲ 16%</span>
+                                    <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                        <path d="M0 12 L10 8 L20 12 L30 4 L40 2" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Metric 2 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-regular fa-circle-question text-slate-400"></i>
+                                    <span class="text-slate-600">Q&A 수</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-slate-800">3,521</span>
+                                    <span class="text-[11px] text-emerald-600 font-medium">▲ 11%</span>
+                                    <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                        <path d="M0 14 L10 10 L20 12 L30 6 L40 3" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Metric 3 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-bezier-curve text-slate-400"></i>
+                                    <span class="text-slate-600">구매 키워드 수</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-slate-800">6,238</span>
+                                    <span class="text-[11px] text-emerald-600 font-medium">▲ 22%</span>
+                                    <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                        <path d="M0 10 L10 12 L20 4 L30 8 L40 2" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Metric 4 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-pen-nib text-slate-400"></i>
+                                    <span class="text-slate-600">광고 성과 (GFA)</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-slate-800">4,517</span>
+                                    <span class="text-[11px] text-emerald-600 font-medium">▲ 9%</span>
+                                    <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                        <path d="M0 12 L10 6 L20 10 L30 8 L40 4" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Metric 5 -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-regular fa-image text-slate-400"></i>
+                                    <span class="text-slate-600">GFA 성과 건수</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="font-bold text-slate-800">2,104</span>
+                                    <span class="text-[11px] text-emerald-600 font-medium">▲ 27%</span>
+                                    <svg class="w-10 h-4 stroke-emerald-500 fill-none" viewBox="0 0 40 16">
+                                        <path d="M0 14 L10 10 L20 6 L30 12 L40 2" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generation Result Queue -->
+                    <div class="bg-white border border-slate-200/80 rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="font-bold text-sm text-slate-800">생성 결과 큐</h2>
+                            <button class="text-xs text-slate-500 hover:text-blue-600 flex items-center gap-1">
+                                전체 보기 <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-2 text-xs">
+                            <!-- Item 1 -->
+                            <div class="p-2 border border-slate-200 rounded-xl bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-10 h-10 bg-amber-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                        <i class="fa-solid fa-jar text-amber-700"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 truncate">[진정·보습] 민감 피부도 편안한 진정 크림</p>
+                                        <span class="text-[10px] text-slate-400">생성 10:24</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">Pending</span>
+                                    <button onclick="switchView('editor')" class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-[11px] hover:bg-slate-50">에디터 열기</button>
+                                    <button class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-[11px] hover:bg-slate-50">검수 로 보내기</button>
+                                    <i class="fa-solid fa-ellipsis-vertical text-slate-400 px-1 cursor-pointer"></i>
+                                </div>
+                            </div>
+
+                            <!-- Item 2 -->
+                            <div class="p-2 border border-slate-200 rounded-xl bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-10 h-10 bg-rose-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                        <i class="fa-solid fa-user-astronaut text-rose-500"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 truncate">가벼운 젤 크림, 여름에도 산뜻하게</p>
+                                        <span class="text-[10px] text-slate-400">생성 10:19</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-medium">Pending</span>
+                                    <button onclick="switchView('editor')" class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-[11px] hover:bg-slate-50">에디터 열기</button>
+                                    <button class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-[11px] hover:bg-slate-50">검수 로 보내기</button>
+                                    <i class="fa-solid fa-ellipsis-vertical text-slate-400 px-1 cursor-pointer"></i>
+                                </div>
+                            </div>
+
+                            <!-- Item 3 -->
+                            <div class="p-2 border border-slate-200 rounded-xl bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-10 h-10 bg-stone-200 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                        <i class="fa-solid fa-circle-play text-slate-600"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 truncate">15초 만에 피부 진정! 더마 리릴프 크림</p>
+                                        <span class="text-[10px] text-slate-400">생성 10:10</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-[10px] bg-rose-100 text-rose-700 px-2 py-0.5 rounded font-medium">Failed</span>
+                                    <button class="px-2 py-1 bg-white border border-slate-200 text-blue-600 rounded text-[11px] hover:bg-blue-50 flex items-center gap-1">
+                                        <i class="fa-solid fa-arrows-rotate text-[9px]"></i> 다시 생성
+                                    </button>
+                                    <i class="fa-solid fa-ellipsis-vertical text-slate-400 px-1 cursor-pointer"></i>
+                                </div>
+                            </div>
+
+                            <!-- Item 4 -->
+                            <div class="p-2 border border-slate-200 rounded-xl bg-slate-50/30 flex items-center justify-between">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                                        <i class="fa-solid fa-droplet text-blue-600"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-slate-800 truncate">피부 자극 테스트 완료, 안심 성분</p>
+                                        <span class="text-[10px] text-slate-400">생성 09:58</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-medium">Reused</span>
+                                    <button onclick="switchView('editor')" class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-[11px] hover:bg-slate-50">에디터 열기</button>
+                                    <button class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-[11px] hover:bg-slate-50">검수 로 보내기</button>
+                                    <i class="fa-solid fa-ellipsis-vertical text-slate-400 px-1 cursor-pointer"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer timestamp & copyright -->
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2">
+                        <div class="flex items-center gap-2">
+                            <span>데이터 기준: 2024-05-22 07:20</span>
+                            <span>•</span>
+                            <span>다음 자동 실행: 2024-05-23 07:20</span>
+                            <i class="fa-solid fa-arrows-rotate text-xs cursor-pointer hover:text-slate-600"></i>
+                        </div>
+                        <p>© 2024 ERP2 Analytics. All rights reserved.</p>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- JAVASCRIPT FOR DYNAMIC VIEW SWITCHING -->
+    <script>
+        function switchView(viewName) {
+            const views = {
+                'main': document.getElementById('view-main'),
+                'editor': document.getElementById('view-editor'),
+                'generator': document.getElementById('view-generator')
+            };
+
+            const buttons = {
+                'main': document.getElementById('btn-view-main'),
+                'editor': document.getElementById('btn-view-editor'),
+                'generator': document.getElementById('btn-view-generator')
+            };
+
+            const breadcrumbSub = document.getElementById('breadcrumb-sub');
+            const breadcrumbTitle = document.getElementById('breadcrumb-title');
+
+            // Hide all views
+            Object.keys(views).forEach(key => {
+                if (views[key]) views[key].classList.add('hidden');
+                if (buttons[key]) {
+                    buttons[key].className = "px-3 py-1 rounded-md hover:text-slate-900";
+                }
+            });
+
+            // Show target view
+            if (views[viewName]) {
+                views[viewName].classList.remove('hidden');
+            }
+
+            // Highlight active view button
+            if (buttons[viewName]) {
+                buttons[viewName].className = "px-3 py-1 rounded-md bg-white shadow-sm text-blue-600 font-bold";
+            }
+
+            // Update breadcrumb
+            if (viewName === 'main') {
+                breadcrumbSub.classList.add('hidden');
+            } else {
+                breadcrumbSub.classList.remove('hidden');
+                if (viewName === 'editor') {
+                    breadcrumbTitle.textContent = '에디터';
+                } else if (viewName === 'generator') {
+                    breadcrumbTitle.textContent = '콘텐츠 생성';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

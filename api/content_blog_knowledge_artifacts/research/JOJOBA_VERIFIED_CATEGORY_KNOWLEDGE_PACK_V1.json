@@ -1,0 +1,547 @@
+{
+  "packId": "JOJOBA_VERIFIED_CATEGORY_KNOWLEDGE_PACK_V1",
+  "version": "v1",
+  "retrievedAt": "2026-09-21",
+  "approvalStatus": "APPROVED_FOR_KNOWLEDGE_INGESTION",
+  "ingestedToRuntime": false,
+  "sourceRegistryIds": [
+    "RS-JOJOBA-MIWA-1971",
+    "RS-JOJOBA-ELMALLAH-2009",
+    "RS-JOJOBA-KAMPF-1986",
+    "RS-JOJOBA-TORRES-2006",
+    "RS-JOJOBA-DIAS-2008",
+    "RS-JOJOBA-SILVA-2024",
+    "RS-JOJOBA-GADO-2021"
+  ],
+  "sections": {
+    "Chemical Composition": [
+      "CK-JOJOBA-6e4a3050"
+    ],
+    "Wax Ester Structure": [
+      "CK-JOJOBA-329486e2"
+    ],
+    "Fatty Alcohol / Fatty Acid Profile": [
+      "CK-JOJOBA-bf4033d8"
+    ],
+    "Oxidative Stability": [
+      "CK-JOJOBA-693445cf"
+    ],
+    "Quality Indicators": [
+      "CK-JOJOBA-1fa01b79"
+    ],
+    "Processing / Cold Press / Refining Evidence": [
+      "CK-JOJOBA-48b662b3"
+    ],
+    "Hair / Cosmetic Application Evidence": [
+      "CK-JOJOBA-f8c18588"
+    ],
+    "Known Limitations": [
+      "Composition percentages vary by origin.",
+      "Oxidative-stability numbers are accelerated tests.",
+      "Cold-pressed evidence is process comparison, not Sujata COA.",
+      "Hair data are in-vitro/formulation assays with mixed combing results."
+    ],
+    "Marketing-safe Interpretations": [
+      {
+        "allowed": true,
+        "example": "호호바는 일반적인 triglyceride 중심 식물성 오일과 달리 wax ester가 주된 구성으로 연구된다는 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "따라서 모발에 더 좋다",
+          "따라서 흡수가 더 잘된다",
+          "타 오일보다 우수하다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "호호바 wax ester가 주로 C40-C42 부근 사슬 길이로 보고된다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 호호바의 정확한 ester %"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "주요 구성이 긴사슬 단일불포화 지방산/지방알코올의 에스터라는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "피부 상처 치유를 보장한다",
+          "탈모를 치료한다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "정제/탈색 과정에서 천연 항산화 성분이 줄어 산화 안정성이 떨어질 수 있다는 연구 맥락을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 호호바는 산화되지 않는다",
+          "다른 오일보다 우수하다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "냉압착/미탈색이 지방산 골격 자체가 아니라 과산화물가와 토코페롤 등 부성분 보존과 관련해 연구된 바 있다는 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "상품명 냉압착이 이 논문의 공정과 동일하다",
+          "그래서 모발 효능이 더 크다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "호호바 품질을 논문에서 어떤 항목으로 보는지(에스터 분포, 과산화물가, 토코페롤 등)를 교육할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타가 해당 기준을 통과했다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "모발 섬유 실험에서 컨디셔닝 맥락이 연구된 바 있으나, 결과는 제형·방법에 따라 다르고 탈모 치료 근거가 아니라는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 호호바가 모발에 더 좋다",
+          "모발이 자란다",
+          "염색 손상을 복구한다"
+        ]
+      }
+    ],
+    "Forbidden Product Leaps": [
+      "수자타 호호바가 모발에 더 좋다",
+      "wax ester이므로 흡수가 더 잘된다",
+      "다른 오일보다 우수하다",
+      "냉압착 표기가 논문 공정과 동일하다",
+      "탈모/모발 성장"
+    ]
+  },
+  "knowledgeStatements": [
+    {
+      "knowledgeId": "CK-JOJOBA-6e4a3050",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "chemical composition",
+      "statement": "Jojoba seed oil is a liquid wax composed mainly of long-chain wax esters of monounsaturated fatty acids and fatty alcohols, unlike typical triglyceride seed oils.",
+      "sourceRefs": [
+        "RS-JOJOBA-MIWA-1971",
+        "RS-JOJOBA-ELMALLAH-2009",
+        "RS-JOJOBA-GADO-2021"
+      ],
+      "sourceLocation": {
+        "section": "abstract / Introduction",
+        "paragraph": "composed mainly (97%) of linear long-chain esters"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "CATEGORY_CONTEXT"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Percentage summaries describe category oil, not a Sujata COA."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Jojoba seed oil is a liquid wax composed mainly of long-chain wax esters of monounsaturated fatty acids and fatty alcohols, unlike typical triglyceride seed oils.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "호호바는 일반적인 triglyceride 중심 식물성 오일과 달리 wax ester가 주된 구성으로 연구된다는 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "따라서 모발에 더 좋다",
+          "따라서 흡수가 더 잘된다",
+          "타 오일보다 우수하다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-JOJOBA-329486e2",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "wax ester structure",
+      "statement": "Reported jojoba wax-ester carbon-number profiles are dominated by C40 and C42 esters, with C44 as a smaller but recurring fraction; exact percentages vary by sample.",
+      "sourceRefs": [
+        "RS-JOJOBA-MIWA-1971",
+        "RS-JOJOBA-ELMALLAH-2009"
+      ],
+      "sourceLocation": {
+        "section": "abstract / Table 3",
+        "table": "Table 3",
+        "paragraph": "C40 ~30% and C42 ~50% (Miwa); Egyptian oil C42 51.1%, C40 30.1%"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Geographic/genotype variation exists; do not freeze one percentage as Sujata composition."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Reported jojoba wax-ester carbon-number profiles are dominated by C40 and C42 esters, with C44 as a smaller but recurring fraction; exact percentages vary by sample.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "호호바 wax ester가 주로 C40-C42 부근 사슬 길이로 보고된다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 호호바의 정확한 ester %"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-JOJOBA-bf4033d8",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "fatty acid / fatty alcohol profile",
+      "statement": "Major reported building blocks include cis-monounsaturated C20 and C22 fatty acids and fatty alcohols; wax esters are not a random pairing of all acids and alcohols.",
+      "sourceRefs": [
+        "RS-JOJOBA-MIWA-1971",
+        "RS-JOJOBA-ELMALLAH-2009",
+        "RS-JOJOBA-GADO-2021"
+      ],
+      "sourceLocation": {
+        "section": "abstract / Chemistry",
+        "paragraph": "eicosenoic acid 35%; eicosenol 22%; docosenol 21%; non-random ester pairing"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Analytical profiles are category-level, not a product COA."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Major reported building blocks include cis-monounsaturated C20 and C22 fatty acids and fatty alcohols; wax esters are not a random pairing of all acids and alcohols.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "주요 구성이 긴사슬 단일불포화 지방산/지방알코올의 에스터라는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "피부 상처 치유를 보장한다",
+          "탈모를 치료한다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-JOJOBA-693445cf",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "oxidative stability",
+      "statement": "Under accelerated oxidation at 98 C, crude jojoba wax had a much longer induction period (about 50 h) than bleached (10-12 h) or stripped (2 h) wax, indicating natural antioxidants that are reduced by bleaching or stripping.",
+      "sourceRefs": [
+        "RS-JOJOBA-KAMPF-1986",
+        "RS-JOJOBA-GADO-2021"
+      ],
+      "sourceLocation": {
+        "section": "abstract",
+        "page": "246-248",
+        "paragraph": "raw yellow wax induction 50 hr vs bleached 10-12 hr vs stripped 2 hr at 98 C"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "QUALITY_CONTEXT"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Accelerated laboratory oxidation, not a consumer-use superiority claim.",
+        "Light and air at room temperature reduced natural inhibitor activity in the same study."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Under accelerated oxidation at 98 C, crude jojoba wax had a much longer induction period (about 50 h) than bleached (10-12 h) or stripped (2 h) wax, indicating natural antioxidants that are reduced by bleaching or stripping.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "정제/탈색 과정에서 천연 항산화 성분이 줄어 산화 안정성이 떨어질 수 있다는 연구 맥락을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 호호바는 산화되지 않는다",
+          "다른 오일보다 우수하다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-JOJOBA-48b662b3",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "processing / cold pressed",
+      "statement": "In a process comparison of Argentine jojoba waxes, fatty acid and fatty alcohol composition did not change among cold-pressed, expeller, and bleached waxes, but cold-pressed wax had lower peroxide value, higher tocopherol and phenol contents, and better oxidative stability; bleaching reduced those antioxidants.",
+      "sourceRefs": [
+        "RS-JOJOBA-TORRES-2006"
+      ],
+      "sourceLocation": {
+        "section": "abstract",
+        "paragraph": "Physical parameters, fatty acid and alcohol compositions were unchanged; cold-pressed lower PV, higher tocopherol/phenols"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "QUALITY_CONTEXT"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Cold-pressed/unrefined here means process effects on minor antioxidants and peroxide, not a different wax-ester backbone.",
+        "Not evidence that a labeled '냉압착 비정제' Sujata SKU matches this Argentine process set."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "In a process comparison of Argentine jojoba waxes, fatty acid and fatty alcohol composition did not change among cold-pressed, expeller, and bleached waxes, but cold-pressed wax had lower peroxide value, higher tocopherol and phenol contents, and better oxidative stability; bleaching reduced those antioxidants.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "냉압착/미탈색이 지방산 골격 자체가 아니라 과산화물가와 토코페롤 등 부성분 보존과 관련해 연구된 바 있다는 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "상품명 냉압착이 이 논문의 공정과 동일하다",
+          "그래서 모발 효능이 더 크다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-JOJOBA-1fa01b79",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "quality indicators",
+      "statement": "Quality-evaluation items used in the jojoba literature include wax-ester carbon-number profile, fatty acid and fatty alcohol composition, peroxide value, tocopherol content, phenol content, and oxidative-stability/induction measurements.",
+      "sourceRefs": [
+        "RS-JOJOBA-MIWA-1971",
+        "RS-JOJOBA-TORRES-2006",
+        "RS-JOJOBA-KAMPF-1986"
+      ],
+      "sourceLocation": {
+        "section": "methods/abstract",
+        "paragraph": "AOCS recommended practices; GLC of esters, acids, alcohols; accelerated oxidation induction"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "These are analytical categories, not a published Sujata certificate."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Quality-evaluation items used in the jojoba literature include wax-ester carbon-number profile, fatty acid and fatty alcohol composition, peroxide value, tocopherol content, phenol content, and oxidative-stability/induction measurements.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "호호바 품질을 논문에서 어떤 항목으로 보는지(에스터 분포, 과산화물가, 토코페롤 등)를 교육할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타가 해당 기준을 통과했다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-JOJOBA-f8c18588",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "hair / cosmetic application evidence",
+      "statement": "Hair-fiber evidence for jojoba is limited to in-vitro or formulation assays: jojoba as a conditioning agent in a thioglycolate straightening emulsion reduced protein loss on Afro-ethnic hair locks in one study, while a later conditioner study found a jojoba-containing conditioner did not significantly reduce combing resistance. These results do not establish hair growth or a general consumer hair-benefit for a neat oil SKU.",
+      "sourceRefs": [
+        "RS-JOJOBA-DIAS-2008",
+        "RS-JOJOBA-SILVA-2024"
+      ],
+      "sourceLocation": {
+        "section": "abstract",
+        "paragraph": "Dias 2008 protein loss/combability; Silva 2024 jojoba did not significantly reduce combing resistance"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "EXPECTATION_SETTING"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Study context is hair locks / conditioner chassis, not clinical alopecia treatment.",
+        "Results are not uniform across methods."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Hair-fiber evidence for jojoba is limited to in-vitro or formulation assays: jojoba as a conditioning agent in a thioglycolate straightening emulsion reduced protein loss on Afro-ethnic hair locks in one study, while a later conditioner study found a jojoba-containing conditioner did not significantly reduce combing resistance. These results do not establish hair growth or a general consumer hair-benefit for a neat oil SKU.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "모발 섬유 실험에서 컨디셔닝 맥락이 연구된 바 있으나, 결과는 제형·방법에 따라 다르고 탈모 치료 근거가 아니라는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 호호바가 모발에 더 좋다",
+          "모발이 자란다",
+          "염색 손상을 복구한다"
+        ]
+      }
+    }
+  ],
+  "researchRequests": [
+    {
+      "requestId": "RR-jojoba-composition",
+      "topic": "jojoba oil composition",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-6e4a3050"
+      ],
+      "notes": "Wax-ester oil identity supported.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-jojoba-wax",
+      "topic": "wax ester composition",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-329486e2"
+      ],
+      "notes": "C40/C42 dominance supported with sample variation.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-jojoba-fa",
+      "topic": "fatty alcohol / fatty acid composition",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-bf4033d8"
+      ],
+      "notes": "C20/C22 cis-monounsaturated profile supported.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-jojoba-os",
+      "topic": "oxidative stability",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-693445cf"
+      ],
+      "notes": "Crude vs bleached/stripped induction periods supported.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-jojoba-quality",
+      "topic": "jojoba oil quality indicators",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-1fa01b79"
+      ],
+      "notes": "Analytical items identified.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-jojoba-coldpress",
+      "topic": "cold-pressed / unrefined",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-48b662b3"
+      ],
+      "notes": "Process effect on antioxidants/PV supported; backbone unchanged.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-jojoba-hair",
+      "topic": "hair application evidence",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "PARTIALLY_RESEARCHED",
+      "coverage": "PARTIALLY_RESEARCHED",
+      "knowledgeIds": [
+        "CK-JOJOBA-f8c18588"
+      ],
+      "notes": "In-vitro fiber assays only; mixed combing result.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    }
+  ],
+  "questionCoverage": {
+    "Q1_chemical_composition": "SUPPORTED",
+    "Q2_vs_triglyceride": "SUPPORTED",
+    "Q3_wax_ester_fa_profile": "SUPPORTED",
+    "Q4_oxidative_stability": "SUPPORTED",
+    "Q5_quality_indicators": "SUPPORTED",
+    "Q6_cold_pressed_unrefined": "SUPPORTED",
+    "Q7_hair_or_skin_use": "PARTIALLY_SUPPORTED",
+    "Q8_not_sujata_efficacy": "SUPPORTED"
+  },
+  "unsupportedQuestions": [
+    "Clinical hair-growth / alopecia treatment by jojoba oil",
+    "Direct wound-healing or pharmacology results as consumer hair benefit"
+  ],
+  "conflictingEvidence": [
+    {
+      "topic": "hair combing / conditioning outcome",
+      "status": "CONFLICTING_EVIDENCE",
+      "detail": "Dias 2008 reported jojoba among better conditioning agents for protein loss in a straightening emulsion; Silva 2024 reported a jojoba conditioner did not significantly reduce combing resistance. Both are formulation-specific in-vitro assays."
+    }
+  ],
+  "approvalChecklist": {
+    "wax_ester_composition": true,
+    "major_composition": true,
+    "oxidative_stability": true,
+    "quality_evaluation_items": true,
+    "processing_cold_pressed_evidence": true,
+    "hair_application_or_limitation": true,
+    "product_claim_boundary": true
+  }
+}

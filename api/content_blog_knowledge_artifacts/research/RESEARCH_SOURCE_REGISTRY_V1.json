@@ -1,0 +1,377 @@
+{
+  "version": "RESEARCH_SOURCE_REGISTRY_V1",
+  "retrievedAt": "2026-09-21",
+  "sources": [
+    {
+      "sourceId": "RS-HENNA-JAMES-1986",
+      "topic": "henna coloring / keratin interaction",
+      "title": "The absorption of lawsone and henna by bleached wool felt",
+      "authors": [
+        "K. C. James",
+        "S. P. Spanoudi",
+        "T. D. Turner"
+      ],
+      "publication": "Journal of the Society of Cosmetic Chemists",
+      "year": 1986,
+      "doi": null,
+      "url": "https://library.scconline.org/cdn-1708705217696/Absorption-Lawsone-Henna-Bleached-Wool-Felt.pdf",
+      "locator": "J. Soc. Cosmet. Chem. 37:359-367",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Substrate is bleached wool felt, not human hair on a living scalp.",
+        "Does not identify a unique lawsone-keratin adduct structure."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 1986
+    },
+    {
+      "sourceId": "RS-HENNA-FORESTIER-1982",
+      "topic": "lawsone absorption by hair",
+      "title": "Henne. Absorption de la lawsone par le cheveu",
+      "authors": [
+        "J. P. Forestier"
+      ],
+      "publication": "International Journal of Cosmetic Science",
+      "year": 1982,
+      "doi": "10.1111/j.1467-2494.1982.tb00311.x",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1111/j.1467-2494.1982.tb00311.x",
+      "locator": "Int J Cosmet Sci. 1982;4(4):153-174",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Abstract and later citations were verified; full-text page images were not copied into the repo.",
+        "Does not establish consumer durability or reduced hair damage versus oxidative dyes."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 1982
+    },
+    {
+      "sourceId": "RS-HENNA-CHAHOMSRI-2017",
+      "topic": "Lawsonia inermis lawsone content",
+      "title": "Pharmacognostic Specifications and Lawsone Content of Lawsonia inermis Leaves",
+      "authors": [
+        "W. Chahomsri",
+        "et al."
+      ],
+      "publication": "Pharmacognosy Research",
+      "year": 2017,
+      "doi": "10.4103/0974-8490.199770",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5330104/",
+      "locator": "PMC5330104; Results: lawsone 0.76±0.05 and 0.87±0.11 g/100 g dried crude drug",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Thai leaf samples from 12 sources; not a Sujata product assay.",
+        "Ethanol Soxhlet extract TLC, not an in-use hair-paste assay."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2017
+    },
+    {
+      "sourceId": "RS-HENNA-ELSHAER-2007",
+      "topic": "lawsone variation in henna powders",
+      "title": "Determination of lawsone in henna powders by high performance thin layer chromatography",
+      "authors": [
+        "N. S. El-Shaer",
+        "J. M. Badr",
+        "M. A. Aboul-Ela",
+        "Y. M. Gohar"
+      ],
+      "publication": "Journal of Separation Science",
+      "year": 2007,
+      "doi": "10.1002/jssc.200700223",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18004727/",
+      "locator": "J Sep Sci. 2007;30:3311-3315; range 0.004%-0.608% as cited by Chahomsri 2017 Discussion",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "analytical",
+      "peerReviewed": true,
+      "sourceRole": "SUPPORTING",
+      "usable": true,
+      "limitations": [
+        "Numeric range used as cited by Chahomsri 2017; original PDF not stored in-repo."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2007
+    },
+    {
+      "sourceId": "RS-HENNA-HEINRICH-2025",
+      "topic": "hennosides / lawsone release",
+      "title": "A Novel and Reliable Analysis Method Utilizing Hennosides to Improve the Quality Assessment of Lawsonia inermis L. Material Used in Cosmetic Formulations",
+      "authors": [
+        "Heinrich et al."
+      ],
+      "publication": "Cosmetics",
+      "year": 2025,
+      "doi": "10.3390/cosmetics12030099",
+      "url": "https://www.mdpi.com/2079-9284/12/3/99",
+      "locator": "Cosmetics 2025, 12(3), 99; Introduction on hennosides A/B/C and aqueous hydrolysis",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Analytical method paper; does not measure Sujata powder.",
+        "Lawsone content of a given commercial SKU still requires that SKU's assay."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2025
+    },
+    {
+      "sourceId": "RS-HENNA-SCCS-2013",
+      "topic": "EU safety opinion on henna hair dye",
+      "title": "Opinion on Lawsonia inermis (Henna) (C169), SCCS/1511/13",
+      "authors": [
+        "Scientific Committee on Consumer Safety"
+      ],
+      "publication": "European Commission SCCS",
+      "year": 2013,
+      "doi": "10.2772/71314",
+      "url": "https://health.ec.europa.eu/publications/opinion-lawsonia-inermis-henna-c169_en",
+      "locator": "SCCS/1511/13 conclusion; corrigendum 12 Nov 2021 did not change the safe conclusion",
+      "authorityClass": "GOVERNMENT_SCIENTIFIC_COMMITTEE",
+      "studyType": "regulatory_opinion",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Applies to assessed henna powder batches 1271 and 830.72 under stated use, not to all extracts or body paint.",
+        "Not a Sujata product safety certificate."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2013
+    },
+    {
+      "sourceId": "RS-HENNA-LEWIS-2013",
+      "topic": "oxidative hair dye mechanism",
+      "title": "A Review of Aspects of Oxidative Hair Dye Chemistry with Special Reference to N-Nitrosamine Formation",
+      "authors": [
+        "D. Lewis",
+        "J. Mama",
+        "J. Hawkes"
+      ],
+      "publication": "Materials",
+      "year": 2013,
+      "doi": "10.3390/ma6020517",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5452089/",
+      "locator": "PMC5452089; section describing PPD oxidation to QDI and coupler reaction",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "review",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Review of oxidative dye chemistry; not a head-to-head henna safety trial."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2013
+    },
+    {
+      "sourceId": "RS-HENNA-PASTUSZAK-2025",
+      "topic": "commercial henna lawsone and PPD",
+      "title": "Quantification of Lawsone and p-Phenylenediamine in Natural Henna Products for Hair Colouring Available in Poland",
+      "authors": [
+        "Pastuszak et al."
+      ],
+      "publication": "Contact Dermatitis",
+      "year": 2025,
+      "doi": "10.1111/cod.14739",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39756814/",
+      "locator": "Contact Dermatitis 2025; results: about 60% of tested products had ≥0.5% lawsone; PPD in 36%",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "analytical",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Polish market sample, not Sujata SKU.",
+        "Introduction mechanism language is secondary to the analytical results."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2025
+    },
+    {
+      "sourceId": "RS-JOJOBA-MIWA-1971",
+      "topic": "jojoba wax ester composition",
+      "title": "Jojoba oil wax esters and derived fatty acids and alcohols: Gas chromatographic analyses",
+      "authors": [
+        "Thomas K. Miwa"
+      ],
+      "publication": "Journal of the American Oil Chemists' Society",
+      "year": 1971,
+      "doi": "10.1007/BF02638458",
+      "url": "https://doi.org/10.1007/bf02638458",
+      "locator": "JAOCS 1971;48:259-264 abstract: C40 ~30%, C42 ~50%, C44 ~10%; C20:1 acid ~35%",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Desert seed samples from 1971; composition varies by geography and genotype.",
+        "Not a Sujata lot assay."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 1971
+    },
+    {
+      "sourceId": "RS-JOJOBA-ELMALLAH-2009",
+      "topic": "Egyptian jojoba wax composition",
+      "title": "Investigation of Liquid Wax Components of Egyptian Jojoba Seeds",
+      "authors": [
+        "M. Hassan El-Mallah",
+        "S. M. El-Shami"
+      ],
+      "publication": "Journal of Oleo Science",
+      "year": 2009,
+      "doi": "10.5650/jos.58.543",
+      "url": "https://www.jstage.jst.go.jp/article/jos/58/10/58_10_543/_article",
+      "locator": "J Oleo Sci. 2009;58:543-548; Table 3 C42 51.1%, C40 30.1%; Introduction 97% linear esters",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "One Egyptian cultivation sample.",
+        "Abstract '55% wax esters' wording is not used as a global composition fact; Table 3 is the ester carbon-number profile of the oil."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2009
+    },
+    {
+      "sourceId": "RS-JOJOBA-KAMPF-1986",
+      "topic": "jojoba oxidative stability",
+      "title": "Oxidative stability of jojoba wax",
+      "authors": [
+        "Arieh Kampf",
+        "Sarina Grinberg",
+        "Arjeh B. Galun"
+      ],
+      "publication": "Journal of the American Oil Chemists' Society",
+      "year": 1986,
+      "doi": "10.1007/BF02546148",
+      "url": "https://doi.org/10.1007/bf02546148",
+      "locator": "JAOCS 1986;63:246-248 abstract: crude induction 50 h vs bleached 10-12 h vs stripped 2 h at 98 C",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Accelerated oxidation at 98 C, not a consumer-use shelf study of a finished Sujata bottle.",
+        "Room-temperature light/air reduced natural inhibitor activity."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 1986
+    },
+    {
+      "sourceId": "RS-JOJOBA-TORRES-2006",
+      "topic": "cold press / bleaching quality",
+      "title": "Effect of the extraction and bleaching processes on jojoba (Simmondsia chinensis) wax quality",
+      "authors": [
+        "M. Torres et al."
+      ],
+      "publication": "European Journal of Lipid Science and Technology",
+      "year": 2006,
+      "doi": "10.1002/ejlt.200300841",
+      "url": "https://doi.org/10.1002/ejlt.200300841",
+      "locator": "Eur. J. Lipid Sci. Technol. abstract: FA/alcohol unchanged; cold-pressed lower PV, higher tocopherol/phenols, best OS; bleaching reduced antioxidants",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Argentine process comparison; not a Sujata process certificate."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2006
+    },
+    {
+      "sourceId": "RS-JOJOBA-DIAS-2008",
+      "topic": "jojoba in hair-fiber conditioning assay",
+      "title": "Protective effect of conditioning agents on Afro-ethnic hair chemically treated with thioglycolate-based straightening emulsion",
+      "authors": [
+        "T. C. de Sa Dias",
+        "A. R. Baby",
+        "T. M. Kaneko",
+        "M. V. R. Velasco"
+      ],
+      "publication": "Journal of Cosmetic Dermatology",
+      "year": 2008,
+      "doi": "10.1111/j.1473-2165.2008.00368.x",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18482015/",
+      "locator": "J Cosmet Dermatol. 2008; PubMed 18482015; in vitro Afro-ethnic hair locks, protein loss/combability/traction",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental_in_vitro_hair",
+      "peerReviewed": true,
+      "sourceRole": "PRIMARY",
+      "usable": true,
+      "limitations": [
+        "Hair-lock assay inside a thioglycolate straightening emulsion, not a leave-on Sujata oil clinical trial.",
+        "Jojoba was one of several conditioning agents; not a hair-growth study."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2008
+    },
+    {
+      "sourceId": "RS-JOJOBA-SILVA-2024",
+      "topic": "jojoba conditioner fiber properties",
+      "title": "Evaluation of Hair Fiber and Sensory Properties following the Application of Conditioners containing Jojoba and Coconut Oils",
+      "authors": [
+        "Brazilian Journal of Pharmaceutical Sciences authors"
+      ],
+      "publication": "Brazilian Journal of Pharmaceutical Sciences",
+      "year": 2024,
+      "doi": null,
+      "url": "https://www.scielo.br/j/bjps/a/Dn9S4BG4YLjFzJMxgd5JMqF/?lang=en",
+      "locator": "SciELO BJPS; abstract: jojoba formulation did not significantly reduce combing resistance; oils increased contact angle",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "experimental_in_vitro_hair",
+      "peerReviewed": true,
+      "sourceRole": "SUPPORTING",
+      "usable": true,
+      "limitations": [
+        "Conditioner chassis with jojoba, not neat oil.",
+        "Results conflict in part with a simple 'jojoba always improves combing' claim."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2024
+    },
+    {
+      "sourceId": "RS-JOJOBA-GADO-2021",
+      "topic": "jojoba chemistry review",
+      "title": "Jojoba Oil: An Updated Comprehensive Review on Chemistry, Pharmaceutical Uses, and Toxicity",
+      "authors": [
+        "Gad et al."
+      ],
+      "publication": "Molecules",
+      "year": 2021,
+      "doi": "10.3390/molecules26113357",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8197201/",
+      "locator": "PMC8197201 Chemistry section: almost 98% waxes; cites Kampf for crude vs bleached OS",
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "studyType": "review",
+      "peerReviewed": true,
+      "sourceRole": "SUPPORTING",
+      "usable": true,
+      "limitations": [
+        "Review; pharmacological/hair-growth folklore in the introduction is DISCOVERY_ONLY and not ingested as CK.",
+        "98% figure is literature summary, not a Sujata assay."
+      ],
+      "retrievedAt": "2026-09-21",
+      "publicationYear": 2021
+    }
+  ]
+}
