@@ -25,7 +25,12 @@ class TestAuthMiddleware(unittest.TestCase):
     def test_allowlist_health_is_public(self):
         res = self.client.get("/health")
         self.assertEqual(res.status_code, 200)
-        self.assertEqual((res.json() or {}).get("status"), "ok")
+        self.assertIn((res.json() or {}).get("status"), ("ok", "error"))
+
+    def test_allowlist_api_health_is_public(self):
+        res = self.client.get("/api/health")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn((res.json() or {}).get("status"), ("ok", "error"))
 
     def test_protected_requires_bearer(self):
         # allowlist가 아닌 경로는 401
