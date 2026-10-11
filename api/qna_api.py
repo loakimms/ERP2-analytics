@@ -65,7 +65,7 @@ from qna_expert_analysis import (
 from settings_store import get_api_settings
 
 
-OPENAI_DEFAULT_MODEL = "gpt-5.2"
+OPENAI_DEFAULT_MODEL = "gpt-4o-mini"
 QNA_PROMPT_VERSION = "commerce_qna_v1"
 NAVER_COMMERCE_TOKEN_URL = "https://api.commerce.naver.com/external/v1/oauth2/token"
 NAVER_COMMERCE_API_BASE = "https://api.commerce.naver.com/external"

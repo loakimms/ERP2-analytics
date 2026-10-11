@@ -102,7 +102,7 @@ describe('QnaManagementView workbench/draft', () => {
 		await waitFor(() => {
 			expect(axiosAny.post).toHaveBeenCalledWith(
 				'http://localhost:5189/qna/drafts/generate',
-				{ qna_key: 'customer:101', model: 'gpt-5.2' },
+				{ qna_key: 'customer:101', model: 'gpt-4o-mini' },
 				{ headers: { Authorization: 'Bearer test-token' } },
 			);
 		});
@@ -140,7 +140,7 @@ describe('QnaManagementView workbench/draft', () => {
 					draft_id: 'draft-202',
 					draft_status: 'generated',
 					draft_text: '기존 초안입니다.',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					last_submit_success: null,
 					last_submit_status_code: null,
 					last_submit_error: null,
@@ -168,7 +168,7 @@ describe('QnaManagementView workbench/draft', () => {
 		await waitFor(() => {
 			expect(axiosAny.post).toHaveBeenCalledWith(
 				'http://localhost:5189/qna/drafts/generate',
-				{ qna_key: 'customer:202', model: 'gpt-5.2', force_regenerate: true },
+				{ qna_key: 'customer:202', model: 'gpt-4o-mini', force_regenerate: true },
 				{ headers: { Authorization: 'Bearer test-token' } },
 			);
 		});

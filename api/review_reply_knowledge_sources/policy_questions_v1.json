@@ -1,0 +1,5363 @@
+{
+ "artifact": "review_reply_knowledge_policy_questions",
+ "version": "policy_questions_v1",
+ "built_from": [
+  "STAGE1_FINAL_SAFETY_SOURCE_AUDIT.md",
+  "final-audit.json",
+  "audit-links.json"
+ ],
+ "registry_version": "official_fact_source_registry_v2",
+ "content_sha256": "b02329a610b87284443b43244605adaac38a1f6221eb4401abc0d400de6d2352",
+ "questions": [
+  {
+   "question_id": "D01",
+   "title": "레드·브라운 필수 병행 / 브라운 단독 비권장",
+   "question": "조건 없이 '레드와 브라운을 반드시 함께', '브라운 단독은 권하지 않음'이라고 안내해도 되는가?",
+   "conflict_summary": "운영자 확인 기준(OPC)은 브라운 단독 기본 2시간을 인정합니다. 가이드 HTML은 브라운 단독을 권장도 금지도 하지 않습니다. 답글이 근거로 든 상세페이지 원문은 프로젝트에 저장돼 있지 않아 확인할 수 없습니다.",
+   "issue_ids": [
+    "I02"
+   ],
+   "guide_conflict": true,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "unconditional",
+     "label": "조건 없는 필수 병행·단독 비권장 표현(흰머리·진한 갈색 조건부 안내는 제외)"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:standard:brown-single"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:faq:gray_or_dark_brown_sequence"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:ratio:natural_brown"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:ratio:red_brown"
+    }
+   ],
+   "notes": [
+    "흰머리·진한 갈색을 원할 때 레드와 함께/순차 사용 안내는 가이드와 일치하므로 이 질문 대상이 아닙니다.",
+    "공식 가이드보다 답글을 우선하는 결정(사람 답글 보충 인정)은 저장할 수 없습니다. 상세페이지가 다르다면 공식 자료 등록 후 가이드를 정리해야 합니다."
+   ],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4877886386",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "레드와 브라운 함께 사용하시는 방법 추천드리고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4906658113",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "처음 하시는 분들은 레드 후 브라운을 하시는게 좋습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4940333279",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "브라운 단독 염색의 색상이 연하시다고 느끼신다면 꼭!!! 레드와 함께 써주시길 권장드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4961470545",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "저희 제품 레드와 브라운 함께 써주셔야 염색이 잘 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966144369",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "저희 제품은 레드와 브라운 함께 써주셔야 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966357372",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "저희 제품은 레드와 브라운 함께 써주셔야 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966942936",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "저희 제품은 레드와 브라운 함께 써주셔야 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967030830",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "저희 제품은 레드와 브라운 함께 써주셔야 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4969320313",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "브라운 제품은 단독으로 염색 권해드리지 않고 레드와 브라운 함께 구매해주셔야 하며"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970872515",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "혹시 브라운 단독으로 염색 예정이시라면 레드와 함께 써주시길 바라겠습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977653359",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "상세페이지에도 나와 있듯이 \"브라운 단독\" 사용은 권장드리지 않습니다.",
+      "레드와 브라운 함께 써주시면 색상은 더 진하게 잘 나옵니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982567696",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "레드와 브라운 함께 사용해주셔야 염색이 잘 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5051359992",
+     "issue_ids": [
+      "I02"
+     ],
+     "quotes": [
+      "저희 제품은 레드와 브라운 함께 써주셔야지 염색이 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "unconditional"
+    }
+   ]
+  },
+  {
+   "question_id": "D02",
+   "title": "유기농·100% 천연·인증 표현",
+   "question": "'최상위 유기농', '100% 천연', 샴푸 '탈모 인증'·'EWG 그린 등급' 표현을 답글에 써도 되는가?",
+   "conflict_summary": "가이드에 유기농·인증 근거가 없고 프로젝트에 인증서 데이터도 없습니다. 성분 문서 7건은 미분석 상태입니다.",
+   "issue_ids": [
+    "I05",
+    "I11"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HAIR_PACK",
+    "HENNA",
+    "SHAMPOO"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:limitation:diagnosis-notice"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:companion:yeast-shampoo"
+    }
+   ],
+   "notes": [
+    "헤나와 샴푸는 인증 대상 제품이 다르므로 제품별로 따로 결정할 수 있습니다."
+   ],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4875316192",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875583616",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "인공실리콘 없는 ewg 그린 1~2등급의 순한 성분으로 구성된 것은 당연하고",
+      "물빠짐 덜하게 하고",
+      "냄새도 중화시켜주고",
+      "말씀처럼 린스 없이 단독 사용해도 부드러움 유지되고",
+      "탈모 인증까지 받은 제품으로"
+     ],
+     "product_group": "SHAMPOO",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875587540",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875695301",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "현재 샴푸 제품이 자극이 있으시다면 저희 맥주효모 샴푸로 바꾸시는 거 추천드립니다.",
+      "ewg 그린1~2등급의 순한 성분으로",
+      "물빠짐 덜하고",
+      "냄새 중화시켜주고",
+      "부드러움은 기본",
+      "탈모 효과까지 검증 받은 제품입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875859459",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4876042344",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4877886386",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4878157082",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4879222702",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4883511780",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4884475474",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4884476175",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4884901439",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4884904499",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4885522316",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4885522478",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4889377998",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4892211549",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4893647952",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4899263314",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4901454008",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4905084454",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4905132105",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908420501",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908688975",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908692821",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4913653630",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4913982670",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4915440661",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916084762",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916358088",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916440723",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916505957",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916553500",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916599094",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4919125852",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4925947165",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "그리고 만약에 물빠짐이 너무 빠르다고 느끼신다면 저희 맥주효모 헤나전용샴푸 함께 써주시는 거 추천드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4935980687",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4938574904",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4939835037",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4941853393",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4943273745",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946285538",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946297929",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946953751",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4947420322",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4947825700",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4948534092",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4949571481",
+     "issue_ids": [
+      "I05",
+      "I11"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다.",
+      "물빠짐이 있으시다면 맥주효모 수자타헤나 샴푸 함께 써주시면 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4950298055",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "저희 수자타헤나 헤나전용샴푸를 사용하시면 물빠짐 예방",
+      "순한 성분으로 세정력 향상",
+      "냄새 중화",
+      "탈모인증 까지 받은 제품으로 적극 추천드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4950433192",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4951072014",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4953400060",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955075253",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955173025",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955626024",
+     "issue_ids": [
+      "I05",
+      "I11"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다.",
+      "물빠짐 예방",
+      "냄새중화",
+      "탈모인증까지 받은 제품입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955696407",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4956489305",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4956696932",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4956994677",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957629347",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957767049",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4958436592",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4958515409",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4958769358",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959465605",
+     "issue_ids": [
+      "I05",
+      "I11"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다.",
+      "맥주효모샴푸와 함께 사용해주시면 물빠짐도 예방되고, 탈모 예방까지 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959696727",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959908012",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4960312081",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4960352897",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4960353518",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4960778772",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4961905957",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4961906226",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4962089841",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4962290610",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4962656784",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4962770167",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4962978480",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4963860879",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966144369",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "헤나전용샴푸를 함께 사용하시면 물빠짐 예방, 냄새중화, 탈모인증까지 받은 제품이기에 강력 추천드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966498321",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967658078",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970130210",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "저희 수자타헤나 맥주효모 샴푸 함께 써주시면 물빠짐, 냄새중화, 탈모예방에 효과적이오니 함께 써주시길 추천드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970872515",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4972363622",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4975564884",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4975762233",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977193907",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다.",
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977335281",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4979297719",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "향이 조금 불편하시다면 저희 수자타헤나 맥주효모 샴푸 또는 당사에서 판매중인 에센셜오일 함께 첨가하시면 냄새중화에 도움이됩니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4979729958",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "물빠짐이 좀 빠르다고 느껴지신다면 수자타헤나 맥주효모 샴푸를 함께 써주시면 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4979736290",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "수자타 제품은 100% 천연 성분이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4984297206",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "헤나 전용 샴푸를 사용해 주시면 냄새 중화에 도움을 줄 수 있어요."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987619576",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987625161",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "당사 제품에 에센셜 오일(라벤더, 페퍼민트, 베르가못, 레몬그라스, 티트리)과 맥주효모샴푸는 헤나의 냄새 중화에 도움이 되오니 참고부탁드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988734038",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4994117821",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4996892628",
+     "issue_ids": [
+      "I11"
+     ],
+     "quotes": [
+      "저희 수자타헤나는 헤나와 너무 잘 맞는 제품입니다.",
+      "냄새중화, 탈모예방 효과까지 인증 받아 샴푸 단독 사용만으로 부드러움 느끼실 수 있기에 적극 추천드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5001947911",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "유기농 제품이라 안심하고 사용해 주시고 발색까지 만족해 주셔서 감사합니다.",
+      "앞으로도 꾸준히 좋은 최상위 유기농 제품으로 제공하겠습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5014822326",
+     "issue_ids": [
+      "I05"
+     ],
+     "quotes": [
+      "항상 고객님들의 건강을 위해 최상위 유기농 제품으로 품질 유지하고 있습니다.",
+      "수자타 제품은 100% 천연 성분이지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D03",
+   "title": "가이드 용도 밖 효능 단정",
+   "question": "가이드에 없는 효능(탈모 완화, 두피 건강, 발색력 향상 등)을 단정적으로 써도 되는가?",
+   "conflict_summary": "가이드는 일반 사용 안내만 제공하며 효능 근거가 없습니다.",
+   "issue_ids": [
+    "I12",
+    "I14",
+    "I15",
+    "I16",
+    "I17",
+    "I23",
+    "I25"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HAIR_PACK",
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:limitation:diagnosis-notice"
+    }
+   ],
+   "notes": [
+    "I14 '레드에 딥클린 효과'는 제품 혼동이 섞여 있어 효능 허용과 별개로 대상 제품을 바로잡아야 합니다.",
+    "I16 암라 효능은 별도 암라 제품에만 해당합니다.",
+    "I23 반복 사용 효과의 사용 주기 부분은 효능 허용과 별개입니다."
+   ],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4875316192",
+     "issue_ids": [
+      "I14",
+      "I15"
+     ],
+     "quotes": [
+      "모발이 뻣뻣하다고 느끼신다면 딥클린의 효과의 과정 중인 듯합니다.",
+      "조금 더 자주 주기적으로 해주시면 본연의 부드러움 회복 하실 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4882483066",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "앞머리가 얇아지고 빠질 때 헤나 하면 조금 더 굵어 보이고 결이 정돈돼 보인다는 말씀에 깊이 공감합니다 ✨",
+      "힘도 더 살아나실 거 같습니다. 🎨💪",
+      "번거로운 과정이지만 두피와 모발을 지키는 소중한 시간이라고 생각해주시면 감사하겠습니다 🙏"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4883511780",
+     "issue_ids": [
+      "I14",
+      "I15"
+     ],
+     "quotes": [
+      "염색 후 모발이 뻣뻣하다고 느끼신다면 클렌징 효과 때문입니다.",
+      "2~3일 지나면 차츰 차츰 부드러움 회복하십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4885521879",
+     "issue_ids": [
+      "I14",
+      "I17"
+     ],
+     "quotes": [
+      "레드 제품은 클렌징 효과가 함께 있기에 그 차이 느끼셨을 거 같습니다.",
+      "레드 제품과 암라 제품 자주 해주시면 모발과 두피 건강에 매우 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4885522316",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "암라는 모근을 튼튼하게 해줘서 주기적으로 사용해주시면 두피와 모발의 노화 예방에 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4885522478",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "암라는 모근을 튼튼하게 해줘서 주기적으로 사용해주시면 두피와 모발의 노화 예방에 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4886214703",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "화학에 익숙해져있던 모발이 건강해지고 천연을 잘 받아들이게 되면 발색도 잘 되실 거예요.",
+      "다만 그때까지 시간이 필요합니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4890582503",
+     "issue_ids": [
+      "I14"
+     ],
+     "quotes": [
+      "아마도 피지, 각질등이 제거되는 과정에 딥클린징이 되면서 탈락 직전의 모발들이 탈락되어 당황스러우셨을 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4892091752",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "윤기까지 잡히셨다니 두피와 모발이 점점 건강해지고 있다는 증거입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4894769417",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "천연 염색은 두피에 묻을 수록 유효성분이 두피를 건강하게 만드는 효과 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4895691752",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "그렇기에 조금 더 자주 반복해주시면서 모발을 관리해주시면 염색력은 더 좋아지십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4895916975",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "머릿결이 더 상하지 않고 빠짐도 덜한 것 같다고 느끼셨다니 헤나의 힘을 제대로 경험하고 계신 것 같습니다.✨"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4897286179",
+     "issue_ids": [
+      "I14"
+     ],
+     "quotes": [
+      "천연 헤나 식물에는 피지, 각질, 비듬, 인공실리콘등을 흡착하여 탈락시켜주는 딥클린징 효과가 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4900172568",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "모발에 긍정적인 효과까지 있으시고 사용도 편하셨다니 헤나의 장점을 제대로 느끼고 계신 것 같습니다.🌿"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4900172985",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "모발에 긍정적인 효과까지 있으시고 사용도 편하셨다니 헤나의 장점을 제대로 느끼고 계신 것 같습니다.🌿"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4907523144",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "암라는 레몬보다 비타민이 40배 많은 식물로 황산화와 노화방지 효과도 있습니다.",
+      "그래서 두피를 건강하게 관리할 수 있어요."
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908540261",
+     "issue_ids": [
+      "I25"
+     ],
+     "quotes": [
+      "딥클린 트리트먼트로 허브향이 냄새를 잡아주고"
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908843369",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "무엇보다 두피나 머릿결 손상이 좋아지는 것이 가장 큰 장점입니다.🙏"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4909300022",
+     "issue_ids": [
+      "I17",
+      "I23"
+     ],
+     "quotes": [
+      "헤나를 잘 받아들이는 건강한 모발로 바꾸시면",
+      "발색도 잘되고 윤기도 잘 나게 되실 거예요.",
+      "레드 후 브라운을 몇번 하셔서"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4913982670",
+     "issue_ids": [
+      "I16"
+     ],
+     "quotes": [
+      "헤나 10 : 암라 1 정도만 추가하여도 발색력, 유지력이 조금 더 향상되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4914309618",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "염색을 지속해주시면 모발이 거칠다고 느끼시면 그때부터 염색이 더 잘되실 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916295244",
+     "issue_ids": [
+      "I25"
+     ],
+     "quotes": [
+      "말씀처럼 겉만 코팅하는 게 아니라 모발 자체를 건강하게 가꿔주는 과정이랍니다!"
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916358088",
+     "issue_ids": [
+      "I25"
+     ],
+     "quotes": [
+      "내추럴 제품 지루성 두피, 손상모발케어에 도움되는 트리트먼트 제품입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916423041",
+     "issue_ids": [
+      "I14",
+      "I15"
+     ],
+     "quotes": [
+      "레드 제품에는 딥클린의 효과도 있습니다.",
+      "피 지, 각질, 비듬, 인공실리콘등 모발 본연의 모습이 드러나게 하는 효과있는데요",
+      "이 효과 제대로 느끼고 계신 거 같습니다.",
+      "하지만 2~3일 시간이 지나면서 부드러움 회복하시는 거 느끼실 수 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916440723",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "두피와 모발 건강해지는 효과 보실 수 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4916505957",
+     "issue_ids": [
+      "I16"
+     ],
+     "quotes": [
+      "염색력이 조금 부족하시다면 암라 1 : 헤나 10 비율로 추가하시거나,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4919125852",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "가는 모발에 레드 제품 잘 선택해주셨습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4920788630",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "레드 제품에 트리트먼트 효과 더 많이 있기에 그렇게 느끼셨을 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4928818014",
+     "issue_ids": [
+      "I14",
+      "I23"
+     ],
+     "quotes": [
+      "레드 제품의 주식물은 피지, 각질, 비듬, 인공실리콘등 모발이 아닌 성분을 걷어내는 효능이 있습니다.",
+      "조금 더 짧은 주기로 염색을 해주시거나",
+      "모발이 건강해지면 색을 머금고 있는 힘이 더 생기십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4938574904",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "천연 헤나는 덧입혀질수록 발색과 모발 건강에 도움을 주어 자주 해주실수록 더욱 좋답니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4940333279",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "꾸준히 사용하시면 점점 더 건강하고 탄력 있는 머릿결로 변화 느끼실 수 있으실 거 같습니다.!"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4941320974",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "천연 염색은 여러번 반족하면서 모발이 건강해지면서 색을 머금는 힘이 생겨서 염색이 잘되고, 덧입혀지면서 염색이 잘 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4949872006",
+     "issue_ids": [
+      "I12",
+      "I16"
+     ],
+     "quotes": [
+      "암라(인디언구스베리 과일열매)는 비타민C 헤어팩으로 천연 과일이기에 항산화 효과 있습니다.",
+      "두피와 모발의 노화를 예방해주는 회춘 열매입니다.",
+      "말씀처럼 헤나 염색하실 때 추가 첨가하시면 발색력, 유지력이 향상되셔서 많이들 찾으시는 제품입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4949896670",
+     "issue_ids": [
+      "I16"
+     ],
+     "quotes": [
+      "헤나 10 : 암라 1 정도 비율로 혼합하시면 발색력, 유지력에 도움이 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4950171199",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "암라(인디언구스베리 과일열매) 비타민C와 폴리페놀이 풍부해 항산화 효과, 모근 강화, 흰머리 및 두피와 모발노화 예방에 효과적이며 모발 윤기에도 도움되는 헤어팩"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4950433192",
+     "issue_ids": [
+      "I14",
+      "I15",
+      "I17"
+     ],
+     "quotes": [
+      "레드 제품에는 딥클린 효과와 식물단백질이 풍부하여",
+      "하지만 시간이 지나면서 본연의 부드러움을 회복하면서 모발이 부드러워지고,",
+      "식물단백질로 굵어지는 효과 보신 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4951072014",
+     "issue_ids": [
+      "I16"
+     ],
+     "quotes": [
+      "암라(인디언구스베리 과일열매)를 10% 정도 추가첨가하시면 발색력, 유지력에 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955075253",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "브라운과 암라를 섞어서 꾸준히 해주시면 모발 개선에 효과가 좋으십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955173025",
+     "issue_ids": [
+      "I15"
+     ],
+     "quotes": [
+      "천연 제품이기에 짧은 주기로 자주 애용해주시면 본연의 윤기와 부드러움 회복하실 거 같습니다"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4958723412",
+     "issue_ids": [
+      "I14",
+      "I15"
+     ],
+     "quotes": [
+      "레드 제품에는 딥클린 효과가 있습니다.",
+      "그렇기에 2~3일 정도는 뻣뻣함 느끼실 수 있습니다.",
+      "하지만 수일이 지나고 짧은 주기로 자주자주 해주시면 모발 본연의 부드러움이 회복되고 천연 성분으로 코팅이 잘되면서 부드러움 느끼실 수 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959544484",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "초반에 조금 더 짧은 주기로 자주 해주시면 염색이 잘 되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959561854",
+     "issue_ids": [
+      "I16",
+      "I17"
+     ],
+     "quotes": [
+      "시간 여유되실 때 레드(+암라) 2시간 후 다음날 브라운(+암라) 2시간으로 염색해보시는 것도 도움 되실 거 같습니다.",
+      "레드와 브라운 두 제품 비교하였을 때 레드에 트리트먼트 효과 조금 더 많기에 두피와 모발에 더 효과있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4963282859",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "레드가 들어가야 모발 코팅감과 윤기 효과 더 많습니다.",
+      "이유는 로손이라는 성분 때문입니다.",
+      "모발에 잘 침투하여 모발의 밀도를 높여주고, 식물 단백질 결합시켜주어 손상된 큐티클을 정리해줍니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4965291480",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "건강한 두피에 도움 되실 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967658078",
+     "issue_ids": [
+      "I25"
+     ],
+     "quotes": [
+      "이탈리아센나잎 식물은 지루성두피로 불편하신 분들도 많이 찾으시고",
+      "색상 변화 없이 손상 모발케어에 효과적이여서",
+      "바로 부드러움 표현되는 식물입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4972935536",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "💚 손상된 모발뿐 아니라 비타민c가 매우 풍부하며 항산화 효과로 두피와 모발의 노화를 예방해주는 과일열매입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4976841259",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "천연 염색은 모발이 건강해지면서 더 염색은 잘 되시고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4979729958",
+     "issue_ids": [
+      "I17",
+      "I23"
+     ],
+     "quotes": [
+      "천연 염색은 트리트먼트 효과로 흰머리가 조금 더 건강해지고,",
+      "색이 덧 입혀지면서 염색이 잘 되기에",
+      "조금 더 짧은 주기로 염색하시면서 관리하시는 것이 두피와 모발, 염색력까지 도움되 실 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982087104",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "하지만 꾸준히 반복하실수록 머릿결이 천연을 잘 받아들이는 건강한 모발이 되어 색을 머금는 힘이 생기고 유지력도 점차 자연스럽게 길어질 수 있어요 ."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4991562957",
+     "issue_ids": [
+      "I17"
+     ],
+     "quotes": [
+      "많은 고객님들께서 사용 후 모발의 윤기와 탄력, 부드러움을 경험하시며 꾸준히 찾아주고 계십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098100",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "천연은 반복하면서 모발 컨디션에 좋아지면서 색을 머금는 힘이 더 생깁니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997136114",
+     "issue_ids": [
+      "I12"
+     ],
+     "quotes": [
+      "비타민c가 풍부해서 항산화 효과에 도움되어 두피와 모발 노화에 효과적이오니"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4998961289",
+     "issue_ids": [
+      "I16"
+     ],
+     "quotes": [
+      "헤나 염색에 암라를 추가하시면 발색력, 유지력이 향상되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4998964677",
+     "issue_ids": [
+      "I16"
+     ],
+     "quotes": [
+      "헤나 염색에 암라를 추가하시면 발색력, 유지력이 향상되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5001204935",
+     "issue_ids": [
+      "I14",
+      "I15"
+     ],
+     "quotes": [
+      "헤나는 피지, 비듬, 인공실리콘등을 딥클린 해주는 효과",
+      "하지만 모발이 회복되면은 본연의 윤기와 부드러움 회복하는데 꾸준히 사용해주셔서 효과를 느껴주시어 저희도 뿌듯합니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5007366659",
+     "issue_ids": [
+      "I23"
+     ],
+     "quotes": [
+      "3~4주 간격으로 꾸준히 관리해 주시는 덕분에 더욱 좋은 결과를 느끼시는 것 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D04",
+   "title": "의학적 판단·안전 단정 표현",
+   "question": "알러지 여부 판단, 저자극 보장, 화학 염색 비하, 질환 원인 단정 같은 표현을 써도 되는가?",
+   "conflict_summary": "가이드는 진단을 하지 않으며 불편감이 있으면 중단하라고만 안내합니다.",
+   "issue_ids": [
+    "I07",
+    "I09",
+    "I18",
+    "I24",
+    "I28",
+    "I31"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HAIR_PACK",
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:sensitive"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:faq:sensitive-skin"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:patch-test"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:limitation:diagnosis-notice"
+    }
+   ],
+   "notes": [
+    "중단 문장이 함께 있으면 자동 규칙 R1(공식 중단 문구)이 우선합니다."
+   ],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4862328648",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "수자타헤나는 두피와 모발이 편안하게 받아들이며"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4886214703",
+     "issue_ids": [
+      "I24"
+     ],
+     "quotes": [
+      "평생을 해야 하는 염색인데 화학염색약으로 할 수는 없잖아요~"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4894769417",
+     "issue_ids": [
+      "I31"
+     ],
+     "quotes": [
+      "마음 편하게 두피에 듬뿍듬뿍 올려주세요 🌱"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4897286179",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "만약에 알러지 반응이 아니시라면 항염, 항균 효과의 과정 중이셨을 수도 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4906825065",
+     "issue_ids": [
+      "I24"
+     ],
+     "quotes": [
+      "30분에 염색이 되는 천연헤나는 없습니다.",
+      "헤나가 이온화되어서 발색이 시작되는 시간이 40분 이후이기 때문입니다.",
+      "따라서 30분에 되는 헤나는 저가의 원료에 화학염색약을 섞은 제품입니다.",
+      "헤나의 특성상 두피에 닿고 모공을 통해서 체내로 흡수되기 때문에 그런 제품은 사용을 안하시는게 좋습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4907399024",
+     "issue_ids": [
+      "I24"
+     ],
+     "quotes": [
+      "화학을 1%만 넣어도 시간은 얼마든지 단축할 수 있지만",
+      "고객님 건강을 위한 투자니까",
+      "화학으로 평생 할 수는 없잖아요~"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908843369",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천천히 물들면서 모발을 감싸주기 때문에 자극이 적은 편이고 🌱"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4913653630",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "사용 중 알러지 반응이 의심되신다니"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4925673808",
+     "issue_ids": [
+      "I28"
+     ],
+     "quotes": [
+      "임신 중 호르몬 변화로 출산 후에 모발상태도 많이 달라지셨을 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946029691",
+     "issue_ids": [
+      "I18"
+     ],
+     "quotes": [
+      "인공실리콘이 첨가되어 있기에 모공을 막고 모낭염을 유발하여",
+      "요즘 샴푸, 트리트먼트, 린스등 헤어제품 전반적으로 배제되고 있는 성분입니다."
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946285538",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946297929",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4946953751",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4948534092",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리랍니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4948771679",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4955696407",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4963282859",
+     "issue_ids": [
+      "I18"
+     ],
+     "quotes": [
+      "인공실리콘이 모발에도 떨어져 나가셔야 더욱더 건강한 모발로 관리되신 답니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4963860879",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 헤나는 독한 약제로 모발을 억지로 열어 색을 넣는 게 아니라, 어릴 적 손톱에 봉숭아 물을 들이듯이 자연스럽게 스며드는 건강한 원리입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4969239698",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "현재 두피가 무겁고 자극감이 느껴지는 반응이 알러지이실까 염려됩니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4969320313",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "두피가 가려우시다면 알러지 반응이실 수도 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4973142980",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "두피가 가려우시다면 알러지 반응이실 수도 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982087104",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 염색은 독한 약제로 모발을 억지로 여는 화학 염색과 달리, 어릴 적 손톱에 봉숭아 물을 들이듯이 식물 입자가 스며들어 코팅되는 건강한 원리입니다 ."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4996022879",
+     "issue_ids": [
+      "I07"
+     ],
+     "quotes": [
+      "천연 염색이기에 눈시림 없이 자연스러운 발색을 경험하셨다니 정말 기쁩니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098100",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "헤나 식물에 알러지 없으셨다니 다행입니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5043257055",
+     "issue_ids": [
+      "I09"
+     ],
+     "quotes": [
+      "지속적으로 자극이 느껴지신다면 헤나식물알러지 이실 수 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D05",
+   "title": "패치테스트 48시간·식약청 지침 인용",
+   "question": "'식약청에서 정한 48시간 이상 테스트'라고 안내해도 되는가?",
+   "conflict_summary": "가이드는 사용 전 패치테스트를 안내하지만 48시간·식약청 근거는 프로젝트에서 확인되지 않았습니다.",
+   "issue_ids": [
+    "I27"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:patch-test"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:faq:sensitive-skin"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:step:05"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4897730168",
+     "issue_ids": [
+      "I27"
+     ],
+     "quotes": [
+      "48시간 테스트"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4941853393",
+     "issue_ids": [
+      "I27"
+     ],
+     "quotes": [
+      "패치테스트 48시간 하셨을 때는 어떠셨나 모르겠습니다.?"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4962290610",
+     "issue_ids": [
+      "I27"
+     ],
+     "quotes": [
+      "식약청에서 정한 48시간 테스트 하시어 안전한 염색되시길 응원하겠습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977653359",
+     "issue_ids": [
+      "I27"
+     ],
+     "quotes": [
+      "화장품 안전성 테스트를 위해 식약청에서 48시간을 권고하고 있습니다.",
+      "말씀처럼, 고객님 안전이 최우선이기에 식약청 지침 48시간을 권고드리고 있지만,"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D06",
+   "title": "레드3:브라운7 비율",
+   "question": "가이드에 없는 레드3:브라운7 비율과 그 결과 색상을 안내해도 되는가?",
+   "conflict_summary": "가이드에는 레드 100%, 50:50, 20:80만 있고 OPC는 정해지지 않은 비율을 임의로 확정하지 않습니다.",
+   "issue_ids": [
+    "I03"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HAIR_PACK",
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:ratio:orange"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:ratio:red_brown"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:ratio:natural_brown"
+    },
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:restriction:ratio"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4875000316",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875186019",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4878637767",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4880577310",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4889445960",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4901942911",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4919975043",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4939572610",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4941646931",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4949074545",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4953554957",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954385824",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 정도면 붉은기 살짝"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954763322",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954932286",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957629347",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957856864",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959518477",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4961470545",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4965291480",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966144369",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966357372",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966942936",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967030830",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967799067",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970278033",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970872515",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4976215417",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977335281",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4978500412",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980764766",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980934254",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980934769",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4981347511",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982030107",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982567696",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982578893",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986068517",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986250098",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986760687",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986763445",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986814012",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987129888",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987253398",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987797390",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면",
+      "붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988218572",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 → 붉은기 있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988281501",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988321656",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율",
+      "붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988572339",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4991796665",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4993376790",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4993414833",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4994101620",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098100",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098722",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5014812052",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5020456641",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5020644421",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5043802965",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5051359992",
+     "issue_ids": [
+      "I03"
+     ],
+     "quotes": [
+      "★레드 3 : 브라운 7 비율로 염색하시면 붉은기 살짝있는 자연스러운 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D07",
+   "title": "브라운 단독 발색 '미색·아주 연한 갈색'",
+   "question": "브라운 단독은 '미색 또는 아주 연한 갈색'으로 염색된다고 안내해도 되는가?",
+   "conflict_summary": "가이드에 브라운 단독 결과 색상 항목이 없습니다. 흰머리 조건부 순차 안내만 있습니다.",
+   "issue_ids": [
+    "I04"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HAIR_PACK",
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:faq:gray_or_dark_brown_sequence"
+    },
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:standard:brown-single"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:current-color"
+    }
+   ],
+   "notes": [
+    "D01 결정과 함께 보아야 합니다."
+   ],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4875000316",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875186019",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4878637767",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4880577310",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4889445960",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4895429111",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "아주 연한 갈색으로 나오는 브라운 단독으로"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4901942911",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4908843369",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "안내는 아주 연한 갈색이지만"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4919975043",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4939572610",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4941646931",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4949074545",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4953554957",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954385824",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "흰머리에 브라운만 하시면 화학성분이 전혀 없어서 한번에 진하게 염색은 잘 안되고 연한 갈색정도 나옵니다"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954763322",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954932286",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957629347",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957856864",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959518477",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4961470545",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4965291480",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966144369",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966357372",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966942936",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967030830",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967799067",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970278033",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970872515",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4976215417",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977335281",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4978500412",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980764766",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980934254",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980934769",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4981347511",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982030107",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982567696",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982578893",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986068517",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986250098",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986760687",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986763445",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986814012",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987129888",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987253398",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987797390",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988281501",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988321656",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988572339",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4991796665",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4993376790",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4993414833",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4994101620",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098100",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098722",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5014812052",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5020456641",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독으로는 새치 발색 힘이 약해 미색 또는 아주 연한 갈색이 나올 수 있습니다.",
+      "브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5020644421",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5043802965",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5051359992",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운의 주식물은 흰모발(0)에서 시작하면 본연의 색상으로 염색되지 않고 미색 또는 아주 연한 갈색으로 염색이 되십니다.",
+      "★브라운 단독 : 미색 또는 아주 연한 갈색"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5060897991",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독으로 염색하시면 미색 또는 아주 연한 갈색이 나올 수 있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5062970462",
+     "issue_ids": [
+      "I04"
+     ],
+     "quotes": [
+      "브라운 단독으로만 염색하시면 미색 또는 아주 연한 갈색이 나올 수 있습니다.."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D08",
+   "title": "헤나에 헤어팩·암라 혼합",
+   "question": "헤나 반죽에 헤어팩이나 암라를 섞어 쓰라고 안내해도 되는가?",
+   "conflict_summary": "가이드의 혼합 안내는 헤어팩끼리의 혼합만 다룹니다.",
+   "issue_ids": [
+    "I22"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:packmix:single"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:packmix:two"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:packmix:three_plus"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4895429111",
+     "issue_ids": [
+      "I22"
+     ],
+     "quotes": [
+      "아주 연한 갈색으로 트리트먼트 더 향상시키는 효과있습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4920788630",
+     "issue_ids": [
+      "I22"
+     ],
+     "quotes": [
+      "이 경우 염색하실 때 \"헤나(레드와 브라운) 10 : 헤어팩(6종_딥클린, 손상케어, 두피케어, 볼륨업, 내추럴, 암라) 1\" 정도 추가 첨가하시면",
+      "트리트먼트 효과 조금 더 향상되오니 참고부탁드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4925673808",
+     "issue_ids": [
+      "I22"
+     ],
+     "quotes": [
+      "모발 컨디션이 좋아지고, 흰모발 단백질 결합, 색을 머금는 힘이 나아지면서 염색에 더 도움 되실 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4925947165",
+     "issue_ids": [
+      "I22"
+     ],
+     "quotes": [
+      "흰모발이 트리트먼트로 돌보아 지면서 색을 머금는 힘이 더 생기실 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959696727",
+     "issue_ids": [
+      "I22"
+     ],
+     "quotes": [
+      "브라운 염색하실 때 헤어팩(딥클린, 손상케어, 볼륨업, 두피케어, 내추럴, 암라) 중 10%정도 추가하시면 도움되십니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4976068872",
+     "issue_ids": [
+      "I22"
+     ],
+     "quotes": [
+      "모발 컨디션이 트리트먼트 효과로 색을 머금는 힘이 생기면 더 염색에 도움이 되오니 참고부탁드립니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D09",
+   "title": "밤새 방치·8시간 숙성",
+   "question": "밤새 바르고 자기, 8시간 숙성 같은 장시간 방치를 긍정해도 되는가?",
+   "conflict_summary": "가이드·OPC 기본은 2시간, 염색 부족 시 2~3시간 조정입니다.",
+   "issue_ids": [
+    "I30"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:duration:dye"
+    },
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:standard:red-single"
+    },
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:adjust:insufficient"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4894769417",
+     "issue_ids": [
+      "I30"
+     ],
+     "quotes": [
+      "레드 반죽 8시간 숙성",
+      "정말 정성 가득 제대로 해주셨습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4901737529",
+     "issue_ids": [
+      "I30"
+     ],
+     "quotes": [
+      "머리에 바르고 주무시고 아침에 감으셨다니, 색도 더 안정적으로 잘 자리 잡으셨을 거 같습니다.🌙"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D10",
+   "title": "백발 레드 후 레드+브라운 5:5",
+   "question": "백발은 레드 후 레드+브라운 5:5로 하라고 안내해도 되는가?",
+   "conflict_summary": "가이드의 흰머리 안내는 1차 레드, 2차 브라운 순차입니다.",
+   "issue_ids": [
+    "I32"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:sequence:dark_brown"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:faq:gray_or_dark_brown_sequence"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:gray-high"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4882483066",
+     "issue_ids": [
+      "I32"
+     ],
+     "quotes": [
+      "백발이셔서 레드 후 레드+브라운 5:5로 두 번 진행하시면 손은 많이 가지만",
+      "그만큼 색도 안정되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D11",
+   "title": "풀색 = 염색 실패 단정",
+   "question": "풀색(녹색 기)이 보이면 염색 실패라고 단정해도 되는가?",
+   "conflict_summary": "가이드에 풀색 판정 기준이 없습니다.",
+   "issue_ids": [
+    "I26"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:current-color"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:sequence:dark_brown"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4971205296",
+     "issue_ids": [
+      "I26"
+     ],
+     "quotes": [
+      "풀색이 되셨다면 염색이 제대로 안되신 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D12",
+   "title": "레드 → 브라운 간격 '당일 또는 다음날'",
+   "question": "작성 주체가 확인되지 않은 '당일 또는 다음날' 간격 안내를 채택해도 되는가?",
+   "conflict_summary": "가이드·OPC는 순차 각 단계 2시간만 정하고 단계 간 간격은 정하지 않습니다. 해당 답글 대부분은 작성 주체 미확인 템플릿입니다.",
+   "issue_ids": [
+    "I06"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HAIR_PACK",
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:sequence:dark_brown"
+    },
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:standard:sequential"
+    }
+   ],
+   "notes": [
+    "채택하더라도 작성 주체 미확인 답글을 사람 답글로 확정하지 않습니다."
+   ],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4875000316",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4875186019",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4878637767",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4880577310",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4889445960",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날(더 추천)"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4901942911",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4919975043",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고",
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4936108100",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "염색력이 너무 연하시다면 레드 후 다음날 브라운 으로 염색하셔야 고객님에게 맞는 염색법이실 수 있을 거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4939572610",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4941646931",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4949074545",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4953554957",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954763322",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4954932286",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957629347",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4957856864",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4959518477",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4961470545",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4965291480",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966144369",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966357372",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4966942936",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967030830",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4967799067",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4968335609",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "혼합하여 염색하셨는데 연하셨다면 레드 2시간이상 후 다음날 브라운 2시간이상 방법으로 염색방법을 변경하셔야 되실 거 같기도 합니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970278033",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4970872515",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4976215417",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4977335281",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4978500412",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4979729958",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "레드 후 최대 48시간 안에 해주셔야 브라운이 본연의 색을 더 잘 냅니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980764766",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980934254",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4980934769",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4981347511",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982030107",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982567696",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4982578893",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986068517",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986250098",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986760687",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986763445",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4986814012",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987129888",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987253398",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4987797390",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988281501",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HAIR_PACK",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988321656",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4988572339",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4991796665",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4993376790",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4993414833",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4994101620",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098100",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:4997098722",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5000282456",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "레드 2시간 후 다음날 브라운 2시간 방법으로 염색하셔야 되시는 것이 고객님과 맞는 염색방법이실 수도 있을거 같습니다."
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5014812052",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5020456641",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5020644421",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5043802965",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5051359992",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "\"진한갈색\"으로 염색되시길 원하신다면 ★레드 2시간 후에 당일 또는 다음날 브라운 2시간 염색하시면 되고"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5060897991",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    },
+    {
+     "knowledge_id": "rrk:naver_review:5062970462",
+     "issue_ids": [
+      "I06"
+     ],
+     "quotes": [
+      "당일 또는 다음날"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "UNKNOWN",
+     "condition_key": "as_stated"
+    }
+   ]
+  },
+  {
+   "question_id": "D13",
+   "title": "브라운 숙성 시 염색 안 됨",
+   "question": "'브라운은 숙성하면 염색이 안 된다'고 안내해도 되는가?",
+   "conflict_summary": "가이드에 숙성 기준이 없습니다. 안전 재검색에서 새로 발견된 문장입니다.",
+   "issue_ids": [
+    "N13"
+   ],
+   "guide_conflict": false,
+   "products": [
+    "HENNA"
+   ],
+   "conditions": [
+    {
+     "key": "as_stated",
+     "label": "답글 표현 그대로"
+    }
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:step:04"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:tip:paste"
+    }
+   ],
+   "notes": [],
+   "linked_replies": [
+    {
+     "knowledge_id": "rrk:naver_review:4969320313",
+     "issue_ids": [
+      "N13"
+     ],
+     "quotes": [
+      "브라운 제품은 숙성을 하시면 염색이 안되기에"
+     ],
+     "product_group": "HENNA",
+     "authorship_at_audit": "LIKELY_HUMAN",
+     "condition_key": "as_stated"
+    }
+   ]
+  }
+ ],
+ "auto_rules": [
+  {
+   "rule_id": "R1",
+   "title": "불편감 시 중단 조건 축소 금지",
+   "issue_ids": [
+    "I01"
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:caution:sensitive"
+    },
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:faq:sensitive-skin"
+    }
+   ],
+   "rule": "피부 불편감 안내는 공식 문구를 그대로 씁니다. '일시적이지 않으면/알러지라고 판단되면/지속되면' 조건을 붙인 과거 문장은 재사용하지 않습니다.",
+   "reply_count": 37
+  },
+  {
+   "rule_id": "R2",
+   "title": "헹굼 기준 완화 금지",
+   "issue_ids": [
+    "I20"
+   ],
+   "guide_refs": [
+    {
+     "source_id": "sujata_usage_guide_html",
+     "entry_key": "html:step:06"
+    }
+   ],
+   "rule": "'반죽이 남지 않도록 꼼꼼하게 헹궈주세요'를 기준으로 하고, '너무 깨끗하게 씻지 않아도/적당하게' 문장은 재사용하지 않습니다.",
+   "reply_count": 1
+  },
+  {
+   "rule_id": "R3",
+   "title": "시간 연장은 염색 부족 조건과 함께만",
+   "issue_ids": [
+    "I21"
+   ],
+   "guide_refs": [
+    {
+     "source_id": "operator_confirmed_usage_guidance",
+     "entry_key": "opc:adjust:insufficient"
+    }
+   ],
+   "rule": "2~3시간 연장은 '염색이 잘되지 않는 경우' 조건과 함께 쓸 때만 사용합니다.",
+   "reply_count": 4
+  }
+ ]
+}

@@ -30,6 +30,7 @@ import {
 import { ContextBar } from '../../shared/ui/ContextBar';
 import { serializeQueryParams } from '../../shared/url/query';
 import { buildErp2ClientIpHeaders, discoverNasHostCdpIp } from '../layout/hostCdpClient';
+import { ReviewKnowledgeValidationPanel } from './ReviewKnowledgeValidationPanel';
 
 type TrackedKeywordRow = {
 	id: number;
@@ -299,8 +300,11 @@ type ReviewReplyDraftBulkSubmitJobResponse = {
 };
 
 const REPLY_MODEL_OPTIONS = [
-	{ value: 'gpt-5.2', label: 'gpt-5.2', note: '권장 기본값, 최신 토큰 규칙 자동 적용' },
-	{ value: 'gpt-4o-mini', label: 'gpt-4o-mini', note: '비용이 낮고 빠른 생성용' },
+	{ value: 'gpt-4o-mini', label: 'gpt-4o-mini', note: '권장 기본값, 비용이 낮고 빠른 생성용' },
+	{ value: 'gpt-4o', label: 'gpt-4o', note: '품질과 속도의 균형이 필요한 답글 생성용' },
+	{ value: 'gpt-5.4-mini', label: 'gpt-5.4-mini', note: 'GPT-5 계열의 경량 모델' },
+	{ value: 'gpt-5.4', label: 'gpt-5.4', note: '더 정교한 문맥 반영이 필요할 때 사용' },
+	{ value: 'gpt-5.5', label: 'gpt-5.5', note: '현재 계정에서 조회된 고성능 GPT 모델' },
 ];
 
 const STYLE_CONTROL_IDS = [
@@ -435,13 +439,14 @@ function formatBulkStageActionMessage(data: ReviewReplyBulkStageJobResponse): st
 
 export function ReviewAnalysisView({ apiBaseUrl, onNavigate = navigateToReviewAnalysisPath }: Props): JSX.Element {
 	const auth = useMaybeAuth();
+	const [pageTab, setPageTab] = useState<'workbench' | 'knowledge'>('workbench');
 	const initialDateRange = useMemo(() => loadStoredReviewAnalysisDateRange(typeof window === 'undefined' ? undefined : window.localStorage), []);
 	const initialQuery = useMemo(() => readInitialReviewManagementNavigationQuery(window.location.search, initialDateRange), [initialDateRange]);
 	const [trackedProducts, setTrackedProducts] = useState<TrackedProductOption[]>([]);
 	const [trackedLoading, setTrackedLoading] = useState<boolean>(true);
 	const [trackedError, setTrackedError] = useState<string | null>(null);
 	const [selectedProductUrl, setSelectedProductUrl] = useState<string>(initialQuery.productUrl);
-	const [selectedModel, setSelectedModel] = useState<string>('gpt-5.2');
+	const [selectedModel, setSelectedModel] = useState<string>('gpt-4o-mini');
 	const [styleLevel, setStyleLevel] = useState<number>(3);
 	const [customControls, setCustomControls] = useState<Record<string, number>>({
 		greeting_density: 3,
@@ -1788,6 +1793,30 @@ export function ReviewAnalysisView({ apiBaseUrl, onNavigate = navigateToReviewAn
 
 	return (
 		<div className="review-analysis-page">
+			<div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+				<button
+					type="button"
+					className={`submenu-tab${pageTab === 'workbench' ? ' submenu-tab-active' : ''}`}
+					onClick={() => setPageTab('workbench')}
+				>
+					리뷰 작업
+				</button>
+				<button
+					type="button"
+					className={`submenu-tab${pageTab === 'knowledge' ? ' submenu-tab-active' : ''}`}
+					onClick={() => setPageTab('knowledge')}
+				>
+					Knowledge 검증
+				</button>
+			</div>
+			{pageTab === 'knowledge' ? (
+				<ReviewKnowledgeValidationPanel
+					apiBaseUrl={apiBaseUrl}
+					roleProtectedGet={roleProtectedGet}
+					roleProtectedPost={roleProtectedPost}
+				/>
+			) : null}
+			<div style={{ display: pageTab === 'workbench' ? 'contents' : 'none' }}>
 			<section className="card">
 				<div className="review-dashboard-header">
 					<div>
@@ -2457,7 +2486,7 @@ export function ReviewAnalysisView({ apiBaseUrl, onNavigate = navigateToReviewAn
 					</div>
 				)}
 			</section>
-
+			</div>
 		</div>
 	);
 }

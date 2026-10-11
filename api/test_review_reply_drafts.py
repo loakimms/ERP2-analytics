@@ -24,6 +24,17 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
     def setUp(self) -> None:
         init_db()
         self.client = TestClient(main.app)
+        seller_center_states = iter(
+            [{"state": "not_replied", "reason": "test_precheck"}]
+        )
+        seller_center_patch = patch(
+            "main._seller_center_review_comment_state",
+            side_effect=lambda *args, **kwargs: next(
+                seller_center_states, {"state": "replied", "reason": "test_post_verify"}
+            ),
+        )
+        seller_center_patch.start()
+        self.addCleanup(seller_center_patch.stop)
         with SessionLocal() as db:
             db.query(AnalyticsJobRun).delete(synchronize_session=False)
             db.query(ReviewReplyFeedbackKnowledge).delete(synchronize_session=False)
@@ -114,6 +125,16 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
                     keyword=keyword,
                 )
             )
+            db.commit()
+
+    def _mark_auto_post_ready(self, *review_keys: str) -> None:
+        with SessionLocal() as db:
+            for review_key in review_keys:
+                row = db.query(NaverReviewRaw).filter(NaverReviewRaw.review_key == review_key).one()
+                row.review_written_at = main._today_kst() - timedelta(days=1)
+                for draft in db.query(ReviewReplyDraft).filter(ReviewReplyDraft.review_key == review_key).all():
+                    draft.prompt_version = main.REVIEW_REPLY_PROMPT_VERSION
+                    draft.generated_at = datetime.now(timezone.utc)
             db.commit()
 
     def _set_review_reply_flags(
@@ -394,7 +415,7 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
         self.assertEqual((body.get("source_counts") or {}).get("generated"), None)
         self.assertIn("positive", body.get("review_type_counts") or {})
 
-    def test_generate_review_reply_draft_uses_style_profile_and_v2_prompt(self) -> None:
+    def test_generate_review_reply_draft_uses_style_profile_and_v3_prompt(self) -> None:
         history_key = self._insert_review(
             review_key="naver_review:style-history",
             product_url="https://smartstore.naver.com/testmall/products/7101",
@@ -3199,6 +3220,7 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
 
         with patch("main.require_role_level", return_value=["ops_admin"]) as role_mock, patch(
             "main._check_review_reply_commerce_api_ready",
+        self._mark_auto_post_ready(review_key)
             return_value={"ready": True, "reason": None},
         ), patch(
             "main._check_review_reply_bulk_browser_ready",
@@ -3241,6 +3263,10 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
 
         with patch("main.require_role_level", return_value=["ops_admin"]), patch(
             "main._check_review_reply_commerce_api_ready",
+        self._mark_auto_post_ready(review_key)
+
+        with patch("main.require_role_level", return_value=["ops_admin"]), patch(
+            "main._check_review_reply_commerce_api_ready",
             return_value={"ready": False, "reason": "commerce_ip_not_allowed"},
         ), patch(
             "main._check_review_reply_bulk_browser_ready",
@@ -3268,9 +3294,7 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
             status="approved",
             draft_text="자동 게시 중지 승인 초안",
         )
-
-        with patch("main.require_role_level", return_value=["ops_admin"]) as role_mock, patch(
-            "main._check_review_reply_commerce_api_ready",
+        self._mark_auto_post_ready(review_key)
             return_value={"ready": True, "reason": None},
         ), patch(
             "main._check_review_reply_bulk_browser_ready",
@@ -3326,7 +3350,7 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
     def test_scan_review_reply_bulk_submit_targets_includes_reply_exists_flag_without_reply_text_for_auto_progress(self) -> None:
         reply_exists_key = self._insert_review(
             review_key="naver_review:bulk-submit-flag-only",
-            product_url="https://smartstore.naver.com/testmall/products/5111",
+    def test_scan_review_reply_bulk_submit_targets_excludes_reply_exists_flag_without_reply_text(self) -> None:
             review_text="답글여부만 있는 리뷰",
         )
         eligible_key = self._insert_review(
@@ -3354,6 +3378,10 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
 
         with SessionLocal() as db, patch(
             "main._check_review_reply_commerce_api_ready",
+        self._mark_auto_post_ready(reply_exists_key, eligible_key)
+
+        with SessionLocal() as db, patch(
+            "main._check_review_reply_commerce_api_ready",
             return_value={"ready": True, "reason": None},
         ), patch(
             "main._check_review_reply_bulk_browser_ready",
@@ -3362,8 +3390,9 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
             snapshot = main._scan_review_reply_bulk_submit_targets(db)
 
         draft_ids = [str(getattr(row, "draft_id", "") or "") for row in list(snapshot.get("eligible_draft_rows") or [])]
-        self.assertEqual(snapshot["eligible_count"], 2)
-        self.assertEqual(set(draft_ids), {"draft-bulk-submit-flag-only", "draft-bulk-submit-eligible"})
+        self.assertEqual(snapshot["eligible_count"], 1)
+        self.assertEqual(draft_ids, ["draft-bulk-submit-eligible"])
+        self.assertEqual(snapshot["blocker_counts"]["review_already_replied"], 1)
 
     def test_scan_review_reply_bulk_submit_targets_excludes_terminal_unavailable_reviews(self) -> None:
         deleted_key = self._insert_review(
@@ -3401,9 +3430,7 @@ class ReviewReplyDraftApiTest(unittest.TestCase):
             status="approved",
             draft_text="정상 초안",
         )
-
-        with SessionLocal() as db, patch(
-            "main._check_review_reply_commerce_api_ready",
+        self._mark_auto_post_ready(deleted_key, blocked_key, eligible_key)
             return_value={"ready": True, "reason": None},
         ), patch(
             "main._check_review_reply_bulk_browser_ready",
