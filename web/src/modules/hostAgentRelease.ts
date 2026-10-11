@@ -1,2 +1,25 @@
-export const REQUIRED_HOST_AGENT_VERSION = '2026.06.29-token-safe-update';
-export const REQUIRED_HOST_AGENT_MANAGE_NO = '20260629-1403';
+export const REQUIRED_HOST_AGENT_VERSION = '2026.10.08-review-reply-extraction-guard';
+export const REQUIRED_HOST_AGENT_MANAGE_NO = '20261008-1720';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

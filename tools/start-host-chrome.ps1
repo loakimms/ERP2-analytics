@@ -60,6 +60,11 @@ function Set-HostChromeDownloadPreferences {
 		[string]$ProfileDirName,
 		[string]$DownloadDir
 	)
+	function Test-PrefsKey($Map, [string]$Key) {
+		if ($null -eq $Map) { return $false }
+		if ($Map -is [System.Collections.IDictionary]) { return $Map.Contains($Key) }
+		try { return $Map.ContainsKey($Key) } catch { return $false }
+	}
 	if ([string]::IsNullOrWhiteSpace($RootDir) -or [string]::IsNullOrWhiteSpace($ProfileDirName) -or [string]::IsNullOrWhiteSpace($DownloadDir)) { return }
 	New-Item -ItemType Directory -Force -Path $DownloadDir | Out-Null
 	$profilePath = Join-Path $RootDir $ProfileDirName
@@ -76,31 +81,31 @@ function Set-HostChromeDownloadPreferences {
 			$prefs = [ordered]@{}
 		}
 	}
-	if (-not $prefs.ContainsKey("download") -or -not ($prefs["download"] -is [hashtable])) { $prefs["download"] = @{} }
+	if (-not (Test-PrefsKey $prefs "download") -or -not ($prefs["download"] -is [hashtable])) { $prefs["download"] = @{} }
 	$prefs["download"]["default_directory"] = $DownloadDir
 	$prefs["download"]["directory_upgrade"] = $true
 	$prefs["download"]["prompt_for_download"] = $false
 	$prefs["download"]["restrictions"] = 0
-	if (-not $prefs.ContainsKey("account_values") -or -not ($prefs["account_values"] -is [hashtable])) { $prefs["account_values"] = @{} }
-	if (-not $prefs["account_values"].ContainsKey("download") -or -not ($prefs["account_values"]["download"] -is [hashtable])) { $prefs["account_values"]["download"] = @{} }
+	if (-not (Test-PrefsKey $prefs "account_values") -or -not ($prefs["account_values"] -is [hashtable])) { $prefs["account_values"] = @{} }
+	if (-not (Test-PrefsKey $prefs["account_values"] "download") -or -not ($prefs["account_values"]["download"] -is [hashtable])) { $prefs["account_values"]["download"] = @{} }
 	$prefs["account_values"]["download"]["default_directory"] = $DownloadDir
 	$prefs["account_values"]["download"]["prompt_for_download"] = $false
-	if (-not $prefs["account_values"].ContainsKey("browser") -or -not ($prefs["account_values"]["browser"] -is [hashtable])) { $prefs["account_values"]["browser"] = @{} }
-	if (-not $prefs["account_values"]["browser"].ContainsKey("download") -or -not ($prefs["account_values"]["browser"]["download"] -is [hashtable])) { $prefs["account_values"]["browser"]["download"] = @{} }
+	if (-not (Test-PrefsKey $prefs["account_values"] "browser") -or -not ($prefs["account_values"]["browser"] -is [hashtable])) { $prefs["account_values"]["browser"] = @{} }
+	if (-not (Test-PrefsKey $prefs["account_values"]["browser"] "download") -or -not ($prefs["account_values"]["browser"]["download"] -is [hashtable])) { $prefs["account_values"]["browser"]["download"] = @{} }
 	$prefs["account_values"]["browser"]["download"]["default_directory"] = $DownloadDir
 	$prefs["account_values"]["browser"]["download"]["prompt_for_download"] = $false
-	if (-not $prefs.ContainsKey("browser") -or -not ($prefs["browser"] -is [hashtable])) { $prefs["browser"] = @{} }
-	if (-not $prefs["browser"].ContainsKey("download") -or -not ($prefs["browser"]["download"] -is [hashtable])) { $prefs["browser"]["download"] = @{} }
+	if (-not (Test-PrefsKey $prefs "browser") -or -not ($prefs["browser"] -is [hashtable])) { $prefs["browser"] = @{} }
+	if (-not (Test-PrefsKey $prefs["browser"] "download") -or -not ($prefs["browser"]["download"] -is [hashtable])) { $prefs["browser"]["download"] = @{} }
 	$prefs["browser"]["download"]["default_directory"] = $DownloadDir
 	$prefs["browser"]["download"]["prompt_for_download"] = $false
-	if (-not $prefs.ContainsKey("savefile") -or -not ($prefs["savefile"] -is [hashtable])) { $prefs["savefile"] = @{} }
+	if (-not (Test-PrefsKey $prefs "savefile") -or -not ($prefs["savefile"] -is [hashtable])) { $prefs["savefile"] = @{} }
 	$prefs["savefile"]["default_directory"] = $DownloadDir
-	if (-not $prefs.ContainsKey("profile") -or -not ($prefs["profile"] -is [hashtable])) { $prefs["profile"] = @{} }
-	if (-not $prefs["profile"].ContainsKey("default_content_setting_values") -or -not ($prefs["profile"]["default_content_setting_values"] -is [hashtable])) {
+	if (-not (Test-PrefsKey $prefs "profile") -or -not ($prefs["profile"] -is [hashtable])) { $prefs["profile"] = @{} }
+	if (-not (Test-PrefsKey $prefs["profile"] "default_content_setting_values") -or -not ($prefs["profile"]["default_content_setting_values"] -is [hashtable])) {
 		$prefs["profile"]["default_content_setting_values"] = @{}
 	}
 	$prefs["profile"]["default_content_setting_values"]["automatic_downloads"] = 1
-	if (-not $prefs.ContainsKey("safebrowsing") -or -not ($prefs["safebrowsing"] -is [hashtable])) { $prefs["safebrowsing"] = @{} }
+	if (-not (Test-PrefsKey $prefs "safebrowsing") -or -not ($prefs["safebrowsing"] -is [hashtable])) { $prefs["safebrowsing"] = @{} }
 	$prefs["safebrowsing"]["enabled"] = $true
 	$prefs | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $prefPath -Encoding UTF8
 }
@@ -119,16 +124,16 @@ $downloadDir = Join-Path ([Environment]::GetFolderPath("UserProfile")) "Download
 Set-HostChromeDownloadPreferences -RootDir $UserDataDir -ProfileDirName $ProfileDir -DownloadDir $downloadDir
 
 # 중요:
-# - 컨테이너(analytics-api)가 host.docker.internal:<port> 로 접근해야 해서
-#   remote-debugging-address=0.0.0.0 로 바인딩해야 연결이 안정적입니다.
-# - 보안상 로컬 PC 방화벽(사설 네트워크)에서만 허용되도록 주의하세요.
+# - Host Agent가 로컬 PC에서 127.0.0.1:<port> 로 CDP에 접근한다.
+# - 0.0.0.0 바인딩은 Windows portproxy/NAS 노출 설정과 충돌해 Chrome 창만 뜨고
+#   DevTools HTTP 포트가 열리지 않는 증상을 만들 수 있으므로 로컬 전용으로 제한한다.
 $chromePath = (Resolve-Path -LiteralPath $chrome).ProviderPath
 
 # 공백/특수문자 경로 안전 처리: 값이 들어가는 인자는 따옴표로 감싼다.
 $chromeArgs = @(
 	"--new-window",
 	"--remote-debugging-port=$Port",
-	"--remote-debugging-address=0.0.0.0",
+	"--remote-debugging-address=127.0.0.1",
 	# Chrome 111+ 부터 DevTools WebSocket 연결에 Origin 검증이 들어가
 	# Docker 컨테이너(원격)에서 connectOverCDP 시 403/끊김이 발생할 수 있다.
 	# 개인용 로컬 스택에서만 사용한다는 전제하에 허용(방화벽은 사설 네트워크로 제한 권장)

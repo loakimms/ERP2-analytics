@@ -30,10 +30,20 @@ const uiManageNo = extract('REQUIRED_HOST_AGENT_MANAGE_NO', releaseText, /REQUIR
 const installerText = read('web/public/nas/Install-Analytics-HostAgent.ps1');
 const bundledVersion = extract('NAS installer $bundledAgentVersion', installerText, /^\$bundledAgentVersion\s*=\s*"([^"]+)"/m);
 const bundledManageNo = extract('NAS installer $bundledAgentManageNo', installerText, /^\$bundledAgentManageNo\s*=\s*"([^"]+)"/m);
+const embeddedAgentBase64 = extract(
+	'NAS installer embedded host-agent.ps1',
+	installerText,
+	/\$agentScript\s*=\s*\[Text\.Encoding\]::UTF8\.GetString\(\[Convert\]::FromBase64String\(@'\r?\n([A-Za-z0-9+/=\r\n]+)\r?\n'@\)\)/,
+);
+const embeddedAgentText = Buffer.from(embeddedAgentBase64.replace(/\s+/g, ''), 'base64').toString('utf8');
+const embeddedAgentVersion = extract('NAS installer embedded $AgentVersion', embeddedAgentText, /^\$AgentVersion\s*=\s*"([^"]+)"/m);
+const embeddedAgentManageNo = extract('NAS installer embedded $AgentManageNo', embeddedAgentText, /^\$AgentManageNo\s*=\s*"([^"]+)"/m);
 
 const checks = [
 	['NAS installer bundled version', bundledVersion, uiVersion],
 	['NAS installer bundled manageNo', bundledManageNo, uiManageNo],
+	['NAS installer embedded version', embeddedAgentVersion, uiVersion],
+	['NAS installer embedded manageNo', embeddedAgentManageNo, uiManageNo],
 ];
 
 let agentVersion = bundledVersion;
@@ -47,6 +57,18 @@ try {
 		['UI required manageNo', uiManageNo, agentManageNo],
 		['NAS installer bundled version vs agent', bundledVersion, agentVersion],
 		['NAS installer bundled manageNo vs agent', bundledManageNo, agentManageNo],
+		['NAS installer embedded version vs agent', embeddedAgentVersion, agentVersion],
+		['NAS installer embedded manageNo vs agent', embeddedAgentManageNo, agentManageNo],
+		[
+			'NAS installer embedded GFA retry code',
+			embeddedAgentText.includes('gfa_performance_transient_retry') ? 'present' : 'missing',
+			'present',
+		],
+		[
+			'NAS installer embedded ad rank diagnosis code',
+			embeddedAgentText.includes('naver_ads_exposure_status_cdp') ? 'present' : 'missing',
+			'present',
+		],
 	);
 } catch (e) {
 	console.warn(`[verify-host-agent-release] tools/host-agent.ps1 unavailable; checked UI and bundled NAS installer only. ${e.message}`);
