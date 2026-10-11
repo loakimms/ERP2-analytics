@@ -1,0 +1,1097 @@
+{
+  "version": "runtime_category_knowledge_index_v1",
+  "generatedAt": "2026-09-21T08:31:37.527688+00:00",
+  "llmCalls": 0,
+  "externalNetwork": 0,
+  "silentAutoSync": false,
+  "henna": {
+    "packId": "HENNA_VERIFIED_CATEGORY_KNOWLEDGE_PACK_V1",
+    "statements": [
+      {
+        "knowledgeId": "CK-HENNA-8099abb9",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "Lawsonia inermis",
+        "statement": "Lawsonia inermis (Lythraceae) is the henna plant; its leaves are the botanical source of traditional henna dye material.",
+        "sourceRefs": [
+          "RS-HENNA-CHAHOMSRI-2017",
+          "RS-HENNA-JAMES-1986"
+        ],
+        "sourceLocation": {
+          "section": "Introduction",
+          "paragraph": "Lawsonia inermis L., commonly referred to henna, belongs to the Lythraceae family"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "CATEGORY_CONTEXT"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Botanical identity is not a Sujata product specification."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Lawsonia inermis (Lythraceae) is the henna plant; its leaves are the botanical source of traditional henna dye material.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "교육 문맥에서 헤나가 Lawsonia inermis 잎에서 온다는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타만의 품종이다",
+            "모든 헤나 제품이 동일하다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-60868ffe",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "lawsone identity",
+        "statement": "Lawsone is 2-hydroxy-1,4-naphthoquinone and is identified as the principal coloring constituent associated with henna leaves.",
+        "sourceRefs": [
+          "RS-HENNA-JAMES-1986",
+          "RS-HENNA-HEINRICH-2025",
+          "RS-HENNA-CHAHOMSRI-2017"
+        ],
+        "sourceLocation": {
+          "page": 360,
+          "section": "INTRODUCTION",
+          "paragraph": "Lawsone, 2-hydroxy-1,4-naphthoquinone (I) is the principal active constituent."
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "EXPLANATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Does not state Sujata powder lawsone percentage."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Lawsone is 2-hydroxy-1,4-naphthoquinone and is identified as the principal coloring constituent associated with henna leaves.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "헤나 착색과 관련해 연구되는 주요 성분이 lawsone(2-hydroxy-1,4-naphthoquinone)이라는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 헤나는 특정 % lawsone을 함유한다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-a3ffa872",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "henna composition",
+        "statement": "Lawsone content measured in Lawsonia leaf or henna powder is sample- and method-dependent; published examples include about 0.76-0.87 g/100 g dried leaf in one Thai collection and a henna-powder range of 0.004%-0.608% in an earlier HPTLC study.",
+        "sourceRefs": [
+          "RS-HENNA-CHAHOMSRI-2017",
+          "RS-HENNA-ELSHAER-2007"
+        ],
+        "sourceLocation": {
+          "section": "Results / Discussion",
+          "figure": "Figures 6-7",
+          "paragraph": "0.76 ± 0.05 and 0.87 ± 0.11 g/100 g; cited range 0.004% to 0.608%"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "EXPECTATION_SETTING"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "These values are not Sujata lot results and cannot be used as a product assay."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Lawsone content measured in Lawsonia leaf or henna powder is sample- and method-dependent; published examples include about 0.76-0.87 g/100 g dried leaf in one Thai collection and a henna-powder range of 0.004%-0.608% in an earlier HPTLC study.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "헤나 원료의 lawsone 함량은 산지와 분석법에 따라 달라질 수 있다는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 제품 lawsone 함량이 이 수치다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-0f8f5b02",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "henna composition precursors",
+        "statement": "In henna leaves, lawsone is largely present as glycosylated reduced precursors (hennosides); the free dye forms after hydrolysis and oxidation in aqueous medium rather than as a fully developed dye in the intact leaf.",
+        "sourceRefs": [
+          "RS-HENNA-HEINRICH-2025"
+        ],
+        "sourceLocation": {
+          "section": "Introduction",
+          "paragraph": "Lawsone is not primarily present as a fully developed dye... hennoside A, B, and C"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "HOW_TO_CONTEXT"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Explains category chemistry of paste preparation; does not prescribe Sujata usage time."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "In henna leaves, lawsone is largely present as glycosylated reduced precursors (hennosides); the free dye forms after hydrolysis and oxidation in aqueous medium rather than as a fully developed dye in the intact leaf.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "건조 잎에서 바로 완성된 염료로 존재하지 않고, 물과 만난 뒤 전구체에서 lawsone이 형성된다는 교육 설명이 가능하다.",
+          "prohibitedExtensions": [
+            "수자타만의 배합 비율이다",
+            "2시간 방치가 모든 헤나의 과학 표준이다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-9b37c233",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "coloring mechanism",
+        "statement": "Experimental work shows lawsone uptake by keratin fibers is time- and temperature-dependent and consistent with diffusion, with color substantivity increasing after dyeing rather than behaving only as loosely adsorbed surface color.",
+        "sourceRefs": [
+          "RS-HENNA-FORESTIER-1982",
+          "RS-HENNA-JAMES-1986"
+        ],
+        "sourceLocation": {
+          "page": 359,
+          "section": "Synopsis / INTRODUCTION",
+          "paragraph": "slow reaction occurs on the wool... increasing the strength of the interaction"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "EXPECTATION_SETTING"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "James used wool felt as a hair model.",
+          "Does not prove clinically longer-lasting color or less damage than oxidative dye."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Experimental work shows lawsone uptake by keratin fibers is time- and temperature-dependent and consistent with diffusion, with color substantivity increasing after dyeing rather than behaving only as loosely adsorbed surface color.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "헤나 착색은 식물 유래 naphthoquinone이 케라틴 섬유로 들어가 결합하는 과정으로 연구된다는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "임상적으로 더 오래 지속된다",
+            "모발 손상을 줄인다",
+            "건강한 모발을 만든다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-ed66e252",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "hair keratin interaction",
+        "statement": "Proposed explanations for lawsone-keratin interaction include pH-dependent association with keratin and hypotheses of addition at the lawsone C-3 carbon involving thiol or amine groups; a single fully characterized consumer-hair adduct is not established as a universal fact.",
+        "sourceRefs": [
+          "RS-HENNA-JAMES-1986",
+          "RS-HENNA-FORESTIER-1982"
+        ],
+        "sourceLocation": {
+          "page": 359,
+          "section": "Synopsis",
+          "paragraph": "new compounds which are more substantive than lawsone or changing the mode of attachment"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Mechanism hypotheses must not be converted into clinical hair-health claims.",
+          "Later secondary texts mention Michael addition; this pack treats adduct identity as not fully settled."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Proposed explanations for lawsone-keratin interaction include pH-dependent association with keratin and hypotheses of addition at the lawsone C-3 carbon involving thiol or amine groups; a single fully characterized consumer-hair adduct is not established as a universal fact.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "lawsone과 케라틴의 상호작용이 연구되어 왔다는 수준의 교육 설명이 가능하다.",
+          "prohibitedExtensions": [
+            "결합 방식이 완전히 규명되었다",
+            "그래서 화학 염모보다 안전하다"
+          ]
+        },
+        "knowledgeUsePolicy": "QUALIFIED_EDUCATION_ONLY",
+        "qualificationRequired": true,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-10f48db5",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "plant dye vs oxidative dye",
+        "statement": "Permanent oxidative hair dyeing generates colored molecules inside the fiber from small aromatic-amine precursors such as p-phenylenediamine and couplers after peroxide oxidation under alkaline conditions; henna coloring is not this in-fiber oxidative coupling process.",
+        "sourceRefs": [
+          "RS-HENNA-LEWIS-2013",
+          "RS-HENNA-JAMES-1986"
+        ],
+        "sourceLocation": {
+          "section": "oxidative dye formation / Scheme 2",
+          "paragraph": "The precursor (PPD) is oxidized by peroxide to give the QDI intermediate... reacts rapidly with the coupler(s)"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "DIFFERENTIATION_CONTEXT"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Category mechanism difference is not a safety or damage ranking.",
+          "Not a comparison of Sujata versus any named oxidative brand."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Permanent oxidative hair dyeing generates colored molecules inside the fiber from small aromatic-amine precursors such as p-phenylenediamine and couplers after peroxide oxidation under alkaline conditions; henna coloring is not this in-fiber oxidative coupling process.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "산화 염모는 과산화수소와 방향족 아민 전구체로 섬유 안에서 색을 만들고, 헤나는 식물 naphthoquinone 착색이라는 방식 차이를 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "헤나가 더 안전하다",
+            "헤나가 모발에 무조건 덜 손상된다",
+            "헤나가 화학 염모보다 우수하다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-d9cd718a",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "whole leaf vs isolated lawsone",
+        "statement": "Whole henna leaf material does not behave identically to isolated lawsone on keratin substrates.",
+        "sourceRefs": [
+          "RS-HENNA-JAMES-1986"
+        ],
+        "sourceLocation": {
+          "page": 360,
+          "section": "INTRODUCTION",
+          "paragraph": "the whole leaf is known to behave differently towards the hair from lawsone alone"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Prevents treating a purified-lawsone dyeing study as identical to a commercial leaf-powder paste."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Whole henna leaf material does not behave identically to isolated lawsone on keratin substrates.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "잎 분말 전체와 정제 lawsone의 염색 거동이 완전히 같지는 않다는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 분말이 실험실 정제 lawsone과 동일하다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-4eb2f7ed",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "marketed henna is not automatically pure Lawsonia",
+        "statement": "Products sold as henna can contain added p-phenylenediamine; in one European market sample about 36% of tested henna products contained PPD and only about 60% were judged good-quality natural products with at least 0.5% lawsone.",
+        "sourceRefs": [
+          "RS-HENNA-PASTUSZAK-2025"
+        ],
+        "sourceLocation": {
+          "section": "Results/conclusions",
+          "paragraph": "only about 60% ... not < 0.5% lawsone; up to 36% contained PPD"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EXPECTATION_SETTING",
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Market survey, not Sujata product testing.",
+          "Cannot be used to claim Sujata is PPD-free or PPD-containing."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Products sold as henna can contain added p-phenylenediamine; in one European market sample about 36% of tested henna products contained PPD and only about 60% were judged good-quality natural products with at least 0.5% lawsone.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "시중 '헤나' 제품이 모두 동일 원료 조성은 아니며, 일부 제품에는 산화 염모 성분인 PPD가 검출된 연구가 있다는 점을 범주 교육으로 말할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 제품 PPD 함량",
+            "모든 천연 헤나는 알레르기가 없다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-HENNA-fcdd1d2e",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "regulatory assessment scope",
+        "statement": "The EU SCCS assessed specific henna powder batches as a hair dye under stated use, including a lawsone content context of up to 1.4% for the assessed material; other extracts with different composition and body-paint use were not covered.",
+        "sourceRefs": [
+          "RS-HENNA-SCCS-2013",
+          "RS-HENNA-HEINRICH-2025"
+        ],
+        "sourceLocation": {
+          "section": "Conclusion of the opinion",
+          "paragraph": "batches 1271 and 830.72; 100 g Henna powder mixed with 300 ml boiling water"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Not a Sujata safety certificate or a permission to claim medical safety."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "The EU SCCS assessed specific henna powder batches as a hair dye under stated use, including a lawsone content context of up to 1.4% for the assessed material; other extracts with different composition and body-paint use were not covered.",
+        "marketingInterpretation": {
+          "allowed": false,
+          "example": null,
+          "prohibitedExtensions": [
+            "SCCS 의견이 수자타 제품 승인이다",
+            "헤나는 무조건 안전하다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      }
+    ],
+    "researchRequests": [
+      {
+        "requestId": "RR-henna-lawsonia",
+        "topic": "Lawsonia inermis",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-HENNA-8099abb9"
+        ],
+        "notes": "Botanical identity supported.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-henna-lawsone",
+        "topic": "lawsone",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-HENNA-60868ffe"
+        ],
+        "notes": "Chemical identity supported.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-henna-composition",
+        "topic": "henna composition",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-HENNA-a3ffa872",
+          "CK-HENNA-0f8f5b02"
+        ],
+        "notes": "Content is variable; precursors supported.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-henna-mechanism",
+        "topic": "henna coloring / staining mechanism",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-HENNA-9b37c233"
+        ],
+        "notes": "Diffusion + increasing substantivity supported; adduct identity partial.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-henna-keratin",
+        "topic": "hair keratin interaction",
+        "domain": "CATEGORY",
+        "status": "PARTIALLY_SUPPORTED",
+        "coverageStatus": "PARTIALLY_RESEARCHED",
+        "knowledgeRefs": [
+          "CK-HENNA-ed66e252"
+        ],
+        "notes": "Interaction proposed; unique adduct not established.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-henna-oxidative",
+        "topic": "plant dye vs oxidative hair dye",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-HENNA-10f48db5"
+        ],
+        "notes": "Mechanism difference supported; safety ranking forbidden.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      }
+    ],
+    "questionCoverage": {
+      "Q1_principal_colorant": "SUPPORTED",
+      "Q2_what_is_lawsone": "SUPPORTED",
+      "Q3_coloring_mechanism": "SUPPORTED",
+      "Q4_keratin_interaction": "PARTIALLY_SUPPORTED",
+      "Q5_vs_oxidative_dye": "SUPPORTED",
+      "Q6_composition_groups": "SUPPORTED",
+      "Q7_science_vs_marketing": "SUPPORTED",
+      "Q8_not_applicable_to_sujata": "SUPPORTED"
+    },
+    "conflictingEvidence": [
+      {
+        "topic": "lawsone-keratin adduct identity",
+        "status": "CONFLICTING_EVIDENCE",
+        "detail": "Experimental papers show increasing substantivity and propose C-3/thiol-amine or ionic association; later secondary texts state Michael addition as if settled. This pack keeps adduct structure as not fully established."
+      }
+    ],
+    "unsupportedQuestions": [],
+    "knownLimitations": [
+      "Wool-felt and hair-lock models are not living-scalp clinical outcomes.",
+      "Lawsone percentages are sample-specific.",
+      "Commercial 'henna' products may contain PPD.",
+      "Mechanism difference is not safety superiority."
+    ]
+  },
+  "jojoba": {
+    "packId": "JOJOBA_VERIFIED_CATEGORY_KNOWLEDGE_PACK_V1",
+    "statements": [
+      {
+        "knowledgeId": "CK-JOJOBA-6e4a3050",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "chemical composition",
+        "statement": "Jojoba seed oil is a liquid wax composed mainly of long-chain wax esters of monounsaturated fatty acids and fatty alcohols, unlike typical triglyceride seed oils.",
+        "sourceRefs": [
+          "RS-JOJOBA-MIWA-1971",
+          "RS-JOJOBA-ELMALLAH-2009",
+          "RS-JOJOBA-GADO-2021"
+        ],
+        "sourceLocation": {
+          "section": "abstract / Introduction",
+          "paragraph": "composed mainly (97%) of linear long-chain esters"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "CATEGORY_CONTEXT"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Percentage summaries describe category oil, not a Sujata COA."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Jojoba seed oil is a liquid wax composed mainly of long-chain wax esters of monounsaturated fatty acids and fatty alcohols, unlike typical triglyceride seed oils.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "호호바는 일반적인 triglyceride 중심 식물성 오일과 달리 wax ester가 주된 구성으로 연구된다는 교육 설명이 가능하다.",
+          "prohibitedExtensions": [
+            "따라서 모발에 더 좋다",
+            "따라서 흡수가 더 잘된다",
+            "타 오일보다 우수하다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-JOJOBA-329486e2",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "wax ester structure",
+        "statement": "Reported jojoba wax-ester carbon-number profiles are dominated by C40 and C42 esters, with C44 as a smaller but recurring fraction; exact percentages vary by sample.",
+        "sourceRefs": [
+          "RS-JOJOBA-MIWA-1971",
+          "RS-JOJOBA-ELMALLAH-2009"
+        ],
+        "sourceLocation": {
+          "section": "abstract / Table 3",
+          "table": "Table 3",
+          "paragraph": "C40 ~30% and C42 ~50% (Miwa); Egyptian oil C42 51.1%, C40 30.1%"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Geographic/genotype variation exists; do not freeze one percentage as Sujata composition."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Reported jojoba wax-ester carbon-number profiles are dominated by C40 and C42 esters, with C44 as a smaller but recurring fraction; exact percentages vary by sample.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "호호바 wax ester가 주로 C40-C42 부근 사슬 길이로 보고된다는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 호호바의 정확한 ester %"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-JOJOBA-bf4033d8",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "fatty acid / fatty alcohol profile",
+        "statement": "Major reported building blocks include cis-monounsaturated C20 and C22 fatty acids and fatty alcohols; wax esters are not a random pairing of all acids and alcohols.",
+        "sourceRefs": [
+          "RS-JOJOBA-MIWA-1971",
+          "RS-JOJOBA-ELMALLAH-2009",
+          "RS-JOJOBA-GADO-2021"
+        ],
+        "sourceLocation": {
+          "section": "abstract / Chemistry",
+          "paragraph": "eicosenoic acid 35%; eicosenol 22%; docosenol 21%; non-random ester pairing"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Analytical profiles are category-level, not a product COA."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Major reported building blocks include cis-monounsaturated C20 and C22 fatty acids and fatty alcohols; wax esters are not a random pairing of all acids and alcohols.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "주요 구성이 긴사슬 단일불포화 지방산/지방알코올의 에스터라는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "피부 상처 치유를 보장한다",
+            "탈모를 치료한다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-JOJOBA-693445cf",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "oxidative stability",
+        "statement": "Under accelerated oxidation at 98 C, crude jojoba wax had a much longer induction period (about 50 h) than bleached (10-12 h) or stripped (2 h) wax, indicating natural antioxidants that are reduced by bleaching or stripping.",
+        "sourceRefs": [
+          "RS-JOJOBA-KAMPF-1986",
+          "RS-JOJOBA-GADO-2021"
+        ],
+        "sourceLocation": {
+          "section": "abstract",
+          "page": "246-248",
+          "paragraph": "raw yellow wax induction 50 hr vs bleached 10-12 hr vs stripped 2 hr at 98 C"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "QUALITY_CONTEXT"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Accelerated laboratory oxidation, not a consumer-use superiority claim.",
+          "Light and air at room temperature reduced natural inhibitor activity in the same study."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Under accelerated oxidation at 98 C, crude jojoba wax had a much longer induction period (about 50 h) than bleached (10-12 h) or stripped (2 h) wax, indicating natural antioxidants that are reduced by bleaching or stripping.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "정제/탈색 과정에서 천연 항산화 성분이 줄어 산화 안정성이 떨어질 수 있다는 연구 맥락을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 호호바는 산화되지 않는다",
+            "다른 오일보다 우수하다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-JOJOBA-48b662b3",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "processing / cold pressed",
+        "statement": "In a process comparison of Argentine jojoba waxes, fatty acid and fatty alcohol composition did not change among cold-pressed, expeller, and bleached waxes, but cold-pressed wax had lower peroxide value, higher tocopherol and phenol contents, and better oxidative stability; bleaching reduced those antioxidants.",
+        "sourceRefs": [
+          "RS-JOJOBA-TORRES-2006"
+        ],
+        "sourceLocation": {
+          "section": "abstract",
+          "paragraph": "Physical parameters, fatty acid and alcohol compositions were unchanged; cold-pressed lower PV, higher tocopherol/phenols"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "QUALITY_CONTEXT"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Cold-pressed/unrefined here means process effects on minor antioxidants and peroxide, not a different wax-ester backbone.",
+          "Not evidence that a labeled '냉압착 비정제' Sujata SKU matches this Argentine process set."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "In a process comparison of Argentine jojoba waxes, fatty acid and fatty alcohol composition did not change among cold-pressed, expeller, and bleached waxes, but cold-pressed wax had lower peroxide value, higher tocopherol and phenol contents, and better oxidative stability; bleaching reduced those antioxidants.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "냉압착/미탈색이 지방산 골격 자체가 아니라 과산화물가와 토코페롤 등 부성분 보존과 관련해 연구된 바 있다는 교육 설명이 가능하다.",
+          "prohibitedExtensions": [
+            "상품명 냉압착이 이 논문의 공정과 동일하다",
+            "그래서 모발 효능이 더 크다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-JOJOBA-1fa01b79",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "quality indicators",
+        "statement": "Quality-evaluation items used in the jojoba literature include wax-ester carbon-number profile, fatty acid and fatty alcohol composition, peroxide value, tocopherol content, phenol content, and oxidative-stability/induction measurements.",
+        "sourceRefs": [
+          "RS-JOJOBA-MIWA-1971",
+          "RS-JOJOBA-TORRES-2006",
+          "RS-JOJOBA-KAMPF-1986"
+        ],
+        "sourceLocation": {
+          "section": "methods/abstract",
+          "paragraph": "AOCS recommended practices; GLC of esters, acids, alcohols; accelerated oxidation induction"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "These are analytical categories, not a published Sujata certificate."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Quality-evaluation items used in the jojoba literature include wax-ester carbon-number profile, fatty acid and fatty alcohol composition, peroxide value, tocopherol content, phenol content, and oxidative-stability/induction measurements.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "호호바 품질을 논문에서 어떤 항목으로 보는지(에스터 분포, 과산화물가, 토코페롤 등)를 교육할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타가 해당 기준을 통과했다"
+          ]
+        },
+        "knowledgeUsePolicy": "DIRECT_EDUCATION_ALLOWED",
+        "qualificationRequired": false,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      },
+      {
+        "knowledgeId": "CK-JOJOBA-f8c18588",
+        "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+        "topic": "hair / cosmetic application evidence",
+        "statement": "Hair-fiber evidence for jojoba is limited to in-vitro or formulation assays: jojoba as a conditioning agent in a thioglycolate straightening emulsion reduced protein loss on Afro-ethnic hair locks in one study, while a later conditioner study found a jojoba-containing conditioner did not significantly reduce combing resistance. These results do not establish hair growth or a general consumer hair-benefit for a neat oil SKU.",
+        "sourceRefs": [
+          "RS-JOJOBA-DIAS-2008",
+          "RS-JOJOBA-SILVA-2024"
+        ],
+        "sourceLocation": {
+          "section": "abstract",
+          "paragraph": "Dias 2008 protein loss/combability; Silva 2024 jojoba did not significantly reduce combing resistance"
+        },
+        "authorityClass": "PEER_REVIEWED_RESEARCH",
+        "verificationStatus": "VERIFIED",
+        "allowedMarketingUses": [
+          "EDUCATION",
+          "EXPECTATION_SETTING"
+        ],
+        "claimBoundary": {
+          "canStateAsFact": true,
+          "canApplyDirectlyToProduct": false,
+          "canClaimProductSuperiority": false,
+          "canClaimConsumerEfficacy": false,
+          "canClaimSafetySuperiority": false,
+          "scientificStatement": true,
+          "marketingInterpretationAllowed": true
+        },
+        "limitations": [
+          "Study context is hair locks / conditioner chassis, not clinical alopecia treatment.",
+          "Results are not uniform across methods."
+        ],
+        "usableForCategoryEducation": true,
+        "usableForProductClaim": false,
+        "scientificStatement": "Hair-fiber evidence for jojoba is limited to in-vitro or formulation assays: jojoba as a conditioning agent in a thioglycolate straightening emulsion reduced protein loss on Afro-ethnic hair locks in one study, while a later conditioner study found a jojoba-containing conditioner did not significantly reduce combing resistance. These results do not establish hair growth or a general consumer hair-benefit for a neat oil SKU.",
+        "marketingInterpretation": {
+          "allowed": true,
+          "example": "모발 섬유 실험에서 컨디셔닝 맥락이 연구된 바 있으나, 결과는 제형·방법에 따라 다르고 탈모 치료 근거가 아니라는 점을 설명할 수 있다.",
+          "prohibitedExtensions": [
+            "수자타 호호바가 모발에 더 좋다",
+            "모발이 자란다",
+            "염색 손상을 복구한다"
+          ]
+        },
+        "knowledgeUsePolicy": "QUALIFIED_EDUCATION_ONLY",
+        "qualificationRequired": true,
+        "sourceDomain": "CATEGORY_KNOWLEDGE",
+        "readerFacing": true,
+        "readerFacingDefensiveMeta": false
+      }
+    ],
+    "researchRequests": [
+      {
+        "requestId": "RR-jojoba-composition",
+        "topic": "jojoba oil composition",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-6e4a3050"
+        ],
+        "notes": "Wax-ester oil identity supported.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-jojoba-wax",
+        "topic": "wax ester composition",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-329486e2"
+        ],
+        "notes": "C40/C42 dominance supported with sample variation.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-jojoba-fa",
+        "topic": "fatty alcohol / fatty acid composition",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-bf4033d8"
+        ],
+        "notes": "C20/C22 cis-monounsaturated profile supported.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-jojoba-os",
+        "topic": "oxidative stability",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-693445cf"
+        ],
+        "notes": "Crude vs bleached/stripped induction periods supported.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-jojoba-quality",
+        "topic": "jojoba oil quality indicators",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-1fa01b79"
+        ],
+        "notes": "Analytical items identified.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-jojoba-coldpress",
+        "topic": "cold-pressed / unrefined",
+        "domain": "CATEGORY",
+        "status": "APPROVED_KNOWLEDGE_AVAILABLE",
+        "coverageStatus": "RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-48b662b3"
+        ],
+        "notes": "Process effect on antioxidants/PV supported; backbone unchanged.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      },
+      {
+        "requestId": "RR-jojoba-hair",
+        "topic": "hair application evidence",
+        "domain": "CATEGORY",
+        "status": "PARTIALLY_SUPPORTED",
+        "coverageStatus": "PARTIALLY_RESEARCHED",
+        "knowledgeRefs": [
+          "CK-JOJOBA-f8c18588"
+        ],
+        "notes": "In-vitro fiber assays only; mixed combing result.",
+        "executed": false,
+        "llmCalls": 0,
+        "externalNetwork": 0,
+        "readerFacing": false
+      }
+    ],
+    "questionCoverage": {
+      "Q1_chemical_composition": "SUPPORTED",
+      "Q2_vs_triglyceride": "SUPPORTED",
+      "Q3_wax_ester_fa_profile": "SUPPORTED",
+      "Q4_oxidative_stability": "SUPPORTED",
+      "Q5_quality_indicators": "SUPPORTED",
+      "Q6_cold_pressed_unrefined": "SUPPORTED",
+      "Q7_hair_or_skin_use": "PARTIALLY_SUPPORTED",
+      "Q8_not_sujata_efficacy": "SUPPORTED"
+    },
+    "conflictingEvidence": [
+      {
+        "topic": "hair combing / conditioning outcome",
+        "status": "CONFLICTING_EVIDENCE",
+        "detail": "Dias 2008 reported jojoba among better conditioning agents for protein loss in a straightening emulsion; Silva 2024 reported a jojoba conditioner did not significantly reduce combing resistance. Both are formulation-specific in-vitro assays."
+      }
+    ],
+    "unsupportedQuestions": [
+      "Clinical hair-growth / alopecia treatment by jojoba oil",
+      "Direct wound-healing or pharmacology results as consumer hair benefit"
+    ],
+    "knownLimitations": [
+      "Composition percentages vary by origin.",
+      "Oxidative-stability numbers are accelerated tests.",
+      "Cold-pressed evidence is process comparison, not Sujata COA.",
+      "Hair data are in-vitro/formulation assays with mixed combing results."
+    ]
+  },
+  "hairPack": {
+    "caseId": "case-c",
+    "categoryResearchStatus": "BLOCKED_BY_PRODUCT_INGREDIENT_SOURCE",
+    "reason": "PRODUCT_INGREDIENT_SOURCE_MISSING; ingredient not inferred from product name",
+    "fail": false
+  }
+}

@@ -1,0 +1,683 @@
+{
+  "packId": "HENNA_VERIFIED_CATEGORY_KNOWLEDGE_PACK_V1",
+  "version": "v1",
+  "retrievedAt": "2026-09-21",
+  "approvalStatus": "APPROVED_FOR_KNOWLEDGE_INGESTION",
+  "ingestedToRuntime": false,
+  "sourceRegistryIds": [
+    "RS-HENNA-JAMES-1986",
+    "RS-HENNA-FORESTIER-1982",
+    "RS-HENNA-CHAHOMSRI-2017",
+    "RS-HENNA-ELSHAER-2007",
+    "RS-HENNA-HEINRICH-2025",
+    "RS-HENNA-SCCS-2013",
+    "RS-HENNA-LEWIS-2013",
+    "RS-HENNA-PASTUSZAK-2025"
+  ],
+  "sections": {
+    "Lawsonia inermis": [
+      "CK-HENNA-8099abb9"
+    ],
+    "Lawsone": [
+      "CK-HENNA-60868ffe"
+    ],
+    "Henna Composition": [
+      "CK-HENNA-a3ffa872",
+      "CK-HENNA-0f8f5b02"
+    ],
+    "Coloring Mechanism": [
+      "CK-HENNA-9b37c233"
+    ],
+    "Hair / Keratin Interaction": [
+      "CK-HENNA-ed66e252"
+    ],
+    "Plant Dye vs Oxidative Dye Mechanism": [
+      "CK-HENNA-10f48db5"
+    ],
+    "Known Limitations": [
+      "Wool-felt and hair-lock models are not living-scalp clinical outcomes.",
+      "Lawsone percentages are sample-specific.",
+      "Commercial 'henna' products may contain PPD.",
+      "Mechanism difference is not safety superiority."
+    ],
+    "Marketing-safe Interpretations": [
+      {
+        "allowed": true,
+        "example": "교육 문맥에서 헤나가 Lawsonia inermis 잎에서 온다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타만의 품종이다",
+          "모든 헤나 제품이 동일하다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "헤나 착색과 관련해 연구되는 주요 성분이 lawsone(2-hydroxy-1,4-naphthoquinone)이라는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 헤나는 특정 % lawsone을 함유한다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "헤나 원료의 lawsone 함량은 산지와 분석법에 따라 달라질 수 있다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 제품 lawsone 함량이 이 수치다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "건조 잎에서 바로 완성된 염료로 존재하지 않고, 물과 만난 뒤 전구체에서 lawsone이 형성된다는 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "수자타만의 배합 비율이다",
+          "2시간 방치가 모든 헤나의 과학 표준이다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "헤나 착색은 식물 유래 naphthoquinone이 케라틴 섬유로 들어가 결합하는 과정으로 연구된다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "임상적으로 더 오래 지속된다",
+          "모발 손상을 줄인다",
+          "건강한 모발을 만든다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "lawsone과 케라틴의 상호작용이 연구되어 왔다는 수준의 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "결합 방식이 완전히 규명되었다",
+          "그래서 화학 염모보다 안전하다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "산화 염모는 과산화수소와 방향족 아민 전구체로 섬유 안에서 색을 만들고, 헤나는 식물 naphthoquinone 착색이라는 방식 차이를 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "헤나가 더 안전하다",
+          "헤나가 모발에 무조건 덜 손상된다",
+          "헤나가 화학 염모보다 우수하다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "잎 분말 전체와 정제 lawsone의 염색 거동이 완전히 같지는 않다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 분말이 실험실 정제 lawsone과 동일하다"
+        ]
+      },
+      {
+        "allowed": true,
+        "example": "시중 '헤나' 제품이 모두 동일 원료 조성은 아니며, 일부 제품에는 산화 염모 성분인 PPD가 검출된 연구가 있다는 점을 범주 교육으로 말할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 제품 PPD 함량",
+          "모든 천연 헤나는 알레르기가 없다"
+        ]
+      },
+      {
+        "allowed": false,
+        "example": null,
+        "prohibitedExtensions": [
+          "SCCS 의견이 수자타 제품 승인이다",
+          "헤나는 무조건 안전하다"
+        ]
+      }
+    ],
+    "Forbidden Product Leaps": [
+      "수자타 헤나 lawsone 함량 단정",
+      "헤나가 산화염모보다 안전/덜 손상/우수",
+      "SCCS 배치 평가 = 수자타 인증",
+      "시중 헤나 시장 조사 = 수자타 제품 조성"
+    ]
+  },
+  "knowledgeStatements": [
+    {
+      "knowledgeId": "CK-HENNA-8099abb9",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "Lawsonia inermis",
+      "statement": "Lawsonia inermis (Lythraceae) is the henna plant; its leaves are the botanical source of traditional henna dye material.",
+      "sourceRefs": [
+        "RS-HENNA-CHAHOMSRI-2017",
+        "RS-HENNA-JAMES-1986"
+      ],
+      "sourceLocation": {
+        "section": "Introduction",
+        "paragraph": "Lawsonia inermis L., commonly referred to henna, belongs to the Lythraceae family"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "CATEGORY_CONTEXT"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Botanical identity is not a Sujata product specification."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Lawsonia inermis (Lythraceae) is the henna plant; its leaves are the botanical source of traditional henna dye material.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "교육 문맥에서 헤나가 Lawsonia inermis 잎에서 온다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타만의 품종이다",
+          "모든 헤나 제품이 동일하다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-60868ffe",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "lawsone identity",
+      "statement": "Lawsone is 2-hydroxy-1,4-naphthoquinone and is identified as the principal coloring constituent associated with henna leaves.",
+      "sourceRefs": [
+        "RS-HENNA-JAMES-1986",
+        "RS-HENNA-HEINRICH-2025",
+        "RS-HENNA-CHAHOMSRI-2017"
+      ],
+      "sourceLocation": {
+        "page": 360,
+        "section": "INTRODUCTION",
+        "paragraph": "Lawsone, 2-hydroxy-1,4-naphthoquinone (I) is the principal active constituent."
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "EXPLANATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Does not state Sujata powder lawsone percentage."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Lawsone is 2-hydroxy-1,4-naphthoquinone and is identified as the principal coloring constituent associated with henna leaves.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "헤나 착색과 관련해 연구되는 주요 성분이 lawsone(2-hydroxy-1,4-naphthoquinone)이라는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 헤나는 특정 % lawsone을 함유한다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-a3ffa872",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "henna composition",
+      "statement": "Lawsone content measured in Lawsonia leaf or henna powder is sample- and method-dependent; published examples include about 0.76-0.87 g/100 g dried leaf in one Thai collection and a henna-powder range of 0.004%-0.608% in an earlier HPTLC study.",
+      "sourceRefs": [
+        "RS-HENNA-CHAHOMSRI-2017",
+        "RS-HENNA-ELSHAER-2007"
+      ],
+      "sourceLocation": {
+        "section": "Results / Discussion",
+        "figure": "Figures 6-7",
+        "paragraph": "0.76 ± 0.05 and 0.87 ± 0.11 g/100 g; cited range 0.004% to 0.608%"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "EXPECTATION_SETTING"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "These values are not Sujata lot results and cannot be used as a product assay."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Lawsone content measured in Lawsonia leaf or henna powder is sample- and method-dependent; published examples include about 0.76-0.87 g/100 g dried leaf in one Thai collection and a henna-powder range of 0.004%-0.608% in an earlier HPTLC study.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "헤나 원료의 lawsone 함량은 산지와 분석법에 따라 달라질 수 있다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 제품 lawsone 함량이 이 수치다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-0f8f5b02",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "henna composition precursors",
+      "statement": "In henna leaves, lawsone is largely present as glycosylated reduced precursors (hennosides); the free dye forms after hydrolysis and oxidation in aqueous medium rather than as a fully developed dye in the intact leaf.",
+      "sourceRefs": [
+        "RS-HENNA-HEINRICH-2025"
+      ],
+      "sourceLocation": {
+        "section": "Introduction",
+        "paragraph": "Lawsone is not primarily present as a fully developed dye... hennoside A, B, and C"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "HOW_TO_CONTEXT"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Explains category chemistry of paste preparation; does not prescribe Sujata usage time."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "In henna leaves, lawsone is largely present as glycosylated reduced precursors (hennosides); the free dye forms after hydrolysis and oxidation in aqueous medium rather than as a fully developed dye in the intact leaf.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "건조 잎에서 바로 완성된 염료로 존재하지 않고, 물과 만난 뒤 전구체에서 lawsone이 형성된다는 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "수자타만의 배합 비율이다",
+          "2시간 방치가 모든 헤나의 과학 표준이다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-9b37c233",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "coloring mechanism",
+      "statement": "Experimental work shows lawsone uptake by keratin fibers is time- and temperature-dependent and consistent with diffusion, with color substantivity increasing after dyeing rather than behaving only as loosely adsorbed surface color.",
+      "sourceRefs": [
+        "RS-HENNA-FORESTIER-1982",
+        "RS-HENNA-JAMES-1986"
+      ],
+      "sourceLocation": {
+        "page": 359,
+        "section": "Synopsis / INTRODUCTION",
+        "paragraph": "slow reaction occurs on the wool... increasing the strength of the interaction"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "EXPECTATION_SETTING"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "James used wool felt as a hair model.",
+        "Does not prove clinically longer-lasting color or less damage than oxidative dye."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Experimental work shows lawsone uptake by keratin fibers is time- and temperature-dependent and consistent with diffusion, with color substantivity increasing after dyeing rather than behaving only as loosely adsorbed surface color.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "헤나 착색은 식물 유래 naphthoquinone이 케라틴 섬유로 들어가 결합하는 과정으로 연구된다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "임상적으로 더 오래 지속된다",
+          "모발 손상을 줄인다",
+          "건강한 모발을 만든다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-ed66e252",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "hair keratin interaction",
+      "statement": "Proposed explanations for lawsone-keratin interaction include pH-dependent association with keratin and hypotheses of addition at the lawsone C-3 carbon involving thiol or amine groups; a single fully characterized consumer-hair adduct is not established as a universal fact.",
+      "sourceRefs": [
+        "RS-HENNA-JAMES-1986",
+        "RS-HENNA-FORESTIER-1982"
+      ],
+      "sourceLocation": {
+        "page": 359,
+        "section": "Synopsis",
+        "paragraph": "new compounds which are more substantive than lawsone or changing the mode of attachment"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Mechanism hypotheses must not be converted into clinical hair-health claims.",
+        "Later secondary texts mention Michael addition; this pack treats adduct identity as not fully settled."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Proposed explanations for lawsone-keratin interaction include pH-dependent association with keratin and hypotheses of addition at the lawsone C-3 carbon involving thiol or amine groups; a single fully characterized consumer-hair adduct is not established as a universal fact.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "lawsone과 케라틴의 상호작용이 연구되어 왔다는 수준의 교육 설명이 가능하다.",
+        "prohibitedExtensions": [
+          "결합 방식이 완전히 규명되었다",
+          "그래서 화학 염모보다 안전하다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-10f48db5",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "plant dye vs oxidative dye",
+      "statement": "Permanent oxidative hair dyeing generates colored molecules inside the fiber from small aromatic-amine precursors such as p-phenylenediamine and couplers after peroxide oxidation under alkaline conditions; henna coloring is not this in-fiber oxidative coupling process.",
+      "sourceRefs": [
+        "RS-HENNA-LEWIS-2013",
+        "RS-HENNA-JAMES-1986"
+      ],
+      "sourceLocation": {
+        "section": "oxidative dye formation / Scheme 2",
+        "paragraph": "The precursor (PPD) is oxidized by peroxide to give the QDI intermediate... reacts rapidly with the coupler(s)"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION",
+        "DIFFERENTIATION_CONTEXT"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Category mechanism difference is not a safety or damage ranking.",
+        "Not a comparison of Sujata versus any named oxidative brand."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Permanent oxidative hair dyeing generates colored molecules inside the fiber from small aromatic-amine precursors such as p-phenylenediamine and couplers after peroxide oxidation under alkaline conditions; henna coloring is not this in-fiber oxidative coupling process.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "산화 염모는 과산화수소와 방향족 아민 전구체로 섬유 안에서 색을 만들고, 헤나는 식물 naphthoquinone 착색이라는 방식 차이를 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "헤나가 더 안전하다",
+          "헤나가 모발에 무조건 덜 손상된다",
+          "헤나가 화학 염모보다 우수하다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-d9cd718a",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "whole leaf vs isolated lawsone",
+      "statement": "Whole henna leaf material does not behave identically to isolated lawsone on keratin substrates.",
+      "sourceRefs": [
+        "RS-HENNA-JAMES-1986"
+      ],
+      "sourceLocation": {
+        "page": 360,
+        "section": "INTRODUCTION",
+        "paragraph": "the whole leaf is known to behave differently towards the hair from lawsone alone"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Prevents treating a purified-lawsone dyeing study as identical to a commercial leaf-powder paste."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Whole henna leaf material does not behave identically to isolated lawsone on keratin substrates.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "잎 분말 전체와 정제 lawsone의 염색 거동이 완전히 같지는 않다는 점을 설명할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 분말이 실험실 정제 lawsone과 동일하다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-4eb2f7ed",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "marketed henna is not automatically pure Lawsonia",
+      "statement": "Products sold as henna can contain added p-phenylenediamine; in one European market sample about 36% of tested henna products contained PPD and only about 60% were judged good-quality natural products with at least 0.5% lawsone.",
+      "sourceRefs": [
+        "RS-HENNA-PASTUSZAK-2025"
+      ],
+      "sourceLocation": {
+        "section": "Results/conclusions",
+        "paragraph": "only about 60% ... not < 0.5% lawsone; up to 36% contained PPD"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EXPECTATION_SETTING",
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Market survey, not Sujata product testing.",
+        "Cannot be used to claim Sujata is PPD-free or PPD-containing."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "Products sold as henna can contain added p-phenylenediamine; in one European market sample about 36% of tested henna products contained PPD and only about 60% were judged good-quality natural products with at least 0.5% lawsone.",
+      "marketingInterpretation": {
+        "allowed": true,
+        "example": "시중 '헤나' 제품이 모두 동일 원료 조성은 아니며, 일부 제품에는 산화 염모 성분인 PPD가 검출된 연구가 있다는 점을 범주 교육으로 말할 수 있다.",
+        "prohibitedExtensions": [
+          "수자타 제품 PPD 함량",
+          "모든 천연 헤나는 알레르기가 없다"
+        ]
+      }
+    },
+    {
+      "knowledgeId": "CK-HENNA-fcdd1d2e",
+      "knowledgeClass": "VERIFIED_CATEGORY_KNOWLEDGE",
+      "topic": "regulatory assessment scope",
+      "statement": "The EU SCCS assessed specific henna powder batches as a hair dye under stated use, including a lawsone content context of up to 1.4% for the assessed material; other extracts with different composition and body-paint use were not covered.",
+      "sourceRefs": [
+        "RS-HENNA-SCCS-2013",
+        "RS-HENNA-HEINRICH-2025"
+      ],
+      "sourceLocation": {
+        "section": "Conclusion of the opinion",
+        "paragraph": "batches 1271 and 830.72; 100 g Henna powder mixed with 300 ml boiling water"
+      },
+      "authorityClass": "PEER_REVIEWED_RESEARCH",
+      "verificationStatus": "VERIFIED",
+      "allowedMarketingUses": [
+        "EDUCATION"
+      ],
+      "claimBoundary": {
+        "canStateAsFact": true,
+        "canApplyDirectlyToProduct": false,
+        "canClaimProductSuperiority": false,
+        "canClaimConsumerEfficacy": false,
+        "canClaimSafetySuperiority": false,
+        "scientificStatement": true,
+        "marketingInterpretationAllowed": true
+      },
+      "limitations": [
+        "Not a Sujata safety certificate or a permission to claim medical safety."
+      ],
+      "usableForCategoryEducation": true,
+      "usableForProductClaim": false,
+      "readerFacingDefensiveMeta": false,
+      "scientificStatement": "The EU SCCS assessed specific henna powder batches as a hair dye under stated use, including a lawsone content context of up to 1.4% for the assessed material; other extracts with different composition and body-paint use were not covered.",
+      "marketingInterpretation": {
+        "allowed": false,
+        "example": null,
+        "prohibitedExtensions": [
+          "SCCS 의견이 수자타 제품 승인이다",
+          "헤나는 무조건 안전하다"
+        ]
+      }
+    }
+  ],
+  "researchRequests": [
+    {
+      "requestId": "RR-henna-lawsonia",
+      "topic": "Lawsonia inermis",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-HENNA-8099abb9"
+      ],
+      "notes": "Botanical identity supported.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-henna-lawsone",
+      "topic": "lawsone",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-HENNA-60868ffe"
+      ],
+      "notes": "Chemical identity supported.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-henna-composition",
+      "topic": "henna composition",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-HENNA-a3ffa872",
+        "CK-HENNA-0f8f5b02"
+      ],
+      "notes": "Content is variable; precursors supported.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-henna-mechanism",
+      "topic": "henna coloring / staining mechanism",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-HENNA-9b37c233"
+      ],
+      "notes": "Diffusion + increasing substantivity supported; adduct identity partial.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-henna-keratin",
+      "topic": "hair keratin interaction",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "PARTIALLY_RESEARCHED",
+      "coverage": "PARTIALLY_RESEARCHED",
+      "knowledgeIds": [
+        "CK-HENNA-ed66e252"
+      ],
+      "notes": "Interaction proposed; unique adduct not established.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    },
+    {
+      "requestId": "RR-henna-oxidative",
+      "topic": "plant dye vs oxidative hair dye",
+      "previousStatus": "NOT_RESEARCHED",
+      "status": "RESEARCHED",
+      "coverage": "RESEARCHED",
+      "knowledgeIds": [
+        "CK-HENNA-10f48db5"
+      ],
+      "notes": "Mechanism difference supported; safety ranking forbidden.",
+      "executedExternalSearch": true,
+      "ingestedToRuntime": false
+    }
+  ],
+  "questionCoverage": {
+    "Q1_principal_colorant": "SUPPORTED",
+    "Q2_what_is_lawsone": "SUPPORTED",
+    "Q3_coloring_mechanism": "SUPPORTED",
+    "Q4_keratin_interaction": "PARTIALLY_SUPPORTED",
+    "Q5_vs_oxidative_dye": "SUPPORTED",
+    "Q6_composition_groups": "SUPPORTED",
+    "Q7_science_vs_marketing": "SUPPORTED",
+    "Q8_not_applicable_to_sujata": "SUPPORTED"
+  },
+  "unsupportedQuestions": [],
+  "conflictingEvidence": [
+    {
+      "topic": "lawsone-keratin adduct identity",
+      "status": "CONFLICTING_EVIDENCE",
+      "detail": "Experimental papers show increasing substantivity and propose C-3/thiol-amine or ionic association; later secondary texts state Michael addition as if settled. This pack keeps adduct structure as not fully established."
+    }
+  ],
+  "approvalChecklist": {
+    "lawsonia_lawsone_basic": true,
+    "coloring_mechanism": true,
+    "composition": true,
+    "hair_interaction_or_limitation": true,
+    "oxidative_mechanism_difference": true,
+    "product_claim_boundary": true
+  }
+}

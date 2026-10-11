@@ -1,0 +1,22 @@
+{
+  "version": "usage_guide_source_v1",
+  "sourceId": "수자타헤나 사용가이드_자사몰배포용.html",
+  "sourceKind": "INTERNAL_USAGE_GUIDE",
+  "authorityClass": "OFFICIAL_PRODUCT_GUIDE",
+  "note": "Extracted from the internal usage-guide HTML. Original source remains authority. Do not treat as category science or certification.",
+  "entries": [
+    {"key": "variant:수자타 레드", "variant": "수자타 레드", "kind": "variant", "statement": "수자타 레드: 따뜻한 오렌지·레드 계열의 기본 헤나"},
+    {"key": "variant:수자타 브라운", "variant": "수자타 브라운", "kind": "variant", "statement": "수자타 브라운: 갈색과 흑갈색 톤을 위한 브라운 계열"},
+    {"key": "variant:수자타 내추럴", "variant": "수자타 내추럴", "kind": "variant", "statement": "수자타 내추럴: 컬러 부담 없이 사용하는 기본 케어"},
+    {"key": "variant:두피 케어 헤어팩", "variant": "두피 케어 헤어팩", "kind": "variant", "statement": "두피 케어 헤어팩: 두피 컨디션을 편안하게 관리하는 케어 제품"},
+    {"key": "variant:딥클린 헤어팩", "variant": "딥클린 헤어팩", "kind": "variant", "statement": "딥클린 헤어팩: 두피와 모발을 산뜻하게 정돈하는 케어 제품"},
+    {"key": "variant:볼륨업 헤어팩", "variant": "볼륨업 헤어팩", "kind": "variant", "statement": "볼륨업 헤어팩: 가는 모발과 뿌리 볼륨 연출을 돕는 케어 제품"},
+    {"key": "variant:손상케어 헤어팩", "variant": "손상케어 헤어팩", "kind": "variant", "statement": "손상케어 헤어팩: 건조하고 푸석한 모발을 부드럽게 관리하는 케어 제품"},
+    {"key": "variant:맥주효모 샴푸", "variant": "맥주효모 샴푸", "kind": "variant", "statement": "맥주효모 샴푸: 헤나 전후 세정 보조 제품"},
+    {"key": "variant:호호바 오일", "variant": "호호바 오일", "kind": "variant", "statement": "호호바 오일: 헤어라인 보호와 마무리 보습"},
+    {"key": "duration:dye", "variant": "염색약", "kind": "duration", "statement": "염색약 사용 시간: 2시간"},
+    {"key": "duration:pack", "variant": "헤어팩", "kind": "duration", "statement": "헤어팩 사용 시간: 1시간"},
+    {"key": "caution:patch", "variant": "염색약", "kind": "caution", "statement": "사용 전 팔 안쪽에 소량을 발라 피부 반응을 먼저 확인하세요. 따가움, 붉어짐, 가려움 등 불편감이 있으면 사용하지 않는 것이 좋습니다."},
+    {"key": "mix:quiz-dependent", "variant": "", "kind": "mix", "statement": "추천 배합 비율은 사용가이드 진단 답변에 따라 달라지며, 특정 제품에 일반화하지 않는다."}
+  ]
+}

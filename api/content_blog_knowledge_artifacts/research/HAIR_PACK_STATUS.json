@@ -1,0 +1,6 @@
+{
+  "caseId": "case-c",
+  "categoryResearchStatus": "BLOCKED_BY_PRODUCT_INGREDIENT_SOURCE",
+  "reason": "PRODUCT_INGREDIENT_SOURCE_MISSING; ingredient not inferred from product name",
+  "fail": false
+}
