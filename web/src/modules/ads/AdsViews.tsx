@@ -7,8 +7,17 @@ import {
 	fetchGfaAdgroupInventory,
 	fetchGfaCampaignInventory,
 	fetchGfaCreativeInventory,
+	fetchGfaStrategyAnalysis,
+	getLatestGfaStrategySnapshot,
+	gfaStrategyPayloadFromSnapshot,
+	isNoPublishedGfaStrategySnapshotError,
 	fetchCreativeDaily,
 	fetchKeywordDaily,
+	fetchGfaCreativeAnalysis,
+	runGfaCreativeAnalysis,
+	runGfaCreativeAnalysisBatch,
+	updateGfaCreativeImageAnalysis,
+	updateGfaCreativeCopyAnalysis,
 	fetchSearchwordDaily,
 	fetchSearchwordDailyAll,
 	type AdgroupDailyAggRow,
@@ -17,6 +26,17 @@ import {
 	type CampaignInventoryRow,
 	type CreativeDailyRow,
 	type CreativeInventoryRow,
+	type GfaStrategyAnalysis,
+	type GfaStrategyActionRow,
+	type GfaStrategyBlueprintRow,
+	type GfaStrategyConditionGapRow,
+	type GfaStrategyCreativeCompareRow,
+	type GfaStrategyDiagnosis,
+	type GfaStrategyGoalRecommendation,
+	type GfaStrategyGoalMatrixRow,
+	type GfaStrategyOperationCompareRow,
+	type GfaStrategyRankRow,
+	type GfaCreativeAnalysis,
 	type AdsPlatform,
 	type KeywordDailyRow,
 	type SearchwordDailyRow,
@@ -24,7 +44,7 @@ import {
 import { AdsDateControls, loadAdsDateState, saveAdsDateState, type AdsDateState } from './AdsDateControls';
 import { aggregateByKey, calcMetricDeltas, computeMetrics, type MetricComputed, type MetricTotals } from './adsMetrics';
 import { computeAdsCampaignAgg, computeAdsKeywordsUnifiedAgg, type AdsCampaignAggResult, type AggTermRow, type CampaignKindKey } from './adsAgg';
-import { defaultYesterdayRange, normalizeRange, rangeLengthDays, shiftRange, toYmd } from './dateRangeUtils';
+import { defaultYesterdayRange, normalizeRange, shiftRange, toYmd } from './dateRangeUtils';
 import { AdsTable, type AdsLeftColumnKey, type AdsMetricColumnKey, type AdsRow } from './AdsTables';
 import { adsJobCache, type JobState } from './adsJobCache';
 import { chunkYmdRange, groupContiguousDates } from './adsRangeChunking';
@@ -57,6 +77,21 @@ type EnsureState = {
 };
 
 type BadgeTone = 'ok' | 'warn' | 'danger' | 'muted';
+
+const DETAIL_COMPLETED_STATUS_LABELS: Record<string, string> = {
+	gfa_creative_detail_completed_empty_editor: '완료(데이터 없음)',
+	gfa_creative_detail_completed_remote_error_page: '완료(광고센터 오류)',
+};
+
+function formatDetailStatusValue(detailLastError?: string | null, detailCollectedAt?: string | null): string {
+	const error = String(detailLastError || '').trim();
+	const collectedAt = String(detailCollectedAt || '').trim();
+	const completedLabel = DETAIL_COMPLETED_STATUS_LABELS[error];
+	if (completedLabel) return `완료: ${completedLabel}`;
+	if (error) return `오류: ${error}`;
+	if (collectedAt) return `완료: ${collectedAt}`;
+	return '미수집';
+}
 
 function badgeStyle(tone: BadgeTone): React.CSSProperties {
 	const colors = {
@@ -120,42 +155,38 @@ function applyGfaYesterdayCreativeStatusToRows(
 	});
 }
 
-function mergeGfaCampaignInventoryRows(
+export function mergeGfaCampaignInventoryRows(
 	rows: CampaignDailyAggRow[],
 	inventoryRows: CampaignInventoryRow[],
 	dateFallback: string,
 ): CampaignDailyAggRow[] {
-	const byKey = new Map<string, CampaignDailyAggRow>();
-	for (const row of rows || []) {
-		const key = normalizeAdsEntityKeyPart(row.campaign_name);
-		if (!key) continue;
-		const current = byKey.get(key);
-		if (!current) {
-			byKey.set(key, row);
-			continue;
-		}
-		const currentCost = Number(current.cost || 0);
-		const nextCost = Number(row.cost || 0);
-		if (nextCost > currentCost) {
-			byKey.set(key, row);
-		}
-	}
+	const inventoryByKey = new Map<string, CampaignInventoryRow>();
 	for (const item of inventoryRows || []) {
 		const key = normalizeAdsEntityKeyPart(item.campaign_name);
 		if (!key) continue;
-		const current = byKey.get(key);
-		if (current) {
-			byKey.set(key, {
-				...current,
-				campaign_status: current.campaign_status ?? item.campaign_status ?? null,
-				ended_on: current.ended_on ?? item.ended_on ?? null,
-				campaign_status_basis: current.campaign_status_basis ?? item.campaign_status_basis ?? null,
-				status_collected_at: current.status_collected_at ?? item.status_collected_at ?? null,
-				is_active: typeof current.is_active === 'boolean' ? current.is_active : (item.is_active ?? null),
-			});
-			continue;
-		}
-		byKey.set(key, {
+		if (!inventoryByKey.has(key)) inventoryByKey.set(key, item);
+	}
+
+	const seenKeys = new Set<string>();
+	const out = (rows || []).map((row) => {
+		const key = normalizeAdsEntityKeyPart(row.campaign_name);
+		if (key) seenKeys.add(key);
+		const item = key ? inventoryByKey.get(key) : undefined;
+		if (!item) return row;
+		return {
+			...row,
+			campaign_status: row.campaign_status ?? item.campaign_status ?? null,
+			ended_on: row.ended_on ?? item.ended_on ?? null,
+			campaign_status_basis: row.campaign_status_basis ?? item.campaign_status_basis ?? null,
+			status_collected_at: row.status_collected_at ?? item.status_collected_at ?? null,
+			is_active: typeof row.is_active === 'boolean' ? row.is_active : (item.is_active ?? null),
+		};
+	});
+
+	for (const item of inventoryRows || []) {
+		const key = normalizeAdsEntityKeyPart(item.campaign_name);
+		if (!key || seenKeys.has(key)) continue;
+		out.push({
 			date: dateFallback,
 			campaign_name: item.campaign_name,
 			campaign_status: item.campaign_status ?? '종료',
@@ -176,48 +207,44 @@ function mergeGfaCampaignInventoryRows(
 			roas: 0,
 		});
 	}
-	return Array.from(byKey.values());
+	return out;
 }
 
-function mergeGfaAdgroupInventoryRows(
+export function mergeGfaAdgroupInventoryRows(
 	rows: AdgroupDailyAggRow[],
 	inventoryRows: AdgroupInventoryRow[],
 	dateFallback: string,
 ): AdgroupDailyAggRow[] {
 	const rowKey = (campaignName: unknown, adgroupName: unknown): string =>
 		`${normalizeAdsEntityKeyPart(campaignName)}||${normalizeAdsEntityKeyPart(adgroupName)}`;
-	const byKey = new Map<string, AdgroupDailyAggRow>();
-	for (const row of rows || []) {
-		const key = rowKey(row.campaign_name, row.adgroup_name);
-		if (!key) continue;
-		const current = byKey.get(key);
-		if (!current) {
-			byKey.set(key, row);
-			continue;
-		}
-		const currentCost = Number(current.cost || 0);
-		const nextCost = Number(row.cost || 0);
-		if (nextCost > currentCost) {
-			byKey.set(key, row);
-		}
-	}
+	const inventoryByKey = new Map<string, AdgroupInventoryRow>();
 	for (const item of inventoryRows || []) {
 		const key = rowKey(item.campaign_name, item.adgroup_name);
 		if (!key) continue;
-		const current = byKey.get(key);
-		if (current) {
-			byKey.set(key, {
-				...current,
-				campaign_status: current.campaign_status ?? item.campaign_status ?? null,
-				adgroup_status: current.adgroup_status ?? item.adgroup_status ?? null,
-				ended_on: current.ended_on ?? item.ended_on ?? null,
-				adgroup_status_basis: current.adgroup_status_basis ?? item.adgroup_status_basis ?? null,
-				status_collected_at: current.status_collected_at ?? item.status_collected_at ?? null,
-				is_active: typeof current.is_active === 'boolean' ? current.is_active : (item.is_active ?? null),
-			});
-			continue;
-		}
-		byKey.set(key, {
+		if (!inventoryByKey.has(key)) inventoryByKey.set(key, item);
+	}
+
+	const seenKeys = new Set<string>();
+	const out = (rows || []).map((row) => {
+		const key = rowKey(row.campaign_name, row.adgroup_name);
+		if (key) seenKeys.add(key);
+		const item = key ? inventoryByKey.get(key) : undefined;
+		if (!item) return row;
+		return {
+			...row,
+			campaign_status: row.campaign_status ?? item.campaign_status ?? null,
+			adgroup_status: row.adgroup_status ?? item.adgroup_status ?? null,
+			ended_on: row.ended_on ?? item.ended_on ?? null,
+			adgroup_status_basis: row.adgroup_status_basis ?? item.adgroup_status_basis ?? null,
+			status_collected_at: row.status_collected_at ?? item.status_collected_at ?? null,
+			is_active: typeof row.is_active === 'boolean' ? row.is_active : (item.is_active ?? null),
+		};
+	});
+
+	for (const item of inventoryRows || []) {
+		const key = rowKey(item.campaign_name, item.adgroup_name);
+		if (!key || seenKeys.has(key)) continue;
+		out.push({
 			date: dateFallback,
 			campaign_name: item.campaign_name,
 			adgroup_name: item.adgroup_name,
@@ -240,7 +267,7 @@ function mergeGfaAdgroupInventoryRows(
 			roas: 0,
 		});
 	}
-	return Array.from(byKey.values());
+	return out;
 }
 
 function mergeGfaCreativeInventoryRows(
@@ -270,6 +297,16 @@ function mergeGfaCreativeInventoryRows(
 				status_collected_at: current.status_collected_at ?? item.status_collected_at ?? null,
 				is_active: typeof current.is_active === 'boolean' ? current.is_active : (item.is_active ?? null),
 				image_url: current.image_url ?? item.image_url ?? null,
+				detail_collected_at: (current as any).detail_collected_at ?? (item as any).detail_collected_at ?? null,
+				detail_last_error: (current as any).detail_last_error ?? (item as any).detail_last_error ?? null,
+				creative_type: (current as any).creative_type ?? (item as any).creative_type ?? null,
+				profile_name: (current as any).profile_name ?? (item as any).profile_name ?? null,
+				profile_image_url: (current as any).profile_image_url ?? (item as any).profile_image_url ?? null,
+				primary_text: (current as any).primary_text ?? (item as any).primary_text ?? null,
+				headline: (current as any).headline ?? (item as any).headline ?? null,
+				description: (current as any).description ?? (item as any).description ?? null,
+				cta: (current as any).cta ?? (item as any).cta ?? null,
+				landing_url: (current as any).landing_url ?? (item as any).landing_url ?? null,
 				ad_type: current.ad_type ?? item.ad_type ?? 'GFA',
 			});
 			continue;
@@ -289,6 +326,16 @@ function mergeGfaCreativeInventoryRows(
 			display_keyword: null,
 			product_title: null,
 			image_url: item.image_url ?? null,
+			detail_collected_at: (item as any).detail_collected_at ?? null,
+			detail_last_error: (item as any).detail_last_error ?? null,
+			creative_type: (item as any).creative_type ?? null,
+			profile_name: (item as any).profile_name ?? null,
+			profile_image_url: (item as any).profile_image_url ?? null,
+			primary_text: (item as any).primary_text ?? null,
+			headline: (item as any).headline ?? null,
+			description: (item as any).description ?? null,
+			cta: (item as any).cta ?? null,
+			landing_url: (item as any).landing_url ?? null,
 			ad_type: item.ad_type ?? 'GFA',
 			current_bid: null,
 			quality_index: null,
@@ -673,6 +720,8 @@ function adsRowsToExcelRows(args: {
 function creativeColumnHeaderLabel(key: CreativeColumnKey, mode: 'powerlink' | 'shopping', hasPurchaseMetrics: boolean): string {
 	switch (key) {
 		case 'creative': return mode === 'powerlink' ? '키워드' : '소재명';
+		case 'creativeCondition': return '소재 컨디션';
+		case 'detailStatus': return '상세수집';
 		case 'bid': return '현재입찰가(CPC)';
 		case 'quality': return mode === 'powerlink' ? '광고 연관지수' : '품질지수';
 		case 'avgRank': return mode === 'powerlink' ? '클릭 기대지수' : '평균노출순위';
@@ -710,6 +759,22 @@ function creativeMetaExport(row: CreativeAggRow, key: CreativeColumnKey, mode: '
 		const productTitle = String(row.productTitle || '').trim();
 		const isNameOk = Boolean(name) && name !== id;
 		return { value: isPowerlink ? (displayKeyword || (isNameOk ? name : id)) : (isNameOk ? name : (productTitle || id)) };
+	}
+	if (key === 'creativeCondition') {
+		return {
+			value: [
+				row.creativeType,
+				row.profileName,
+				row.primaryText,
+				row.headline,
+				row.description,
+				row.cta,
+				row.landingUrl,
+			].filter(Boolean).join(' / '),
+		};
+	}
+	if (key === 'detailStatus') {
+		return { value: formatDetailStatusValue(row.detailLastError, row.detailCollectedAt) };
 	}
 	if (key === 'bid') {
 		const c = row.currentBid == null ? null : Number(row.currentBid);
@@ -884,6 +949,7 @@ function creativeGroupsToUiExcelSheet(args: {
 	]);
 	const defaultColumnsForMode = (mode: 'powerlink' | 'shopping', hasPurchaseMetrics: boolean): CreativeColumnKey[] => [
 		'creative',
+		...(mode === 'shopping' ? (['creativeCondition', 'detailStatus'] as CreativeColumnKey[]) : []),
 		'bid',
 		'quality',
 		'avgRank',
@@ -2473,6 +2539,60 @@ function chunkRange(from: string, to: string, maxDays: number): Array<{ from: st
 	return out;
 }
 
+const ADS_VALIDATE_FIX_MAX_DAYS = 31;
+
+type AdsValidateFixBody = {
+	date_from: string;
+	date_to?: string;
+	campaigns?: string[];
+	adgroups?: string[];
+	max_groups_per_day?: number;
+	dry_run?: boolean;
+};
+
+async function postAdsValidateFixChunked(apiBaseUrl: string, body: AdsValidateFixBody): Promise<any> {
+	const from = String(body.date_from || '').trim();
+	const to = String(body.date_to || body.date_from || '').trim();
+	const chunks = chunkYmdRange(from, to, ADS_VALIDATE_FIX_MAX_DAYS);
+	if (chunks.length <= 1) {
+		const res = await axios.post(`${apiBaseUrl}/ads/validate-fix`, { ...body, date_from: from, date_to: to }, { timeout: 1200000 });
+		return res?.data;
+	}
+
+	const totals: Record<string, number> = {};
+	const processed: any[] = [];
+	let ok = true;
+	let mergedScope: any = null;
+	let note: string | undefined;
+
+	for (const seg of chunks) {
+		const res = await axios.post(
+			`${apiBaseUrl}/ads/validate-fix`,
+			{ ...body, date_from: seg.from, date_to: seg.to },
+			{ timeout: 1200000 },
+		);
+		const data = res?.data || {};
+		ok = ok && data?.ok !== false;
+		if (data?.scope) mergedScope = data.scope;
+		if (data?.note && !note) note = String(data.note);
+		for (const [key, value] of Object.entries(data?.totals || {})) {
+			totals[key] = (totals[key] || 0) + (Number(value) || 0);
+		}
+		if (Array.isArray(data?.processed)) processed.push(...data.processed);
+	}
+
+	return {
+		ok,
+		dry_run: Boolean(body.dry_run),
+		from: chunks[0]?.from || from,
+		to: chunks[chunks.length - 1]?.to || to,
+		scope: mergedScope,
+		totals,
+		processed,
+		note,
+	};
+}
+
 async function ensureAdsData(params: {
 	apiBaseUrl: string;
 	kind: 'keyword' | 'searchword' | 'campaign' | 'adgroup' | 'creative';
@@ -2502,6 +2622,7 @@ async function ensureAdsData(params: {
 	// 1) availability는 서버에서 62일 제한이 있으므로, 요청 범위를 62일 이하로 쪼개서 조회한다.
 	//    그리고 "없는 날짜(missingDates)"만 모아서 수집을 수행한다.
 	const missingAll: string[] = [];
+	const collectableTo = toYmd(defaultYesterdayRange().from);
 	for (const seg of chunkYmdRange(params.dateFrom, params.dateTo, 62)) {
 		const segAvail = await fetchAdsAvailability({
 			baseUrl: params.apiBaseUrl,
@@ -2511,7 +2632,10 @@ async function ensureAdsData(params: {
 			platform: params.platform,
 		});
 		const segMissing = Array.isArray(segAvail?.missingDates) ? segAvail.missingDates : [];
-		for (const d of segMissing) missingAll.push(String(d));
+		for (const d of segMissing) {
+			const ymd = String(d);
+			if (ymd && ymd <= collectableTo) missingAll.push(ymd);
+		}
 	}
 	// 중복 제거 + 정렬은 groupContiguousDates 내부에서 수행되므로 그대로 사용
 	const missingRanges = groupContiguousDates(missingAll);
@@ -2595,6 +2719,7 @@ async function ensureAdsDataMulti(params: {
 	};
 
 	const missingAll: string[] = [];
+	const collectableTo = toYmd(defaultYesterdayRange().from);
 	for (const r of params.ranges) {
 		for (const seg of chunkYmdRange(r.from, r.to, 62)) {
 			const segAvail = await fetchAdsAvailability({
@@ -2606,7 +2731,10 @@ async function ensureAdsDataMulti(params: {
 				platform: params.platform,
 			});
 			const segMissing = Array.isArray(segAvail?.missingDates) ? segAvail.missingDates : [];
-			for (const d of segMissing) missingAll.push(String(d));
+			for (const d of segMissing) {
+				const ymd = String(d);
+				if (ymd && ymd <= collectableTo) missingAll.push(ymd);
+			}
 		}
 	}
 
@@ -2874,48 +3002,8 @@ function AdsPerformanceView(props: { apiBaseUrl: string; kind: 'keyword' | 'sear
 					source: r.source,
 				});
 
-				// 1) 현재/비교 기간에 데이터가 없으면 자동 수집
-				//    searchword는 비어 있을 수 있으므로, 실패 시 keyword(non_powerlink)로 폴백한다(추측 없이 원본 그대로).
-				try {
-					if (props.kind === 'keyword') {
-						await ensureAdsDataMulti({
-							apiBaseUrl: props.apiBaseUrl,
-							kind: 'keyword',
-							campaignKind: fixedCampaignKind,
-							ranges: [
-								{ from: dateFrom, to: dateTo },
-								{ from: prevFrom, to: prevTo },
-							],
-							setEnsure: (s) => !cancelled && setEnsureState(s),
-						});
-					} else {
-						try {
-							await ensureAdsDataMulti({
-								apiBaseUrl: props.apiBaseUrl,
-								kind: 'searchword',
-								campaignKind: fixedCampaignKind,
-								ranges: [
-									{ from: dateFrom, to: dateTo },
-									{ from: prevFrom, to: prevTo },
-								],
-								setEnsure: (s) => !cancelled && setEnsureState(s),
-							});
-						} catch {
-							await ensureAdsDataMulti({
-								apiBaseUrl: props.apiBaseUrl,
-								kind: 'keyword',
-								campaignKind: fixedCampaignKind,
-								ranges: [
-									{ from: dateFrom, to: dateTo },
-									{ from: prevFrom, to: prevTo },
-								],
-								setEnsure: (s) => !cancelled && setEnsureState(s),
-							});
-						}
-					}
-				} finally {
-					if (!cancelled) setEnsureState({ ensuring: false, message: null });
-				}
+				// 메뉴 진입은 조회만 수행한다. 누락 수집은 사용자가 수집 메뉴/명시 버튼에서 실행한다.
+				if (!cancelled) setEnsureState({ ensuring: false, message: null });
 
 				const fetchTermDaily = async (from: string, to: string): Promise<TermDailyRow[]> => {
 					if (props.kind === 'keyword') {
@@ -3123,8 +3211,23 @@ export function GfaCreativeAnalysisView(props: { apiBaseUrl: string }): JSX.Elem
 	const [notes, setNotes] = useState('');
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [breakdown, setBreakdown] = useState<any | null>(null);
+	const [creativeAnalysis, setCreativeAnalysis] = useState<GfaCreativeAnalysis | null>(null);
+	const [imageSubjects, setImageSubjects] = useState('');
+	const [imageHairConditions, setImageHairConditions] = useState('');
+	const [imageScenes, setImageScenes] = useState('');
+	const [imageEmotions, setImageEmotions] = useState('');
+	const [imageCompositions, setImageCompositions] = useState('');
+	const [imageColorMoods, setImageColorMoods] = useState('');
+	const [imageProductVisibility, setImageProductVisibility] = useState('');
+	const [copyKeywords, setCopyKeywords] = useState('');
+	const [copyPainPoints, setCopyPainPoints] = useState('');
+	const [copyAppealTypes, setCopyAppealTypes] = useState('');
+	const [copyMessageTone, setCopyMessageTone] = useState('');
+	const [copyCtaType, setCopyCtaType] = useState('');
 	const [message, setMessage] = useState<string | null>(null);
 	const [dateState] = useAdsDateState();
+	const splitTags = (v: string): string[] => v.split(',').map((x) => x.trim()).filter(Boolean);
+	const joinTags = (v?: string[] | null): string => Array.isArray(v) ? v.join(', ') : '';
 
 	useEffect(() => {
 		const cid = String(searchParams.get('creative_id') || '').trim();
@@ -3149,6 +3252,25 @@ export function GfaCreativeAnalysisView(props: { apiBaseUrl: string }): JSX.Elem
 			setImageType(String(meta.image_type || ''));
 			setMessageType(String(meta.message_type || ''));
 			setNotes(String(meta.notes || ''));
+			const analysis = {
+				ok: true,
+				creative_id: cid,
+				image_analysis: meta.image_analysis || null,
+				copy_analysis: meta.copy_analysis || null,
+			} as GfaCreativeAnalysis;
+			setCreativeAnalysis(analysis);
+			setImageSubjects(joinTags(analysis.image_analysis?.visual_subjects));
+			setImageHairConditions(joinTags(analysis.image_analysis?.hair_condition_tags));
+			setImageScenes(joinTags(analysis.image_analysis?.scene_tags));
+			setImageEmotions(joinTags(analysis.image_analysis?.emotion_tags));
+			setImageCompositions(joinTags(analysis.image_analysis?.composition_tags));
+			setImageColorMoods(joinTags(analysis.image_analysis?.color_mood_tags));
+			setImageProductVisibility(String(analysis.image_analysis?.product_visibility || ''));
+			setCopyKeywords(joinTags(analysis.copy_analysis?.core_keywords));
+			setCopyPainPoints(joinTags(analysis.copy_analysis?.pain_points));
+			setCopyAppealTypes(joinTags(analysis.copy_analysis?.appeal_types));
+			setCopyMessageTone(String(analysis.copy_analysis?.message_tone || ''));
+			setCopyCtaType(String(analysis.copy_analysis?.cta_type || ''));
 			setBreakdown(breakdownRes.data);
 			setMessage('소재 메타와 반응 데이터를 불러왔습니다.');
 		} catch (e) {
@@ -3189,7 +3311,80 @@ export function GfaCreativeAnalysisView(props: { apiBaseUrl: string }): JSX.Elem
 		}
 	};
 
+	const runAnalysis = async () => {
+		const cid = creativeId.trim();
+		if (!cid) {
+			setMessage('소재 ID를 입력하세요.');
+			return;
+		}
+		try {
+			const res = await runGfaCreativeAnalysis({ baseUrl: props.apiBaseUrl, creativeId: cid, force: true, allowFallback: true });
+			setCreativeAnalysis(res);
+			setImageSubjects(joinTags(res.image_analysis?.visual_subjects));
+			setImageHairConditions(joinTags(res.image_analysis?.hair_condition_tags));
+			setImageScenes(joinTags(res.image_analysis?.scene_tags));
+			setImageEmotions(joinTags(res.image_analysis?.emotion_tags));
+			setImageCompositions(joinTags(res.image_analysis?.composition_tags));
+			setImageColorMoods(joinTags(res.image_analysis?.color_mood_tags));
+			setImageProductVisibility(String(res.image_analysis?.product_visibility || ''));
+			setCopyKeywords(joinTags(res.copy_analysis?.core_keywords));
+			setCopyPainPoints(joinTags(res.copy_analysis?.pain_points));
+			setCopyAppealTypes(joinTags(res.copy_analysis?.appeal_types));
+			setCopyMessageTone(String(res.copy_analysis?.message_tone || ''));
+			setCopyCtaType(String(res.copy_analysis?.cta_type || ''));
+			setMessage('이미지/카피 자동 분석을 실행했습니다. 결과를 검토 후 저장하세요.');
+		} catch (e) {
+			setMessage(errorDetailText(e));
+		}
+	};
+
+	const saveAnalysisReview = async () => {
+		const cid = creativeId.trim();
+		if (!cid) {
+			setMessage('소재 ID를 입력하세요.');
+			return;
+		}
+		try {
+			await updateGfaCreativeImageAnalysis({
+				baseUrl: props.apiBaseUrl,
+				creativeId: cid,
+				payload: {
+					visual_subjects: splitTags(imageSubjects),
+					hair_condition_tags: splitTags(imageHairConditions),
+					scene_tags: splitTags(imageScenes),
+					emotion_tags: splitTags(imageEmotions),
+					composition_tags: splitTags(imageCompositions),
+					color_mood_tags: splitTags(imageColorMoods),
+					product_visibility: imageProductVisibility,
+					status: 'reviewed',
+				},
+			});
+			const res = await updateGfaCreativeCopyAnalysis({
+				baseUrl: props.apiBaseUrl,
+				creativeId: cid,
+				payload: {
+					core_keywords: splitTags(copyKeywords),
+					pain_points: splitTags(copyPainPoints),
+					appeal_types: splitTags(copyAppealTypes),
+					message_tone: copyMessageTone,
+					cta_type: copyCtaType,
+					status: 'reviewed',
+				},
+			});
+			const latest = await fetchGfaCreativeAnalysis({ baseUrl: props.apiBaseUrl, creativeId: cid });
+			setCreativeAnalysis({ ...res, ...latest });
+			setMessage('이미지/카피 분석 검토 결과를 저장했습니다.');
+		} catch (e) {
+			setMessage(errorDetailText(e));
+		}
+	};
+
 	const metricRow = (row: any): string => `${row.name}: 비용 ${formatWon(row.cost)} / 클릭 ${formatInt(row.clicks)} / 구매 ${formatInt(row.purchase_conversions || 0)} / 구매매출 ${formatWon(row.purchase_revenue || 0)} / ROAS ${formatPct(row.roas || 0)}`;
+	const cvMetrics = creativeAnalysis?.image_analysis?.cv_metrics || null;
+	const cvScore = (key: string): string => {
+		const value = Number((cvMetrics as any)?.[key] ?? 0);
+		return Number.isFinite(value) ? `${Math.round(value * 100)}%` : '-';
+	};
 
 	return (
 		<div style={{ display: 'grid', gap: 14 }}>
@@ -3211,8 +3406,49 @@ export function GfaCreativeAnalysisView(props: { apiBaseUrl: string }): JSX.Elem
 				<div style={{ display: 'flex', gap: 8 }}>
 					<button type="button" className="btn-ghost" onClick={loadMeta}>불러오기</button>
 					<button type="button" className="btn-primary" onClick={saveMeta}>저장</button>
+					<button type="button" className="btn-ghost" onClick={runAnalysis}>이미지/카피 자동 분석</button>
+					<button type="button" className="btn-primary" onClick={saveAnalysisReview}>분석 검토 저장</button>
 				</div>
 				{message && <div style={{ fontSize: 12, color: message.includes('실패') ? '#fecaca' : '#bbf7d0' }}>{message}</div>}
+				<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+					<div className="card" style={{ display: 'grid', gap: 8 }}>
+						<div style={{ fontWeight: 900 }}>이미지 분석 검토</div>
+						<div style={{ fontSize: 11, color: '#94a3b8' }}>
+							이미지에서 보이는 대상/헤어상태/장면/감정/구도를 카피와 분리해 관리합니다.
+							상태: {creativeAnalysis?.image_analysis?.status || '미분석'} · 신뢰도 {Number(creativeAnalysis?.image_analysis?.confidence || 0).toFixed(2)}
+						</div>
+						<input className="input" value={imageSubjects} onChange={(e) => setImageSubjects(e.target.value)} placeholder="인물/대상 예: 20대 여성, 헤어 클로즈업" />
+						<input className="input" value={imageHairConditions} onChange={(e) => setImageHairConditions(e.target.value)} placeholder="헤어상태 예: 손상모, 새치 고민, 윤기" />
+						<input className="input" value={imageScenes} onChange={(e) => setImageScenes(e.target.value)} placeholder="장면 예: 헤나 사용 장면, 비포애프터" />
+						<input className="input" value={imageEmotions} onChange={(e) => setImageEmotions(e.target.value)} placeholder="감정/표정 예: 환한 미소, 고민, 자신감" />
+						<input className="input" value={imageCompositions} onChange={(e) => setImageCompositions(e.target.value)} placeholder="구도 예: 클로즈업, 전후 비교, 리뷰형" />
+						<input className="input" value={imageColorMoods} onChange={(e) => setImageColorMoods(e.target.value)} placeholder="색감/분위기 예: 자연, 화이트톤, 깨끗함, 프리미엄, 따뜻함" />
+						<input className="input" value={imageProductVisibility} onChange={(e) => setImageProductVisibility(e.target.value)} placeholder="제품 노출 예: 제품 노출, 미확인" />
+						{cvMetrics ? (
+							<div style={{ fontSize: 11, color: '#cbd5e1', display: 'grid', gap: 4, padding: 10, border: '1px solid rgba(148,163,184,0.25)', borderRadius: 10 }}>
+								<div style={{ fontWeight: 900, color: '#e5e7eb' }}>OpenCV 객관 수치</div>
+								<div>밝기 {cvScore('brightness_score')} · 채도 {cvScore('saturation_score')} · 대비 {cvScore('contrast_score')} · 선명도 {cvScore('sharpness_score')}</div>
+								<div>화이트톤 {cvScore('white_tone_ratio')} · 따뜻한 색감 {cvScore('warm_tone_ratio')} · 좌우분할 {cvScore('split_layout_score')}</div>
+								<div>텍스트 추정 {cvScore('estimated_text_area_ratio')} · 얼굴비중 {cvScore('face_area_ratio')} · 얼굴수 {formatInt(Number((cvMetrics as any).face_count || 0))}</div>
+								{Array.isArray((cvMetrics as any).dominant_colors) && (cvMetrics as any).dominant_colors.length ? (
+									<div>주요 색상 {(cvMetrics as any).dominant_colors.join(', ')}</div>
+								) : null}
+							</div>
+						) : null}
+					</div>
+					<div className="card" style={{ display: 'grid', gap: 8 }}>
+						<div style={{ fontWeight: 900 }}>카피 분석 검토</div>
+						<div style={{ fontSize: 11, color: '#94a3b8' }}>
+							작성 문구의 키워드/고민/소구/톤/CTA를 이미지와 분리해 관리합니다.
+							상태: {creativeAnalysis?.copy_analysis?.status || '미분석'} · 신뢰도 {Number(creativeAnalysis?.copy_analysis?.confidence || 0).toFixed(2)}
+						</div>
+						<input className="input" value={copyKeywords} onChange={(e) => setCopyKeywords(e.target.value)} placeholder="핵심 키워드 예: 헤나, 새치, 손상모" />
+						<input className="input" value={copyPainPoints} onChange={(e) => setCopyPainPoints(e.target.value)} placeholder="고객 고민 예: 새치 고민, 손상모 고민" />
+						<input className="input" value={copyAppealTypes} onChange={(e) => setCopyAppealTypes(e.target.value)} placeholder="소구 유형 예: 공감형, 문제 제시형, 혜택 제시형" />
+						<input className="input" value={copyMessageTone} onChange={(e) => setCopyMessageTone(e.target.value)} placeholder="문장 톤 예: 고민 공감형, 혜택 강조형" />
+						<input className="input" value={copyCtaType} onChange={(e) => setCopyCtaType(e.target.value)} placeholder="CTA 유형 예: 구매 유도, 상세 확인" />
+					</div>
+				</div>
 				{breakdown && (
 					<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
 						<div>
@@ -3230,57 +3466,1146 @@ export function GfaCreativeAnalysisView(props: { apiBaseUrl: string }): JSX.Elem
 	);
 }
 
+type GfaStrategyViewMode = 'SNAPSHOT_VIEW' | 'MANUAL_ANALYSIS_VIEW';
+type GfaStrategyLoadState = 'LOADING' | 'LOADED' | 'EMPTY' | 'ERROR';
+
+type GfaStrategySnapshotMeta = {
+	snapshotId: string;
+	status: string;
+	asOfDate: string | null;
+	periodStart: string | null;
+	periodEnd: string | null;
+	publishedAt: string | null;
+};
+
+function formatGfaDotDate(ymd?: string | null): string {
+	const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(ymd || '').trim());
+	if (!m) return String(ymd || '').trim() || '-';
+	return `${m[1]}.${m[2]}.${m[3]}`;
+}
+
+function formatGfaPublishedAt(iso?: string | null): string {
+	const raw = String(iso || '').trim();
+	if (!raw) return '-';
+	const d = new Date(raw);
+	if (!Number.isFinite(d.getTime())) return raw;
+	const y = d.getFullYear();
+	const mo = String(d.getMonth() + 1).padStart(2, '0');
+	const da = String(d.getDate()).padStart(2, '0');
+	const hh = String(d.getHours()).padStart(2, '0');
+	const mm = String(d.getMinutes()).padStart(2, '0');
+	return `${y}.${mo}.${da} ${hh}:${mm}`;
+}
+
+function snapshotMetaFromLatest(snapshot: {
+	snapshot_id: string;
+	status?: string | null;
+	as_of_date?: string | null;
+	period?: { start?: string | null; end?: string | null };
+	published_at?: string | null;
+}): GfaStrategySnapshotMeta {
+	return {
+		snapshotId: String(snapshot.snapshot_id || ''),
+		status: String(snapshot.status || ''),
+		asOfDate: snapshot.as_of_date || null,
+		periodStart: snapshot.period?.start || null,
+		periodEnd: snapshot.period?.end || null,
+		publishedAt: snapshot.published_at || null,
+	};
+}
+
 export function GfaStrategyView(props: { apiBaseUrl: string }): JSX.Element {
 	const [dateState, setDateState] = useAdsDateState();
+	const [snapshotLoading, setSnapshotLoading] = useState(true);
+	const [analyzing, setAnalyzing] = useState(false);
+	const [result, setResult] = useState<GfaStrategyAnalysis | null>(null);
+	const [viewMode, setViewMode] = useState<GfaStrategyViewMode>('SNAPSHOT_VIEW');
+	const [loadState, setLoadState] = useState<GfaStrategyLoadState>('LOADING');
+	const [snapshotMeta, setSnapshotMeta] = useState<GfaStrategySnapshotMeta | null>(null);
+	const [snapshotError, setSnapshotError] = useState('');
+	const [activeSection, setActiveSection] = useState<'summary' | 'condition' | 'operation' | 'creative' | 'creativeAnalysis' | 'actions'>('summary');
+	const [previewImage, setPreviewImage] = useState<string | null>(null);
+	const [selectedStrategyCampaignId, setSelectedStrategyCampaignId] = useState<string>('');
+	const [selectedStrategyAdgroupId, setSelectedStrategyAdgroupId] = useState<string>('');
+	const [analysisRunning, setAnalysisRunning] = useState(false);
+	const [analysisMessage, setAnalysisMessage] = useState('');
+	const navigate = useNavigate();
+	const navigateToCreativeGenerator = (row?: Partial<GfaStrategyCreativeCompareRow>) => {
+		const r = normalizeRange(dateState.range);
+		const q = new URLSearchParams({
+			date_from: toYmd(r.from),
+			date_to: toYmd(r.to),
+		});
+		if (row?.recommended_goal) q.set('goal', String(row.recommended_goal));
+		if (row?.creative_id) q.set('creative_id', String(row.creative_id));
+		navigate(`/analytics/gfa/creative-generator?${q.toString()}`);
+	};
+	const applySnapshot = (snapshot: Parameters<typeof gfaStrategyPayloadFromSnapshot>[0]) => {
+		setResult(gfaStrategyPayloadFromSnapshot(snapshot));
+		setSnapshotMeta(snapshotMetaFromLatest(snapshot));
+		setViewMode('SNAPSHOT_VIEW');
+		setLoadState('LOADED');
+		setSnapshotError('');
+		setSelectedStrategyCampaignId('');
+		setSelectedStrategyAdgroupId('');
+		setAnalysisMessage('');
+	};
+	const loadLatestSnapshot = async () => {
+		setSnapshotLoading(true);
+		setLoadState('LOADING');
+		setSnapshotError('');
+		try {
+			const snapshot = await getLatestGfaStrategySnapshot({ baseUrl: props.apiBaseUrl });
+			applySnapshot(snapshot);
+		} catch (e) {
+			if (isNoPublishedGfaStrategySnapshotError(e)) {
+				setResult(null);
+				setSnapshotMeta(null);
+				setViewMode('SNAPSHOT_VIEW');
+				setLoadState('EMPTY');
+				setSnapshotError('');
+			} else {
+				setLoadState('ERROR');
+				setSnapshotError('전략 결과를 불러오지 못했습니다.');
+			}
+		} finally {
+			setSnapshotLoading(false);
+		}
+	};
+	useEffect(() => {
+		void loadLatestSnapshot();
+		// Menu entry / remount / browser refresh: latest snapshot only. Never auto-analyze.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.apiBaseUrl]);
+	const run = async (options?: { forceRefresh?: boolean }) => {
+		setAnalyzing(true);
+		try {
+			const r = normalizeRange(dateState.range);
+			const res = await fetchGfaStrategyAnalysis({
+				baseUrl: props.apiBaseUrl,
+				dateFrom: toYmd(r.from),
+				dateTo: toYmd(r.to),
+				forceRefresh: options?.forceRefresh ?? false,
+			});
+			setResult(res);
+			setViewMode('MANUAL_ANALYSIS_VIEW');
+			setLoadState('LOADED');
+			setSelectedStrategyCampaignId('');
+			setSelectedStrategyAdgroupId('');
+			setAnalysisMessage('');
+		} catch (e) {
+			setResult({ ok: false, date_from: '', date_to: '', executive_summary: [errorDetailText(e)] });
+			setViewMode('MANUAL_ANALYSIS_VIEW');
+			setLoadState('LOADED');
+		} finally {
+			setAnalyzing(false);
+		}
+	};
+
+	const runTopCreativeAnalysis = async () => {
+		const ids = Array.from(new Set((result?.creative_compare_rows || [])
+			.filter((r) => r.image_url && ['missing', 'failed', ''].includes(String(r.image_analysis_status || '')))
+			.map((r) => String(r.creative_id || '').trim())
+			.filter((x) => x && !x.startsWith('__campaign__:'))));
+		if (!ids.length) {
+			setAnalysisMessage('분석 가능한 이미지 URL 보유 미완료/실패 소재가 없습니다.');
+			return;
+		}
+		setAnalysisRunning(true);
+		try {
+			const res = await runGfaCreativeAnalysisBatch({ baseUrl: props.apiBaseUrl, creativeIds: ids, force: false, allowFallback: true });
+			const errors = (res.results || []).filter((x) => x.error);
+			const success = (res.results || []).length - errors.length;
+			const message = errors.length ? `분석 ${success}건 완료, ${errors.length}건 실패: ${analysisErrorText(errors[0]?.error)}` : `Top 소재 ${success}건 분석 완료`;
+			setAnalysisMessage(message);
+			if (success > 0) {
+				await run({ forceRefresh: true });
+				setAnalysisMessage(message);
+			}
+		} catch (e) {
+			setAnalysisMessage(errorDetailText(e));
+		} finally {
+			setAnalysisRunning(false);
+		}
+	};
+
+	const runAllMissingCreativeAnalysis = async () => {
+		const retryTargetCount = imageAnalysisIncomplete + imageAnalysisFailed;
+		if (retryTargetCount <= 0) {
+			setAnalysisMessage('전체 이미지 URL 보유 소재의 이미지 분석이 이미 완료되었습니다.');
+			return;
+		}
+		setAnalysisRunning(true);
+		try {
+			const res = await runGfaCreativeAnalysisBatch({
+				baseUrl: props.apiBaseUrl,
+				limit: Math.max(retryTargetCount, imageCreativesTotal, 1),
+				force: false,
+				allowFallback: true,
+			});
+			const errors = (res.results || []).filter((x) => x.error);
+			const success = (res.results || []).length - errors.length;
+			const message = errors.length
+				? `전체 이미지 분석 ${success}건 완료, ${errors.length}건 실패: ${analysisErrorText(errors[0]?.error)}`
+				: `전체 이미지 분석 ${success}건 완료`;
+			setAnalysisMessage(message);
+			if (success > 0) {
+				await run({ forceRefresh: true });
+				setAnalysisMessage(message);
+			}
+		} catch (e) {
+			setAnalysisMessage(errorDetailText(e));
+		} finally {
+			setAnalysisRunning(false);
+		}
+	};
+
+	const runAllForceCreativeAnalysis = async () => {
+		if (imageCreativesTotal <= 0) {
+			setAnalysisMessage('분석 가능한 이미지 URL 보유 소재가 없습니다.');
+			return;
+		}
+		setAnalysisRunning(true);
+		try {
+			const res = await runGfaCreativeAnalysisBatch({
+				baseUrl: props.apiBaseUrl,
+				limit: Math.max(imageCreativesTotal, 1),
+				force: true,
+				allowFallback: true,
+			});
+			const errors = (res.results || []).filter((x) => x.error);
+			const success = (res.results || []).length - errors.length;
+			const message = errors.length
+				? `전체 이미지 강제 재분석 ${success}건 완료, ${errors.length}건 실패: ${analysisErrorText(errors[0]?.error)}`
+				: `전체 이미지 강제 재분석 ${success}건 완료`;
+			setAnalysisMessage(message);
+			if (success > 0) {
+				await run({ forceRefresh: true });
+				setAnalysisMessage(message);
+			}
+		} catch (e) {
+			setAnalysisMessage(errorDetailText(e));
+		} finally {
+			setAnalysisRunning(false);
+		}
+	};
+
+	const sections = [
+		{ key: 'summary', label: '전략 결론' },
+		{ key: 'condition', label: '캠페인 운영 진단' },
+		{ key: 'operation', label: '노출 운영 최적값' },
+		{ key: 'creative', label: '소재 제작 최적값' },
+		{ key: 'creativeAnalysis', label: '소재 Feature 분석' },
+		{ key: 'actions', label: '실행 후보' },
+	] as const;
+	const gradeColor = (grade?: string): string => {
+		const g = String(grade || '').toUpperCase();
+		if (g === 'S') return '#fbbf24';
+		if (g === 'A') return '#86efac';
+		if (g === 'B') return '#93c5fd';
+		if (g === 'C') return '#cbd5e1';
+		return '#fca5a5';
+	};
+	const GradeBadge = ({ grade }: { grade?: string }): JSX.Element => (
+		<span style={{ color: gradeColor(grade), fontWeight: 900 }}>{grade || '-'}</span>
+	);
+	const featureLabel = (value?: unknown): string => {
+		const text = String(value ?? '').trim();
+		return text || '-';
+	};
+	const featureList = (value?: unknown, limit = 3): string => {
+		const arr = Array.isArray(value) ? value : [];
+		const clean = arr.map((x) => String(x || '').trim()).filter(Boolean);
+		return clean.length ? clean.slice(0, limit).join(', ') : '-';
+	};
+	const scoreText = (value?: unknown): string => {
+		const n = Number(value ?? 0);
+		return Number.isFinite(n) && n > 0 ? n.toFixed(2) : '-';
+	};
+	const score100Text = (value?: unknown): string => {
+		const n = Number(value ?? 0);
+		return Number.isFinite(n) && n > 0 ? n.toFixed(0) : '-';
+	};
+	const starText = (value?: unknown): string => {
+		const item = value && typeof value === 'object' ? value as { stars?: unknown } : {};
+		const n = Math.max(0, Math.min(5, Number(item.stars || 0)));
+		return n > 0 ? `${'★'.repeat(n)}${'☆'.repeat(5 - n)}` : '-';
+	};
+	const CreativeFeatureCell = ({ row }: { row: GfaStrategyCreativeCompareRow }): JSX.Element => (
+		<div style={{ display: 'grid', gap: 6, fontSize: 11, lineHeight: 1.35 }}>
+			<div><strong>Hook</strong> {featureLabel(row.copy_feature_hook)} · <strong>Stage</strong> {featureLabel(row.copy_buyer_stage)}</div>
+			<div><strong>Psych</strong> {featureList(row.copy_psychology_triggers)}</div>
+			<div><strong>Benefit</strong> {featureList(row.copy_benefits)} · <strong>Evidence</strong> {featureList(row.copy_evidence_types)}</div>
+			<div><strong>USP</strong> {featureList(row.copy_usp_categories)} · <strong>CTA</strong> {featureLabel(row.copy_cta_action_type)}</div>
+			<div style={{ display: 'grid', gap: 2, color: '#fef3c7' }}>
+				<div><strong>Success DNA</strong> Hook {starText(row.copy_success_dna?.hook)} · Emotion {starText(row.copy_success_dna?.emotion)}</div>
+				<div>USP {starText(row.copy_success_dna?.usp)} · Trust {starText(row.copy_success_dna?.trust)} · Urgency {starText(row.copy_success_dna?.urgency)}</div>
+			</div>
+			<div style={{ color: '#86efac' }}>
+				Alignment {score100Text(row.copy_image_alignment_score)} · CTA {score100Text(row.copy_cta_strength_score)} · Novelty {score100Text(row.novelty_score)} · Fatigue {featureLabel(row.fatigue_risk)}
+			</div>
+			<div style={{ color: '#93c5fd' }}>
+				Focus {scoreText(row.copy_message_focus_score)} · Complexity {scoreText(row.copy_complexity_score)} · Trust {scoreText(row.copy_trust_score)}
+			</div>
+		</div>
+	);
+	const DenseCell = ({ children, maxHeight = 112 }: { children: React.ReactNode; maxHeight?: number }): JSX.Element => (
+		<div style={{ maxHeight, overflow: 'auto', whiteSpace: 'pre-wrap', lineHeight: 1.35, paddingRight: 2 }}>
+			{children}
+		</div>
+	);
+	type Column<T> = {
+		key: string;
+		label: string;
+		width?: number;
+		align?: 'left' | 'right' | 'center';
+		sortable?: boolean;
+		sortValue?: (row: T) => string | number | null | undefined;
+		render: (row: T, idx: number) => React.ReactNode;
+	};
+	const StrategyTable = <T,>({
+		title,
+		rows,
+		columns,
+		empty,
+		sortable = false,
+		compact = false,
+	}: {
+		title: string;
+		rows?: T[];
+		columns: Column<T>[];
+		empty?: string;
+		sortable?: boolean;
+		compact?: boolean;
+	}): JSX.Element => {
+		const [sortState, setSortState] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(null);
+		const topScrollRef = useRef<HTMLDivElement | null>(null);
+		const tableScrollRef = useRef<HTMLDivElement | null>(null);
+		const [scrollWidth, setScrollWidth] = useState(0);
+		const sortedRows = useMemo(() => {
+			const base = [...(rows || [])];
+			if (!sortState) return base;
+			const column = columns.find((c) => c.key === sortState.key);
+			if (!column) return base;
+			const valueOf = (row: T): string | number => {
+				const raw = column.sortValue ? column.sortValue(row) : (row as Record<string, unknown>)[column.key];
+				if (typeof raw === 'number') return raw;
+				const n = Number(raw);
+				if (raw !== null && raw !== undefined && raw !== '' && Number.isFinite(n)) return n;
+				return String(raw ?? '').toLowerCase();
+			};
+			return base.sort((a, b) => {
+				const av = valueOf(a);
+				const bv = valueOf(b);
+				const cmp = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv), 'ko');
+				return sortState.dir === 'asc' ? cmp : -cmp;
+			});
+		}, [columns, rows, sortState]);
+		const toggleSort = (column: Column<T>) => {
+			if (!sortable && !column.sortable) return;
+			setSortState((prev) => (prev?.key === column.key ? { key: column.key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key: column.key, dir: 'desc' }));
+		};
+		const syncScroll = (source: 'top' | 'table') => {
+			const top = topScrollRef.current;
+			const table = tableScrollRef.current;
+			if (!top || !table) return;
+			if (source === 'top' && table.scrollLeft !== top.scrollLeft) table.scrollLeft = top.scrollLeft;
+			if (source === 'table' && top.scrollLeft !== table.scrollLeft) top.scrollLeft = table.scrollLeft;
+		};
+		useEffect(() => {
+			const update = () => setScrollWidth(tableScrollRef.current?.scrollWidth || 0);
+			update();
+			window.addEventListener('resize', update);
+			return () => window.removeEventListener('resize', update);
+		}, [columns, sortedRows.length]);
+		const totalColumnWidth = columns.reduce((sum, c) => sum + Number(c.width || 120), 0) || 1;
+		const columnWidth = (c: Column<T>): number => Number(c.width || 120);
+		return (
+			<div className="card" style={{ display: 'grid', gap: compact ? 6 : 10, padding: compact ? 10 : undefined }}>
+				<div className="card-title" style={{ fontSize: compact ? 13 : undefined }}>{title}</div>
+				{(rows || []).length <= 0 ? (
+					<div style={{ fontSize: 12, color: '#94a3b8' }}>{empty || '분석 가능한 데이터가 없습니다.'}</div>
+				) : (
+					<div style={{ display: 'grid', gap: compact ? 2 : 4 }}>
+						<div ref={topScrollRef} onScroll={() => syncScroll('top')} style={{ overflowX: 'auto', overflowY: 'hidden', height: 12 }}>
+							<div style={{ width: scrollWidth || '100%', height: 1 }} />
+						</div>
+						<div ref={tableScrollRef} onScroll={() => syncScroll('table')} style={{ overflow: 'auto', border: '1px solid rgba(148,163,184,0.18)', borderRadius: compact ? 8 : 12 }}>
+							<table style={{ width: compact ? totalColumnWidth : '100%', minWidth: compact ? totalColumnWidth : undefined, borderCollapse: 'separate', borderSpacing: 0, tableLayout: compact ? 'fixed' : 'auto' }}>
+								<thead>
+									<tr>
+										{columns.map((c) => {
+											const active = sortState?.key === c.key;
+											const canSort = sortable || c.sortable;
+											return (
+												<th key={c.key} style={{ padding: compact ? '4px 4px' : '9px 10px', position: 'sticky', top: 0, zIndex: 1, background: '#0f172a', color: '#cbd5e1', fontSize: compact ? 9 : 11, lineHeight: 1.15, textAlign: 'center', whiteSpace: 'normal', width: columnWidth(c), minWidth: columnWidth(c), borderBottom: '1px solid rgba(148,163,184,0.2)' }}>
+													<button type="button" onClick={() => toggleSort(c)} disabled={!canSort} style={{ width: '100%', border: 'none', background: 'transparent', color: 'inherit', fontSize: 'inherit', fontWeight: 800, cursor: canSort ? 'pointer' : 'default', padding: 0 }}>
+														{c.label}{active ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : canSort ? ' ↕' : ''}
+													</button>
+												</th>
+											);
+										})}
+									</tr>
+								</thead>
+								<tbody>
+									{sortedRows.map((row, idx) => (
+										<tr key={idx}>
+											{columns.map((c) => (
+												<td key={c.key} style={{ padding: compact ? '4px 4px' : '8px 10px', fontSize: compact ? 10 : 12, lineHeight: compact ? 1.22 : 1.35, color: '#d1d5db', textAlign: c.align || 'left', verticalAlign: 'top', wordBreak: 'keep-all', overflowWrap: 'anywhere', width: columnWidth(c), minWidth: columnWidth(c), borderBottom: '1px solid rgba(148,163,184,0.10)' }}>{c.render(row, idx)}</td>
+											))}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				)}
+			</div>
+		);
+	};
+	const pctCell = (v: unknown): string => formatPct(Number(v || 0));
+	const wonCell = (v: unknown): string => formatWon(Number(v || 0));
+	const metricMini = (row: Partial<GfaStrategyRankRow>): JSX.Element => (
+		<div style={{ display: 'grid', gap: 1, minWidth: 0, fontSize: 10, lineHeight: 1.2 }}>
+			<div>비용 {wonCell(row.cost)} · CTR {pctCell(row.ctr)}</div>
+			<div>총전환 {formatInt(row.total_conversions || 0)}건 · {wonCell(row.total_revenue)}</div>
+			<div>구매 {formatInt(row.purchase_conversions || 0)}건 · {wonCell(row.purchase_revenue)}</div>
+			<div>총CVR {pctCell(row.total_cvr || (row as any).cvr)} · 구매CVR {pctCell(row.purchase_cvr)}</div>
+		</div>
+	);
+
+	const goalMatrixColumns: Column<GfaStrategyGoalMatrixRow>[] = [
+		{ key: 'goal', label: '목적', width: 110, render: (r) => <strong>{r.goal_label}</strong> },
+		{ key: 'metric', label: '판단 기준', width: 90, render: (r) => r.decision_metric },
+		{ key: 'adType', label: '광고형태', width: 150, render: (r) => <div>{r.ad_product_type || '-'}<br /><span style={{ color: '#94a3b8' }}>{r.ad_product_purpose || '-'}</span></div> },
+		{ key: 'fit', label: '목적 적합성', width: 190, render: (r) => <div><strong>{r.purpose_fit || '-'}</strong><br /><span style={{ color: '#94a3b8' }}>{r.purpose_fit_reason || '-'}</span></div> },
+		{ key: 'target', label: '누구에게', width: 170, render: (r) => `${r.recommended_gender || '전체'} / ${r.recommended_age || '전체'} / ${r.recommended_audience || '전체'}` },
+		{ key: 'where', label: '어디에 노출', width: 210, render: (r) => `${r.recommended_media || '데이터 부족'} / ${r.recommended_placement || '데이터 부족'}` },
+		{ key: 'creative', label: '소재 후보', width: 180, render: (r) => r.recommended_creative || '데이터 부족' },
+		{ key: 'image', label: '이미지 최적 요소', width: 270, render: (r) => r.recommended_image_elements || '분류 필요' },
+		{ key: 'copy', label: '카피/소구 최적 요소', width: 360, render: (r) => <span style={{ whiteSpace: 'pre-wrap', lineHeight: 1.45 }}>{r.recommended_copy_elements || '분류 필요'}</span> },
+		{ key: 'grade', label: '등급', width: 70, align: 'center', render: (r) => <GradeBadge grade={r.grade} /> },
+		{ key: 'action', label: '전략 방향', width: 360, render: (r) => r.creative_direction || r.operation_action || '추가 분석 필요' },
+	];
+	const blueprintColumns: Column<GfaStrategyBlueprintRow>[] = [
+		{ key: 'goal', label: '목적', width: 110, render: (r) => <strong>{r.goal_label}</strong> },
+		{ key: 'adType', label: '광고형태', width: 150, render: (r) => <div>{r.ad_product_type || '-'}<br /><span style={{ color: '#94a3b8' }}>{r.ad_product_purpose || '-'}</span></div> },
+		{ key: 'fit', label: '목적 적합성', width: 190, render: (r) => <div><strong>{r.purpose_fit || '-'}</strong><br /><span style={{ color: '#94a3b8' }}>{r.purpose_fit_reason || '-'}</span></div> },
+		{ key: 'role', label: '전략 역할', width: 240, render: (r) => r.strategic_role || '-' },
+		{ key: 'exposure', label: '노출 운영 공식', width: 280, render: (r) => r.exposure_formula || '-' },
+		{ key: 'creative', label: '소재 제작 공식', width: 360, render: (r) => r.creative_formula || '-' },
+		{ key: 'success', label: '성공 공식', width: 340, render: (r) => r.success_formula || '-' },
+		{ key: 'avoid', label: '피해야 할 공식', width: 300, render: (r) => r.avoid_formula || '-' },
+		{ key: 'rule', label: '판단 기준', width: 260, render: (r) => r.decision_rule || '-' },
+		{ key: 'next', label: '다음 테스트', width: 360, render: (r) => r.next_test || '-' },
+	];
+	const operationBlueprintColumns = blueprintColumns.filter((c) => !['creative'].includes(String(c.key)));
+	const creativeBlueprintColumns = blueprintColumns.filter((c) => !['exposure'].includes(String(c.key)));
+	const creativeGoalMatrixColumns = goalMatrixColumns.filter((c) => !['target', 'where'].includes(String(c.key)));
+	const conditionColumns: Column<GfaStrategyConditionGapRow>[] = [
+		{ key: 'level', label: '구분', width: 70, sortValue: (r) => r.level_label || r.level || '', render: (r) => r.level_label || r.level || '-' },
+		{ key: 'name', label: '캠페인/그룹/소재', width: 220, sortValue: (r) => r.name || r.campaign_name || r.adgroup_name || r.creative_name || '', render: (r) => <strong>{r.name || r.campaign_name || r.adgroup_name || r.creative_name || '-'}</strong> },
+		{ key: 'grade', label: '등급', width: 52, align: 'center', sortValue: (r) => ({ S: 5, A: 4, B: 3, C: 2, D: 1 }[String(r.grade || '').toUpperCase()] || 0), render: (r) => <GradeBadge grade={r.grade} /> },
+		{ key: 'sample', label: '표본', width: 105, sortValue: (r) => r.sample_sufficient ? 1 : 0, render: (r) => <div><strong style={{ color: r.sample_sufficient ? '#86efac' : '#fbbf24' }}>{r.sample_status || '-'}</strong><br /><span style={{ color: '#94a3b8' }}>{r.sample_reason || '-'}</span></div> },
+		{ key: 'adType', label: '광고형태', width: 120, sortValue: (r) => r.ad_product_type || '', render: (r) => <div>{r.ad_product_type || '-'}<br /><span style={{ color: '#94a3b8' }}>{r.ad_product_purpose || '-'}</span></div> },
+		{ key: 'fit', label: '목적 적합성', width: 150, sortValue: (r) => r.purpose_fit || '', render: (r) => <div><strong>{r.purpose_fit || '-'}</strong><br /><span style={{ color: '#94a3b8' }}>{r.purpose_fit_reason || '-'}</span></div> },
+		{ key: 'goal', label: '우수 목적', width: 78, sortValue: (r) => r.best_goal_label || '', render: (r) => r.best_goal_label || '-' },
+		{ key: 'current', label: '현재 성과', width: 78, align: 'right', sortValue: (r) => Number(r.current_metric_value || 0), render: (r) => pctCell(r.current_metric_value) },
+		{ key: 'baseline', label: '우수 기준선', width: 135, sortValue: (r) => Number(r.baseline_metric_value || 0), render: (r) => <div>{r.baseline_name}<br /><span style={{ color: '#94a3b8' }}>{r.baseline_metric_label} {pctCell(r.baseline_metric_value)}</span></div> },
+		{ key: 'metrics', label: '핵심 지표', width: 145, sortValue: (r) => Number(r.cost || 0), render: (r) => metricMini(r) },
+		{ key: 'cause', label: '문제 원인', width: 190, sortValue: (r) => r.problem_cause || r.gap_summary || '', render: (r) => r.problem_cause || r.gap_summary || '-' },
+		{ key: 'rec', label: '개선 방향', width: 230, sortValue: (r) => r.recommendation || '', render: (r) => r.recommendation || '-' },
+	];
+	const campaignRows = result?.condition_hierarchy?.campaigns || result?.condition_gap_rows?.filter((r) => r.level === 'campaign') || [];
+	const metaCoverage = result?.creative_factor_analysis?.meta_coverage || {};
+	const totalCampaigns = campaignRows.length;
+	const totalAdgroups = (result?.condition_hierarchy?.adgroups || []).length;
+	const totalCreatives = Number(metaCoverage.total_creatives || (result?.condition_hierarchy?.creatives || []).length || 0);
+	const imageCreativesTotal = Number(metaCoverage.image_creatives_total || 0);
+	const imageAnalysisCompleted = Number(metaCoverage.image_analysis_completed || 0);
+	const imageAnalysisIncomplete = Number(metaCoverage.image_analysis_incomplete || 0);
+	const imageAnalysisFailed = Number(metaCoverage.image_analysis_failed || 0);
+	const imageAnalysisRetryTarget = imageAnalysisIncomplete + imageAnalysisFailed;
+	const missingImageAnalysis = Number(metaCoverage.missing_image_analysis || 0);
+	const missingCopyAnalysis = Number(metaCoverage.missing_copy_analysis || 0);
+	const topMissingWithImage = (result?.creative_compare_rows || []).filter((r) => r.image_url && ['missing', 'failed', ''].includes(String(r.image_analysis_status || ''))).length;
+	const analysisErrorText = (code?: string): string => {
+		const c = String(code || '');
+		if (c.includes('openai_api_key_missing')) return 'OpenAI API 키가 설정되지 않았습니다. 설정 > API 세팅에서 OPENAI_API_KEY를 저장하세요.';
+		if (c.includes('gfa_creative_image_url_missing')) return '이미지 URL이 없는 소재입니다. 먼저 GFA 소재 상세 수집을 실행해야 합니다.';
+		if (c.includes('gfa_creative_image_url_not_public')) return '이미지 URL이 외부에서 접근 가능한 http/https 주소가 아닙니다.';
+		if (c.includes('insufficient_quota')) return 'OpenAI API 키는 정상이나 현재 계정/프로젝트의 사용 한도 또는 결제 쿼터가 초과되었습니다.';
+		if (c.includes('model_not_found')) return '설정된 GPT 모델을 사용할 수 없습니다. 이미지 분석 모델명을 확인하세요.';
+		if (c.includes('gfa_creative_vision_analysis_failed')) return 'GPT 이미지 분석 호출이 실패했습니다. API 키, 모델명, 이미지 URL 접근 상태를 확인하세요.';
+		if (c.includes('openai_vision_error')) return c.replace(/^openai_vision_error:/, 'OpenAI 이미지 분석 오류: ');
+		return c || '';
+	};
+	const selectedCampaign = selectedStrategyCampaignId ? campaignRows.find((r) => String(r.campaign_id || r.name || '') === selectedStrategyCampaignId) : null;
+	const adgroupRows = (result?.condition_hierarchy?.adgroups || []).filter((r) => !selectedStrategyCampaignId || String(r.campaign_id || '') === selectedStrategyCampaignId);
+	const selectedAdgroup = selectedStrategyAdgroupId ? adgroupRows.find((r) => String(r.adgroup_id || r.name || '') === selectedStrategyAdgroupId) : null;
+	const creativeRowsBySelection = (result?.condition_hierarchy?.creatives || []).filter((r) => {
+		if (selectedStrategyCampaignId && String(r.campaign_id || '') !== selectedStrategyCampaignId) return false;
+		if (selectedStrategyAdgroupId && String(r.adgroup_id || '') !== selectedStrategyAdgroupId) return false;
+		return true;
+	});
+	const hierarchyCampaignColumns: Column<GfaStrategyConditionGapRow>[] = [
+		{
+			key: 'select',
+			label: '캠페인',
+			width: 220,
+			render: (r) => {
+				const id = String(r.campaign_id || r.name || '');
+				const active = id === selectedStrategyCampaignId;
+				return (
+					<button
+						type="button"
+						className={active ? 'btn-primary' : 'btn-ghost'}
+						onClick={() => {
+							setSelectedStrategyCampaignId(id);
+							setSelectedStrategyAdgroupId('');
+						}}
+						style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+					>
+						{r.name || r.campaign_name || '-'}
+					</button>
+				);
+			},
+		},
+		...conditionColumns.filter((c) => c.key !== 'level' && c.key !== 'name'),
+	];
+	const hierarchyAdgroupColumns: Column<GfaStrategyConditionGapRow>[] = [
+		{
+			key: 'select',
+			label: '광고그룹',
+			width: 220,
+			render: (r) => {
+				const id = String(r.adgroup_id || r.name || '');
+				const active = id === selectedStrategyAdgroupId;
+				return (
+					<button
+						type="button"
+						className={active ? 'btn-primary' : 'btn-ghost'}
+						onClick={() => setSelectedStrategyAdgroupId(id)}
+						style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+					>
+						{r.name || r.adgroup_name || '-'}
+					</button>
+				);
+			},
+		},
+		...conditionColumns.filter((c) => c.key !== 'level' && c.key !== 'name'),
+	];
+	const hierarchyCreativeColumns: Column<GfaStrategyConditionGapRow>[] = [
+		{ key: 'creative', label: '소재', width: 220, sortValue: (r) => r.name || r.creative_name || r.creative_id || '', render: (r) => <strong>{r.name || r.creative_name || r.creative_id || '-'}</strong> },
+		...conditionColumns.filter((c) => c.key !== 'level' && c.key !== 'name'),
+	];
+	const operationColumns: Column<GfaStrategyOperationCompareRow>[] = [
+		{ key: 'rank', label: '순위', width: 60, align: 'center', sortValue: (r) => Number(r.rank || 999), render: (r) => r.rank || '-' },
+		{ key: 'axis', label: '분석 축', width: 160, sortValue: (r) => r.axis_label || r.axis || '', render: (r) => r.axis_label || r.axis || '-' },
+		{ key: 'goal', label: '목적', width: 110, sortValue: (r) => r.goal_label || '', render: (r) => r.goal_label || '-' },
+		{ key: 'target', label: '성별/연령', width: 170, sortValue: (r) => `${r.gender || '전체'} ${r.age || '전체'} ${r.audience || '전체'}`, render: (r) => `${r.gender || '전체'} / ${r.age || '전체'} / ${r.audience || '전체'}` },
+		{ key: 'media', label: '매체', width: 130, sortValue: (r) => r.media || '전체', render: (r) => r.media || '전체' },
+		{ key: 'placement', label: '게재위치', width: 180, sortValue: (r) => r.placement || '전체', render: (r) => r.placement || '전체' },
+		{ key: 'metrics', label: '성과', width: 170, sortValue: (r) => Number(r.cost || 0), render: (r) => metricMini(r) },
+		{ key: 'grade', label: '등급', width: 70, align: 'center', sortValue: (r) => ({ S: 5, A: 4, B: 3, C: 2, D: 1 }[String(r.grade || '').toUpperCase()] || 0), render: (r) => <GradeBadge grade={r.grade} /> },
+		{ key: 'suggestion', label: '운영 제안', width: 350, sortValue: (r) => r.operation_suggestion || r.judgment || '', render: (r) => r.operation_suggestion || r.judgment || '-' },
+	];
+	const creativeColumns: Column<GfaStrategyCreativeCompareRow>[] = [
+		{
+			key: 'image',
+			label: '이미지',
+			width: 90,
+			sortValue: (r) => r.image_url ? 1 : 0,
+			render: (r) => r.image_url ? (
+				<button type="button" className="btn-ghost" onClick={() => setPreviewImage(String(r.image_url))} style={{ padding: 0, border: 'none', background: 'transparent' }}>
+					<img src={r.image_url} alt={r.creative_name || 'creative'} style={{ width: 54, height: 36, objectFit: 'cover', borderRadius: 6, border: '1px solid rgba(148,163,184,0.35)' }} />
+				</button>
+			) : <span style={{ color: '#64748b' }}>없음</span>,
+		},
+		{ key: 'name', label: '소재명', width: 230, sortValue: (r) => r.creative_name || r.name || r.creative_id || '', render: (r) => <strong>{r.creative_name || r.name || r.creative_id || '-'}</strong> },
+		{ key: 'adType', label: '광고형태', width: 150, sortValue: (r) => r.ad_product_type || '', render: (r) => <div>{r.ad_product_type || '-'}<br /><span style={{ color: '#94a3b8' }}>{r.ad_product_purpose || '-'}</span></div> },
+		{ key: 'fit', label: '목적 적합성', width: 190, sortValue: (r) => r.purpose_fit || '', render: (r) => <div><strong>{r.purpose_fit || '-'}</strong><br /><span style={{ color: '#94a3b8' }}>{r.purpose_fit_reason || '-'}</span></div> },
+		{ key: 'purpose', label: '추천 목적', width: 120, sortValue: (r) => r.recommended_goal_label || '', render: (r) => r.recommended_goal_label || '-' },
+		{ key: 'grade', label: '등급', width: 70, align: 'center', sortValue: (r) => ({ S: 5, A: 4, B: 3, C: 2, D: 1 }[String(r.grade || '').toUpperCase()] || 0), render: (r) => <GradeBadge grade={r.grade} /> },
+		{ key: 'rank', label: '목적별 순위', width: 130, sortValue: (r) => Math.min(Number(r.ctr_rank || 999), Number(r.total_cvr_rank || 999), Number(r.purchase_cvr_rank || 999)), render: (r) => `CTR ${r.ctr_rank || '-'} / 총 ${r.total_cvr_rank || '-'} / 구매 ${r.purchase_cvr_rank || '-'}` },
+		{ key: 'metrics', label: '성과', width: 170, sortValue: (r) => Number(r.cost || 0), render: (r) => metricMini(r) },
+		{ key: 'imageSummary', label: '이미지 분석', width: 280, sortValue: (r) => r.image_summary || '', render: (r) => <DenseCell>{r.image_summary || '분류 필요'}</DenseCell> },
+		{ key: 'opencv', label: 'OpenCV 수치', width: 200, sortValue: (r) => r.opencv_summary || '', render: (r) => <DenseCell maxHeight={84}>{r.opencv_summary || '분류 필요'}</DenseCell> },
+		{ key: 'copy', label: '카피/소구', width: 420, sortValue: (r) => r.copy_summary || '', render: (r) => <DenseCell>{r.copy_summary || '분류 필요'}</DenseCell> },
+		{ key: 'aiFeature', label: 'AI Feature / Success DNA', width: 430, sortValue: (r) => Number(r.copy_image_alignment_score || r.copy_message_focus_score || 0), render: (r) => <DenseCell maxHeight={118}><CreativeFeatureCell row={r} /></DenseCell> },
+		{ key: 'direction', label: '소재 제작 방향', width: 420, sortValue: (r) => r.creative_direction || '', render: (r) => <DenseCell>{r.creative_direction || '-'}</DenseCell> },
+		{ key: 'generate', label: '소재 생성', width: 90, align: 'center', sortValue: (r) => r.creative_id || '', render: (r) => (
+			<button type="button" className="btn-ghost" onClick={() => navigateToCreativeGenerator(r)} disabled={!r.creative_id}>
+				생성
+			</button>
+		) },
+	];
+	const actionColumns: Column<GfaStrategyActionRow>[] = [
+		{ key: 'action', label: '액션', width: 130, sortValue: (r) => r.action_type || '', render: (r) => <strong>{r.action_type || '-'}</strong> },
+		{ key: 'name', label: '대상', width: 260, sortValue: (r) => `${r.level_label || ''} ${r.name || ''}`.trim(), render: (r) => `${r.level_label || ''} ${r.name || ''}`.trim() || '-' },
+		{ key: 'grade', label: '등급', width: 70, align: 'center', sortValue: (r) => ({ S: 5, A: 4, B: 3, C: 2, D: 1 }[String(r.grade || '').toUpperCase()] || 0), render: (r) => <GradeBadge grade={r.grade} /> },
+		{ key: 'metrics', label: '성과', width: 180, sortValue: (r) => Number(r.cost || 0), render: (r) => <div>비용 {wonCell(r.cost)}<br />CTR {pctCell(r.ctr)} · 총CVR {pctCell(r.total_cvr)}<br />구매CVR {pctCell(r.purchase_cvr)} · 구매ROAS {pctCell(r.purchase_roas)}</div> },
+		{ key: 'reason', label: '판정 이유', width: 280, sortValue: (r) => r.reason || '', render: (r) => r.reason || '-' },
+		{ key: 'rec', label: '실행 제안', width: 440, sortValue: (r) => r.recommendation || '', render: (r) => r.recommendation || '-' },
+	];
+
+	const snapshotPeriodLabel = snapshotMeta
+		? `${formatGfaDotDate(snapshotMeta.periodStart)} ~ ${formatGfaDotDate(snapshotMeta.periodEnd)}`
+		: '';
+	const snapshotAsOfLabel = formatGfaDotDate(snapshotMeta?.asOfDate);
+	const snapshotPublishedLabel = formatGfaPublishedAt(snapshotMeta?.publishedAt);
+
+	return (
+		<div style={{ display: 'grid', gap: 14 }} data-testid="gfa-strategy-view" data-load-state={loadState} data-view-mode={viewMode}>
+			<div className="card">
+				<div className="card-title">GFA 전략 도출</div>
+				<div style={{ fontSize: 12, color: '#9ca3af' }}>
+					저장된 최신 GFA 데이터를 기준으로 운영 문제와 소재 제작 전략을 보여줍니다.
+				</div>
+				{viewMode === 'SNAPSHOT_VIEW' && snapshotMeta && loadState === 'LOADED' ? (
+					<div style={{ display: 'grid', gap: 4, marginTop: 10, fontSize: 12, color: '#cbd5e1' }} data-testid="gfa-strategy-snapshot-meta">
+						<div style={{ fontWeight: 800, color: '#86efac' }}>● 저장된 전략</div>
+						<div>데이터 기준 {snapshotPeriodLabel}</div>
+						<div>데이터 기준일 {snapshotAsOfLabel}</div>
+						<div>최종 전략 갱신 {snapshotPublishedLabel}</div>
+					</div>
+				) : null}
+				{viewMode === 'MANUAL_ANALYSIS_VIEW' && result ? (
+					<div style={{ display: 'grid', gap: 4, marginTop: 10, fontSize: 12, color: '#fde68a' }} data-testid="gfa-strategy-manual-meta">
+						<div style={{ fontWeight: 800 }}>수동 분석 결과</div>
+						<div>분석 기간 {formatGfaDotDate(result.date_from)} ~ {formatGfaDotDate(result.date_to)}</div>
+					</div>
+				) : null}
+			</div>
+			<AdsDateControls value={dateState} onChange={setDateState} />
+			<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+				<button type="button" className="btn-primary" style={{ width: 180 }} onClick={() => void run({ forceRefresh: true })} disabled={snapshotLoading || analyzing}>
+					{analyzing ? '분석 중...' : '전략 분석 실행'}
+				</button>
+				<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/operating-check')}>운영 체크로 이동</button>
+				<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/raw-analysis')}>원본 분석으로 이동</button>
+				<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/creative-analysis')}>소재 분석으로 이동</button>
+			</div>
+			{loadState === 'LOADING' ? (
+				<div className="card" data-testid="gfa-strategy-loading" style={{ fontSize: 13, color: '#cbd5e1' }}>
+					저장된 전략 결과를 불러오는 중입니다.
+				</div>
+			) : null}
+			{loadState === 'EMPTY' ? (
+				<div className="card" data-testid="gfa-strategy-empty" style={{ display: 'grid', gap: 6, fontSize: 13, color: '#cbd5e1' }}>
+					<div style={{ fontWeight: 800 }}>저장된 전략 결과가 없습니다.</div>
+					<div>관리자 분석 또는 일일 배치 실행이 필요합니다.</div>
+				</div>
+			) : null}
+			{loadState === 'ERROR' ? (
+				<div className="card" data-testid="gfa-strategy-error" style={{ fontSize: 13, color: '#fecaca' }}>
+					{snapshotError || '전략 결과를 불러오지 못했습니다.'}
+				</div>
+			) : null}
+			{result ? (
+				<div style={{ display: 'grid', gap: 12 }}>
+					<div className="card" style={{ display: 'grid', gap: 10 }}>
+						<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+							{sections.map((s) => (
+								<button key={s.key} type="button" className={activeSection === s.key ? 'btn-primary' : 'btn-ghost'} onClick={() => setActiveSection(s.key)}>
+									{s.label}
+								</button>
+							))}
+						</div>
+						<div style={{ fontSize: 12, color: '#cbd5e1' }}>
+							총전환은 장바구니 전환과 구매전환의 합산 지표입니다. 운영 공식은 소재 없는 캠페인을 포함한 전체 캠페인 기준으로, 소재 제작 공식과 전략 매트릭스는 소재 있는 캠페인 기준으로 분리해 도출합니다.
+						</div>
+					</div>
+
+					{activeSection === 'summary' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							{result ? (
+								<div className="card" style={{ display: 'grid', gap: 10, borderColor: imageAnalysisIncomplete || imageAnalysisFailed || missingCopyAnalysis ? 'rgba(251,191,36,0.45)' : undefined }}>
+									<div className="card-title">전체 분석 대시보드</div>
+									<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8 }}>
+										{[
+											{ label: '전체 캠페인', value: totalCampaigns, color: '#bfdbfe' },
+											{ label: '전체 그룹', value: totalAdgroups, color: '#c4b5fd' },
+											{ label: '전체 소재', value: totalCreatives, color: '#e5e7eb' },
+											{ label: '이미지 URL 확보', value: imageCreativesTotal, color: '#93c5fd' },
+											{ label: '이미지 분석 완료', value: imageAnalysisCompleted, color: '#86efac' },
+											{ label: '이미지 분석 미완료', value: imageAnalysisIncomplete, color: '#fbbf24' },
+											{ label: '이미지 분석 실패', value: imageAnalysisFailed, color: '#fca5a5' },
+										].map((item) => (
+											<div key={item.label} style={{ padding: '10px 12px', border: '1px solid rgba(148,163,184,0.25)', borderRadius: 12, background: 'rgba(15,23,42,0.55)' }}>
+												<div style={{ fontSize: 11, color: '#94a3b8' }}>{item.label}</div>
+												<div style={{ fontSize: 22, fontWeight: 900, color: item.color }}>{formatInt(item.value)}건</div>
+											</div>
+										))}
+									</div>
+									<div style={{ fontSize: 12, color: '#cbd5e1' }}>
+										카피 분석 미완료 {formatInt(missingCopyAnalysis)}건 · 전체 이미지 재분석 대상 {formatInt(imageAnalysisRetryTarget)}건 · Top 후보 재분석 대상 {formatInt(topMissingWithImage)}건
+									</div>
+									<div style={{ fontSize: 12, color: '#94a3b8' }}>
+										이미지/카피 분석이 완료되어야 “소재 제작 공식”에 실제 이미지 요소, 카피 키워드, 소구포인트가 들어갑니다. OpenAI API 키가 없거나 이미지 URL이 없으면 분석은 저장되지 않습니다.
+										GPT 이미지 분석이 실패한 소재도 재분석 대상에 포함하며, 실패 시 rule-based fallback으로 최소 분석 결과를 저장합니다.
+									</div>
+									<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+										<button type="button" className="btn-primary" onClick={runAllMissingCreativeAnalysis} disabled={analysisRunning || imageAnalysisRetryTarget <= 0}>
+											{analysisRunning ? '분석 중...' : '전체 미완료/실패 이미지 분석 실행'}
+										</button>
+										<button type="button" className="btn-ghost" onClick={runAllForceCreativeAnalysis} disabled={analysisRunning || imageCreativesTotal <= 0}>
+											{analysisRunning ? '분석 중...' : '전체 이미지 강제 재분석'}
+										</button>
+										<button type="button" className="btn-primary" onClick={runTopCreativeAnalysis} disabled={analysisRunning || topMissingWithImage <= 0}>
+											{analysisRunning ? '분석 중...' : 'Top 소재 재분석 실행'}
+										</button>
+										<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/creative-analysis')}>소재 분석 화면으로 이동</button>
+									</div>
+									{analysisMessage ? <div style={{ fontSize: 12, color: analysisMessage.includes('실패') || analysisMessage.includes('missing') || analysisMessage.includes('없') ? '#fecaca' : '#bbf7d0' }}>{analysisMessage}</div> : null}
+								</div>
+							) : null}
+							<div className="card" style={{ display: 'grid', gap: 8 }}>
+								<div className="card-title">이번 기간 핵심 결론</div>
+								{(result.executive_summary || result.suggestions || []).length ? (
+									(result.executive_summary || result.suggestions || []).map((s, idx) => <div key={idx} style={{ fontSize: 13, color: '#e5e7eb' }}>{idx + 1}. {s}</div>)
+								) : (
+									<div style={{ fontSize: 12, color: '#94a3b8' }}>저장된 전략 결론이 없습니다.</div>
+								)}
+							</div>
+							<StrategyTable title="목적별 광고 운영 공식" rows={result.operation_blueprints || []} columns={operationBlueprintColumns} compact />
+							<StrategyTable title="목적별 소재 제작 공식" rows={result.creative_blueprints || []} columns={creativeBlueprintColumns} compact />
+							<StrategyTable title="목적별 전략 매트릭스(소재 있는 캠페인)" rows={result.goal_matrix || []} columns={creativeGoalMatrixColumns} compact />
+						</div>
+					) : null}
+					{activeSection === 'condition' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1', display: 'grid', gap: 4 }}>
+								<div style={{ fontWeight: 900, color: '#e5e7eb' }}>광고센터형 운영 진단 흐름</div>
+								<div>캠페인, 광고그룹, 소재는 성격이 다르므로 한 표에서 섞지 않고 단계별 매트릭스로 비교합니다. 캠페인을 클릭하면 광고그룹 매트릭스로, 광고그룹을 클릭하면 소재 매트릭스로 이동합니다.</div>
+								<div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', color: '#94a3b8' }}>
+									<span>현재 위치: 캠페인 {selectedCampaign?.name || selectedCampaign?.campaign_name || '전체'} / 광고그룹 {selectedAdgroup?.name || selectedAdgroup?.adgroup_name || '전체'}</span>
+									{selectedStrategyAdgroupId ? (
+										<button type="button" className="btn-ghost" onClick={() => setSelectedStrategyAdgroupId('')}>광고그룹 목록으로</button>
+									) : null}
+									{selectedStrategyCampaignId ? (
+										<button
+											type="button"
+											className="btn-ghost"
+											onClick={() => {
+												setSelectedStrategyCampaignId('');
+												setSelectedStrategyAdgroupId('');
+											}}
+										>
+											캠페인 목록으로
+										</button>
+									) : null}
+								</div>
+							</div>
+							{selectedStrategyCampaignId && selectedStrategyAdgroupId ? (
+								<StrategyTable title="3단계: 선택 광고그룹의 소재 운영 진단" rows={creativeRowsBySelection} columns={hierarchyCreativeColumns} empty="선택한 광고그룹에 해당하는 소재 데이터가 없습니다." sortable compact />
+							) : selectedStrategyCampaignId ? (
+								<StrategyTable title="2단계: 선택 캠페인의 광고그룹 운영 진단" rows={adgroupRows} columns={hierarchyAdgroupColumns} empty="선택한 캠페인에 해당하는 광고그룹 데이터가 없습니다." sortable compact />
+							) : (
+								<StrategyTable title="1단계: 캠페인 운영 진단" rows={campaignRows} columns={hierarchyCampaignColumns} sortable compact />
+							)}
+						</div>
+					) : null}
+					{activeSection === 'operation' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1' }}>성별/연령, 매체, 게재위치, 조합별로 목적에 맞는 노출 조건 Top 5를 비교합니다.</div>
+							<StrategyTable title="노출 운영 최적값 Top 5" rows={result.operation_compare_rows || []} columns={operationColumns} sortable compact />
+						</div>
+					) : null}
+					{activeSection === 'creative' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1', display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+								<span>소재 Top 성과와 GPT 이미지/카피 분석, OpenCV 객관 수치를 한 행에 묶어 앞으로 만들 소재의 최적 요소를 도출합니다.</span>
+								<button type="button" className="btn-primary" style={{ marginLeft: 'auto' }} onClick={() => navigateToCreativeGenerator()}>
+									현재 분석 결과로 소재 생성
+								</button>
+							</div>
+							<StrategyTable title="소재 제작 최적값 비교" rows={result.creative_compare_rows || []} columns={creativeColumns} sortable compact />
+						</div>
+					) : null}
+					{activeSection === 'creativeAnalysis' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1' }}>
+								소재 Feature와 Success DNA는 저장된 전략 결과의 소재 비교 데이터를 그대로 보여줍니다.
+							</div>
+							<StrategyTable title="소재 Feature 분석" rows={result.creative_compare_rows || []} columns={creativeColumns} sortable compact />
+						</div>
+					) : null}
+					{activeSection === 'actions' ? (
+						<StrategyTable title="확대 / 개선 / 중단 / 교체 실행 후보" rows={result.action_rows || []} columns={actionColumns} sortable compact />
+					) : null}
+				</div>
+			) : null}
+			{previewImage ? (
+				<div role="presentation" onClick={() => setPreviewImage(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,0.78)', zIndex: 50, display: 'grid', placeItems: 'center', padding: 24 }}>
+					<img src={previewImage} alt="소재 확대" style={{ maxWidth: '92vw', maxHeight: '88vh', borderRadius: 14, border: '1px solid rgba(226,232,240,0.25)' }} />
+				</div>
+			) : null}
+		</div>
+	);
+}
+
+function LegacyGfaStrategyView(props: { apiBaseUrl: string }): JSX.Element {
+	const [dateState, setDateState] = useAdsDateState();
 	const [loading, setLoading] = useState(false);
-	const [result, setResult] = useState<any | null>(null);
+	const [result, setResult] = useState<GfaStrategyAnalysis | null>(null);
+	const [activeSection, setActiveSection] = useState<'condition' | 'operation' | 'creative' | 'creativeAnalysis' | 'goals'>('condition');
+	const navigate = useNavigate();
 	const run = async () => {
 		setLoading(true);
 		try {
 			const r = normalizeRange(dateState.range);
-			const res = await axios.post(`${props.apiBaseUrl}/gfa/strategy/analyze`, {
-				date_from: toYmd(r.from),
-				date_to: toYmd(r.to),
+			const res = await fetchGfaStrategyAnalysis({
+				baseUrl: props.apiBaseUrl,
+				dateFrom: toYmd(r.from),
+				dateTo: toYmd(r.to),
+				forceRefresh: true,
 			});
-			setResult(res.data);
+			setResult(res);
 		} catch (e) {
-			setResult({ ok: false, suggestions: [errorDetailText(e)] });
+			setResult({ ok: false, date_from: '', date_to: '', suggestions: [errorDetailText(e)] });
 		} finally {
 			setLoading(false);
 		}
 	};
-	return (
-		<div style={{ display: 'grid', gap: 14 }}>
-			<div className="card">
-				<div className="card-title">GFA 전략 도출</div>
-				<div style={{ fontSize: 12, color: '#9ca3af' }}>성과 데이터와 소재 메타를 결합해 확장할 조합과 축소할 조합을 도출합니다.</div>
+
+	const metricSplit = (r: any): JSX.Element => {
+		const row = (r || {}) as GfaStrategyRankRow;
+		return (
+			<div style={{ display: 'grid', gap: 2, fontSize: 11, color: '#cbd5e1', lineHeight: 1.45 }}>
+				<div>
+					<span style={{ color: '#93c5fd', fontWeight: 900 }}>총전환</span>
+					{` ${formatInt(Number(row.total_conversions || 0))}건 · 전체CVR ${formatPct(Number(row.total_cvr || 0))} · 전체ROAS ${formatPct(Number(row.total_roas || 0))} · 전체금액 ${formatWon(Number(row.total_revenue || 0))}`}
+				</div>
+				<div>
+					<span style={{ color: '#fcd34d', fontWeight: 900 }}>장바구니</span>
+					{` ${formatInt(Number(row.cart_conversions || 0))}건 · 장바구니CVR ${formatPct(Number(row.cart_cvr || 0))} · 장바구니ROAS ${formatPct(Number(row.cart_roas || 0))} · 장바구니금액 ${formatWon(Number(row.cart_revenue || 0))}`}
+				</div>
+				<div>
+					<span style={{ color: '#86efac', fontWeight: 900 }}>구매완료</span>
+					{` ${formatInt(Number(row.purchase_conversions || 0))}건 · 구매CVR ${formatPct(Number(row.purchase_cvr || 0))} · 구매ROAS ${formatPct(Number(row.purchase_roas || 0))} · 구매금액 ${formatWon(Number(row.purchase_revenue || 0))}`}
+				</div>
 			</div>
-			<AdsDateControls value={dateState} onChange={setDateState} />
-			<button type="button" className="btn-primary" style={{ width: 180 }} onClick={run} disabled={loading}>
-				전략 분석 실행
-			</button>
-			{result && (
-				<div className="card" style={{ display: 'grid', gap: 12 }}>
-					<div className="card-title">분석 결과</div>
-					{(result.suggestions || []).map((s: string, idx: number) => <div key={idx} style={{ fontSize: 13, color: '#e5e7eb' }}>{s}</div>)}
-					<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
-						<div>
-							<div style={{ fontWeight: 900, marginBottom: 6 }}>우수 조합</div>
-							{(result.strong_combinations || []).slice(0, 5).map((r: any, idx: number) => (
-								<div key={idx} style={{ fontSize: 12, color: '#d1d5db' }}>{r.appeal_point} / {r.image_type} / {r.placement} / {r.audience} · 구매ROAS {formatPct(Number(r.purchase_revenue || 0) / Math.max(1, Number(r.cost || 0)) * 100)}</div>
-							))}
-						</div>
-						<div>
-							<div style={{ fontWeight: 900, marginBottom: 6 }}>축소 후보</div>
-							{(result.weak_combinations || []).slice(0, 5).map((r: any, idx: number) => (
-								<div key={idx} style={{ fontSize: 12, color: '#d1d5db' }}>{r.creative_name} / {r.placement} / {r.audience} · 비용 {formatWon(r.cost || 0)}</div>
-							))}
-						</div>
-					</div>
+		);
+	};
+
+	const rowTitle = (r: GfaStrategyRankRow): string => String(r.creative_name || r.name || r.campaign_name || r.adgroup_name || r.placement || r.media || r.audience || '미상');
+	const severityColor = (s: string): string => s === 'danger' ? '#fca5a5' : s === 'warn' ? '#fcd34d' : s === 'good' ? '#86efac' : '#cbd5e1';
+	const sections = [
+		{ key: 'condition', label: '캠페인 컨디션' },
+		{ key: 'operation', label: '운영 요소 Top 5' },
+		{ key: 'creative', label: '소재 요소 Top 10' },
+		{ key: 'creativeAnalysis', label: '이미지/카피 분리 분석' },
+		{ key: 'goals', label: '목적별 실행 전략' },
+	] as const;
+
+	const StrategyRankList = (p: { title: string; rows?: GfaStrategyRankRow[]; metric: 'ctr' | 'cart_cvr' | 'total_cvr' | 'purchase_cvr'; empty?: string }): JSX.Element => (
+		<div className="card" style={{ display: 'grid', gap: 8 }}>
+			<div style={{ fontWeight: 900 }}>{p.title}</div>
+			{(p.rows || []).length <= 0 ? (
+				<div style={{ fontSize: 12, color: '#94a3b8' }}>{p.empty || '분석 가능한 데이터가 없습니다.'}</div>
+			) : (
+				<div style={{ display: 'grid', gap: 8 }}>
+					{(p.rows || []).map((r, idx) => {
+						const metricValue = p.metric === 'ctr' ? r.ctr : p.metric === 'cart_cvr' ? r.cart_cvr : p.metric === 'total_cvr' ? r.total_cvr : r.purchase_cvr;
+						return (
+							<div key={`${p.title}-${idx}-${rowTitle(r)}`} style={{ borderTop: idx === 0 ? 'none' : '1px solid rgba(148,163,184,0.16)', paddingTop: idx === 0 ? 0 : 8 }}>
+								<div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
+									<div style={{ fontWeight: 900, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+										{idx + 1}. {rowTitle(r)}
+									</div>
+									<div style={{ color: '#bfdbfe', fontWeight: 900, flex: '0 0 auto' }}>{formatPct(Number(metricValue || 0))}</div>
+								</div>
+								<div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+									{[r.audience, r.media, r.placement, r.image_type, r.appeal_point, r.message_type].filter(Boolean).join(' / ')}
+								</div>
+								{metricSplit(r)}
+							</div>
+						);
+					})}
 				</div>
 			)}
 		</div>
 	);
+
+	const purposeMetric = (goal: 'click' | 'conversion' | 'purchase'): 'ctr' | 'total_cvr' | 'purchase_cvr' => (
+		goal === 'click' ? 'ctr' : goal === 'conversion' ? 'total_cvr' : 'purchase_cvr'
+	);
+
+	const PurposeRankList = (p: {
+		title: string;
+		block?: Record<string, GfaStrategyRankRow[]>;
+		goal: 'click' | 'conversion' | 'purchase';
+	}): JSX.Element => (
+		<StrategyRankList
+			title={p.title}
+			rows={p.block?.[p.goal] || []}
+			metric={purposeMetric(p.goal)}
+		/>
+	);
+
+	const DiagnosisList = (p: { title: string; rows?: GfaStrategyDiagnosis[] }): JSX.Element => (
+		<div className="card" style={{ display: 'grid', gap: 8 }}>
+			<div style={{ fontWeight: 900 }}>{p.title}</div>
+			{(p.rows || []).length <= 0 ? (
+				<div style={{ fontSize: 12, color: '#94a3b8' }}>뚜렷한 문제 후보가 없습니다.</div>
+			) : (
+				<div style={{ display: 'grid', gap: 8 }}>
+					{(p.rows || []).map((r, idx) => (
+						<div key={`${p.title}-${r.id}-${idx}`} style={{ borderTop: idx === 0 ? 'none' : '1px solid rgba(148,163,184,0.16)', paddingTop: idx === 0 ? 0 : 8 }}>
+							<div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+								<div style={{ fontWeight: 900 }}>{r.name}</div>
+								<div style={{ color: severityColor(String(r.severity || '')), fontWeight: 900 }}>{(r.issues || []).join(', ')}</div>
+							</div>
+							<div style={{ fontSize: 12, color: '#cbd5e1', marginTop: 3 }}>{r.reason}</div>
+							<div style={{ fontSize: 12, color: '#fde68a', marginTop: 3 }}>운영 방안: {r.action}</div>
+							{metricSplit(r.metrics as any)}
+						</div>
+					))}
+				</div>
+			)}
+		</div>
+	);
+
+	const GoalCard = (p: { goal?: GfaStrategyGoalRecommendation }): JSX.Element | null => {
+		const g = p.goal;
+		if (!g) return null;
+		return (
+			<div className="card" style={{ display: 'grid', gap: 10 }}>
+				<div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
+					<div className="card-title">{g.label}</div>
+					<div style={{ fontSize: 12, color: '#bfdbfe', fontWeight: 900 }}>기준: {g.primary_metric}</div>
+				</div>
+				<div style={{ fontSize: 13, color: '#e5e7eb' }}>{g.summary}</div>
+				<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
+					<div className="badge-muted">추천 타겟: {g.recommended_audience}</div>
+					<div className="badge-muted">추천 매체: {g.recommended_media || '데이터 부족'}</div>
+					<div className="badge-muted">추천 게재위치: {g.recommended_placement}</div>
+					<div className="badge-muted">추천 소재: {g.recommended_creative_type}</div>
+					<div className="badge-muted">소구/문구: {g.recommended_appeal_or_message}</div>
+				</div>
+				<StrategyRankList title="우선 테스트 소재 후보" rows={g.test_candidates || []} metric={g.goal === 'click' ? 'ctr' : g.goal === 'conversion' ? 'total_cvr' : 'purchase_cvr'} />
+			</div>
+		);
+	};
+
+	return (
+		<div style={{ display: 'grid', gap: 14 }}>
+			<div className="card">
+				<div className="card-title">GFA 전략 도출</div>
+				<div style={{ fontSize: 12, color: '#9ca3af' }}>
+					캠페인/그룹/소재 문제점을 진단하고, 타겟·게재위치·소재 요소를 목적별로 분석해 다음 운영 방향을 제안합니다.
+				</div>
+			</div>
+			<AdsDateControls value={dateState} onChange={setDateState} />
+			<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+				<button type="button" className="btn-primary" style={{ width: 180 }} onClick={run} disabled={loading}>
+					{loading ? '분석 중...' : '전략 분석 실행'}
+				</button>
+				<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/operating-check')}>운영 체크로 이동</button>
+				<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/raw-analysis')}>원본 분석으로 이동</button>
+				<button type="button" className="btn-ghost" onClick={() => navigate('/analytics/gfa/creative-analysis')}>소재 분석으로 이동</button>
+			</div>
+			{result && (
+				<div style={{ display: 'grid', gap: 12 }}>
+					<div className="card" style={{ display: 'grid', gap: 10 }}>
+						<div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+							{sections.map((s) => (
+								<button key={s.key} type="button" className={activeSection === s.key ? 'btn-primary' : 'btn-ghost'} onClick={() => setActiveSection(s.key)}>
+									{s.label}
+								</button>
+							))}
+						</div>
+						<div style={{ fontSize: 12, color: '#cbd5e1' }}>
+							총전환은 장바구니 전환과 구매전환의 합산 지표입니다. 소재 유형 판단은 클릭유도형(CTR) · 가망고객확보용(총전환CVR) · 매출확보용(구매CVR) Top 10으로 분리합니다.
+						</div>
+						{(result.suggestions || []).map((s, idx) => <div key={idx} style={{ fontSize: 13, color: '#e5e7eb' }}>{s}</div>)}
+					</div>
+
+					{activeSection === 'condition' ? (
+						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+							<DiagnosisList title="캠페인별 문제점과 운영 방안" rows={result.campaign_condition?.campaigns || []} />
+							<DiagnosisList title="광고그룹별 문제점과 운영 방안" rows={result.campaign_condition?.adgroups || []} />
+							<DiagnosisList title="소재별 문제점과 운영 방안" rows={result.campaign_condition?.creatives || []} />
+						</div>
+					) : null}
+
+					{activeSection === 'operation' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1' }}>{result.operating_factor_analysis?.note || '매체는 게재위치 기반 운영 축으로 분석합니다.'}</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<StrategyRankList title="타겟 Top 5 - 클릭유도형" rows={result.operating_factor_analysis?.audience?.click?.top || []} metric="ctr" />
+								<StrategyRankList title="매체 Top 5 - 클릭유도형" rows={result.operating_factor_analysis?.media?.click?.top || []} metric="ctr" />
+								<StrategyRankList title="게재위치 Top 5 - 클릭유도형" rows={result.operating_factor_analysis?.placement?.click?.top || []} metric="ctr" />
+								<StrategyRankList title="타겟 Top 5 - 가망고객확보용" rows={result.operating_factor_analysis?.audience?.conversion?.top || []} metric="total_cvr" />
+								<StrategyRankList title="매체 Top 5 - 가망고객확보용" rows={result.operating_factor_analysis?.media?.conversion?.top || []} metric="total_cvr" />
+								<StrategyRankList title="게재위치 Top 5 - 가망고객확보용" rows={result.operating_factor_analysis?.placement?.conversion?.top || []} metric="total_cvr" />
+								<StrategyRankList title="타겟 Top 5 - 매출확보용" rows={result.operating_factor_analysis?.audience?.purchase?.top || []} metric="purchase_cvr" />
+								<StrategyRankList title="매체 Top 5 - 매출확보용" rows={result.operating_factor_analysis?.media?.purchase?.top || []} metric="purchase_cvr" />
+								<StrategyRankList title="게재위치 Top 5 - 매출확보용" rows={result.operating_factor_analysis?.placement?.purchase?.top || []} metric="purchase_cvr" />
+								<StrategyRankList title="타겟 x 매체 x 게재위치 Top 5 - 클릭유도형" rows={result.operating_factor_analysis?.audience_media_placement?.click?.top || result.operating_factor_analysis?.audience_placement?.click?.top || []} metric="ctr" />
+								<StrategyRankList title="타겟 x 매체 x 게재위치 Top 5 - 가망고객확보용" rows={result.operating_factor_analysis?.audience_media_placement?.conversion?.top || result.operating_factor_analysis?.audience_placement?.conversion?.top || []} metric="total_cvr" />
+								<StrategyRankList title="타겟 x 매체 x 게재위치 Top 5 - 매출확보용" rows={result.operating_factor_analysis?.audience_media_placement?.purchase?.top || result.operating_factor_analysis?.audience_placement?.purchase?.top || []} metric="purchase_cvr" />
+							</div>
+						</div>
+					) : null}
+
+					{activeSection === 'creative' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<StrategyRankList title="클릭유도형 소재 Top 10 - CTR 기준" rows={result.creative_factor_analysis?.top_ctr || []} metric="ctr" />
+								<StrategyRankList title="총전환율 높은 소재 Top 10 - 가망고객확보용" rows={result.creative_factor_analysis?.top_total_cvr || []} metric="total_cvr" />
+								<StrategyRankList title="구매유도형 소재 Top 10 - 구매CVR 기준" rows={result.creative_factor_analysis?.top_purchase_cvr || []} metric="purchase_cvr" />
+							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<StrategyRankList title="이미지 유형 - CTR 기준" rows={result.creative_factor_analysis?.patterns?.image_type_by_ctr || []} metric="ctr" />
+								<StrategyRankList title="소구 포인트 - 총전환CVR 기준" rows={result.creative_factor_analysis?.patterns?.appeal_point_by_total_cvr || []} metric="total_cvr" />
+								<StrategyRankList title="문구 형태 - 구매 CVR 기준" rows={result.creative_factor_analysis?.patterns?.message_type_by_purchase_cvr || []} metric="purchase_cvr" />
+							</div>
+						</div>
+					) : null}
+
+					{activeSection === 'creativeAnalysis' ? (
+						<div style={{ display: 'grid', gap: 12 }}>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1' }}>
+								이미지에서 보이는 장면/인물/헤어상태와 작성 카피의 키워드/고민/소구 방식을 분리해 성과와 연결합니다.
+								자동 분석이 없는 소재는 `미분류`로 표시되며, 소재 분석 화면에서 검토/수정할 수 있습니다.
+							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<PurposeRankList title="이미지 인물/대상 - 클릭유도형" block={result.creative_factor_analysis?.image_elements?.visual_subjects} goal="click" />
+								<PurposeRankList title="이미지 헤어상태 - 가망고객확보용" block={result.creative_factor_analysis?.image_elements?.hair_condition_tags} goal="conversion" />
+								<PurposeRankList title="이미지 장면 - 매출확보용" block={result.creative_factor_analysis?.image_elements?.scene_tags} goal="purchase" />
+								<PurposeRankList title="이미지 감정/표정 - 클릭유도형" block={result.creative_factor_analysis?.image_elements?.emotion_tags} goal="click" />
+								<PurposeRankList title="이미지 구도 - 가망고객확보용" block={result.creative_factor_analysis?.image_elements?.composition_tags} goal="conversion" />
+								<PurposeRankList title="이미지 색감/분위기 - 클릭유도형" block={result.creative_factor_analysis?.image_elements?.color_mood_tags} goal="click" />
+								<PurposeRankList title="제품 노출 - 매출확보용" block={result.creative_factor_analysis?.image_elements?.product_visibility} goal="purchase" />
+								<PurposeRankList title="OpenCV 밝기 - 클릭유도형" block={result.creative_factor_analysis?.image_elements?.cv_brightness_level} goal="click" />
+								<PurposeRankList title="OpenCV 채도 - 클릭유도형" block={result.creative_factor_analysis?.image_elements?.cv_saturation_level} goal="click" />
+								<PurposeRankList title="OpenCV 문구 비중 - 가망고객확보용" block={result.creative_factor_analysis?.image_elements?.cv_text_area_level} goal="conversion" />
+								<PurposeRankList title="OpenCV 얼굴 비중 - 매출확보용" block={result.creative_factor_analysis?.image_elements?.cv_face_area_level} goal="purchase" />
+								<PurposeRankList title="OpenCV 전후/좌우 분할 - 가망고객확보용" block={result.creative_factor_analysis?.image_elements?.cv_split_layout_level} goal="conversion" />
+							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<PurposeRankList title="카피 핵심 키워드 - 클릭유도형" block={result.creative_factor_analysis?.copy_elements?.core_keywords} goal="click" />
+								<PurposeRankList title="카피 고객 고민 - 가망고객확보용" block={result.creative_factor_analysis?.copy_elements?.pain_points} goal="conversion" />
+								<PurposeRankList title="카피 소구 유형 - 매출확보용" block={result.creative_factor_analysis?.copy_elements?.appeal_types} goal="purchase" />
+								<PurposeRankList title="카피 문장 톤 - 가망고객확보용" block={result.creative_factor_analysis?.copy_elements?.message_tone} goal="conversion" />
+								<PurposeRankList title="CTA 유형 - 매출확보용" block={result.creative_factor_analysis?.copy_elements?.cta_type} goal="purchase" />
+							</div>
+							<div className="card" style={{ fontSize: 12, color: '#cbd5e1' }}>
+								AI 생성용 Feature Layer입니다. 사람이 읽는 설명이 아니라 Hook, 구매 단계, 심리 트리거, 혜택, 근거, USP, CTA를 코드값으로 성과와 연결합니다.
+							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<PurposeRankList title="Hook Type - 클릭유도형" block={result.creative_factor_analysis?.feature_performance?.hook} goal="click" />
+								<PurposeRankList title="Buyer Stage - 가망고객확보용" block={result.creative_factor_analysis?.feature_performance?.buyer_stage} goal="conversion" />
+								<PurposeRankList title="Psychology Trigger - 클릭유도형" block={result.creative_factor_analysis?.feature_performance?.psychology} goal="click" />
+								<PurposeRankList title="Benefit - 매출확보용" block={result.creative_factor_analysis?.feature_performance?.benefit} goal="purchase" />
+								<PurposeRankList title="Evidence Type - 매출확보용" block={result.creative_factor_analysis?.feature_performance?.evidence} goal="purchase" />
+								<PurposeRankList title="USP Category - 총전환형" block={result.creative_factor_analysis?.feature_performance?.usp} goal="conversion" />
+								<PurposeRankList title="CTA Action - 매출확보용" block={result.creative_factor_analysis?.feature_performance?.cta} goal="purchase" />
+							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 12 }}>
+								<PurposeRankList title="이미지 대상 x 카피 소구 - 클릭유도형" block={result.creative_factor_analysis?.image_copy_combinations?.subject_x_appeal} goal="click" />
+								<PurposeRankList title="이미지 대상 x 카피 소구 - 가망고객확보용" block={result.creative_factor_analysis?.image_copy_combinations?.subject_x_appeal} goal="conversion" />
+								<PurposeRankList title="이미지 대상 x 카피 소구 - 매출확보용" block={result.creative_factor_analysis?.image_copy_combinations?.subject_x_appeal} goal="purchase" />
+								<PurposeRankList title="이미지 장면 x 고객 고민 - 가망고객확보용" block={result.creative_factor_analysis?.image_copy_combinations?.scene_x_pain_point} goal="conversion" />
+								<PurposeRankList title="헤어상태 x 핵심 키워드 - 매출확보용" block={result.creative_factor_analysis?.image_copy_combinations?.hair_condition_x_keyword} goal="purchase" />
+								<PurposeRankList title="감정/표정 x 문장 톤 - 클릭유도형" block={result.creative_factor_analysis?.image_copy_combinations?.emotion_x_message_tone} goal="click" />
+							</div>
+						</div>
+					) : null}
+
+					{activeSection === 'goals' ? (
+						<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 12 }}>
+							<GoalCard goal={result.goal_recommendations?.click} />
+							<GoalCard goal={result.goal_recommendations?.conversion} />
+							<GoalCard goal={result.goal_recommendations?.purchase} />
+						</div>
+					) : null}
+				</div>
+			)}
+		</div>
+	);
+}
+
+type GfaRawDimension = 'campaign' | 'adgroup' | 'creative' | 'placement' | 'audience' | 'result_type' | 'status';
+type GfaRawCacheEntry = {
+	data?: any;
+	promise?: Promise<any>;
+	error?: string | null;
+	updatedAt?: number;
+};
+const gfaRawAnalysisMemoryCache = new Map<string, GfaRawCacheEntry>();
+const gfaRawDimensionOrder: GfaRawDimension[] = ['campaign', 'adgroup', 'creative', 'placement', 'audience', 'result_type', 'status'];
+
+function gfaRawRequestLimit(dimension: GfaRawDimension): number {
+	if (dimension === 'campaign' || dimension === 'adgroup') return 5000;
+	if (dimension === 'creative') return 2000;
+	return 500;
+}
+
+function gfaRawCacheKey(params: {
+	apiBaseUrl: string;
+	dateFrom: string;
+	dateTo: string;
+	dimension: GfaRawDimension;
+	includeInventory: boolean;
+}): string {
+	return [
+		params.apiBaseUrl,
+		params.dateFrom,
+		params.dateTo,
+		params.dimension,
+		gfaRawRequestLimit(params.dimension),
+		params.includeInventory ? 'inventory' : 'no-inventory',
+	].join('|');
+}
+
+function getCachedGfaRawAnalysis(params: {
+	apiBaseUrl: string;
+	dateFrom: string;
+	dateTo: string;
+	dimension: GfaRawDimension;
+	includeInventory: boolean;
+}): any | null {
+	return gfaRawAnalysisMemoryCache.get(gfaRawCacheKey(params))?.data ?? null;
+}
+
+function fetchGfaRawAnalysisCached(params: {
+	apiBaseUrl: string;
+	dateFrom: string;
+	dateTo: string;
+	dimension: GfaRawDimension;
+	includeInventory: boolean;
+	forceRefresh?: boolean;
+}): Promise<any> {
+	const key = gfaRawCacheKey(params);
+	const current = gfaRawAnalysisMemoryCache.get(key);
+	if (!params.forceRefresh && current?.data) return Promise.resolve(current.data);
+	if (!params.forceRefresh && current?.promise) return current.promise;
+	const promise = axios.get(`${params.apiBaseUrl}/gfa/raw-analysis`, {
+		params: {
+			date_from: params.dateFrom,
+			date_to: params.dateTo,
+			dimension: params.dimension,
+			limit: gfaRawRequestLimit(params.dimension),
+			include_inventory: params.includeInventory,
+			force_refresh: Boolean(params.forceRefresh),
+		},
+	}).then((res) => {
+		const data = res.data;
+		gfaRawAnalysisMemoryCache.set(key, { data, error: null, updatedAt: Date.now() });
+		return data;
+	}).catch((e) => {
+		gfaRawAnalysisMemoryCache.set(key, { error: errorDetailText(e), updatedAt: Date.now() });
+		throw e;
+	});
+	gfaRawAnalysisMemoryCache.set(key, { ...(current || {}), promise, error: null, updatedAt: Date.now() });
+	return promise;
+}
+
+function waitGfaRawPrefetch(ms: number): Promise<void> {
+	return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
@@ -3320,8 +4645,9 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 	};
 
 	const [dateState, setDateState] = useAdsDateState();
-	const [dimension, setDimension] = useState<'campaign' | 'adgroup' | 'creative' | 'placement' | 'audience' | 'result_type' | 'status'>('campaign');
+	const [dimension, setDimension] = useState<GfaRawDimension>('campaign');
 	const [loading, setLoading] = useState(false);
+	const [prefetching, setPrefetching] = useState(false);
 	const [result, setResult] = useState<any | null>(null);
 	const [message, setMessage] = useState<string | null>(null);
 	const [columnSettingsOpen, setColumnSettingsOpen] = useState(false);
@@ -3329,26 +4655,8 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 	const [hiddenColumnKeys, setHiddenColumnKeys] = useState<RawMetricColumnKey[]>(() => loadHiddenColumnKeys<RawMetricColumnKey>(rawHiddenColumnsKey));
 	const [sortState, setSortState] = useState<SortState>({ key: 'cost', dir: 'desc' });
 	const [rawStatusFilter, setRawStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-	const didAutoResetRef = useRef(false);
-	const [rangeNotice, setRangeNotice] = useState<string | null>(null);
-	const maxRawRangeDays = 30;
-
-	const handleRawDateChange = (next: AdsDateState) => {
-		const r = normalizeRange(next.range);
-		if (rangeLengthDays(r) <= maxRawRangeDays) {
-			setRangeNotice(null);
-			setDateState({ ...next, range: r });
-			return;
-		}
-		const cappedFrom = new Date(r.to);
-		cappedFrom.setDate(cappedFrom.getDate() - (maxRawRangeDays - 1));
-		const capped = { ...next, range: normalizeRange({ from: cappedFrom, to: r.to }) };
-		setRangeNotice(
-			`원본 분석은 성능을 위해 최근 ${maxRawRangeDays}일까지만 조회합니다. 선택하신 기간(${toYmd(r.from)} ~ ${toYmd(r.to)}) 중 ${toYmd(capped.range.from)} ~ ${toYmd(capped.range.to)}로 적용했습니다.`,
-		);
-		setDateState(capped);
-		window.setTimeout(() => saveAdsDateState(capped), 0);
-	};
+	const rawLoadSeqRef = useRef(0);
+	const rawPrefetchSeqRef = useRef(0);
 
 	const dimensions = [
 		['campaign', '캠페인'],
@@ -3397,48 +4705,108 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 		saveHiddenColumnKeys(rawHiddenColumnsKey, hiddenColumnKeys);
 	}, [hiddenColumnKeys]);
 
-	const load = async () => {
-		setLoading(true);
-		setMessage(null);
+	const rawRange = useMemo(() => {
+		const r = normalizeRange(dateState.range);
+		return { from: toYmd(r.from), to: toYmd(r.to) };
+	}, [dateState.range]);
+	const rawRequestBase = {
+		apiBaseUrl: props.apiBaseUrl,
+		dateFrom: rawRange.from,
+		dateTo: rawRange.to,
+		includeInventory: true,
+	};
+
+	const loadDimension = async (targetDimension: GfaRawDimension, options?: { foreground?: boolean; forceRefresh?: boolean }) => {
+		const seq = rawLoadSeqRef.current;
+		const foreground = options?.foreground ?? false;
+		const params = { ...rawRequestBase, dimension: targetDimension, forceRefresh: Boolean(options?.forceRefresh) };
+		if (foreground) {
+			const cached = !params.forceRefresh ? getCachedGfaRawAnalysis(params) : null;
+			if (cached) {
+				setResult(cached);
+				setMessage(null);
+				return cached;
+			}
+			setResult(null);
+			setLoading(true);
+			setMessage(null);
+		}
 		try {
-			const r = normalizeRange(dateState.range);
-			const requestLimit =
-				dimension === 'campaign' || dimension === 'adgroup'
-					? 5000
-					: dimension === 'creative'
-						? 2000
-						: 500;
-			const res = await axios.get(`${props.apiBaseUrl}/gfa/raw-analysis`, {
-				params: {
-					date_from: toYmd(r.from),
-					date_to: toYmd(r.to),
-					dimension,
-					limit: requestLimit,
-					include_inventory: true,
-				},
-			});
-			setResult(res.data);
+			const data = await fetchGfaRawAnalysisCached(params);
+			if (foreground && seq === rawLoadSeqRef.current) {
+				setResult(data);
+				setMessage(null);
+			}
+			return data;
 		} catch (e) {
-			setMessage(errorDetailText(e));
+			if (foreground && seq === rawLoadSeqRef.current) setMessage(errorDetailText(e));
+			throw e;
 		} finally {
-			setLoading(false);
+			if (foreground && seq === rawLoadSeqRef.current) setLoading(false);
 		}
 	};
 
-	useEffect(() => {
-		const r = normalizeRange(dateState.range);
-		if (!didAutoResetRef.current) {
-			didAutoResetRef.current = true;
-			const y = normalizeRange(defaultYesterdayRange());
-			const isYesterday = toYmd(r.from) === toYmd(y.from) && toYmd(r.to) === toYmd(y.to) && dateState.compareMode === 'prev_day';
-			if (!isYesterday) {
-				setDateState({ range: y, compareMode: 'prev_day' });
-				return;
+	const prefetchRemainingDimensions = async (primary: GfaRawDimension, forceRefresh = false, seq = rawPrefetchSeqRef.current) => {
+		const rest = gfaRawDimensionOrder.filter((key) => key !== primary);
+		setPrefetching(true);
+		try {
+			for (const key of rest) {
+				if (seq !== rawPrefetchSeqRef.current) return;
+				if (getCachedGfaRawAnalysis({ ...rawRequestBase, dimension: key })) continue;
+				await waitGfaRawPrefetch(1200);
+				if (seq !== rawPrefetchSeqRef.current) return;
+				try {
+					// 백그라운드 prefetch는 API/DB를 독점하지 않도록 1개씩만 실행한다.
+					await loadDimension(key, { foreground: false, forceRefresh });
+				} catch {
+					// 탭 이동 시 foreground 요청에서 오류를 보여주면 되므로, background 오류는 조용히 넘긴다.
+				}
 			}
+		} finally {
+			if (seq === rawPrefetchSeqRef.current) setPrefetching(false);
 		}
-		void load();
+	};
+
+	const loadAll = async (options?: { forceRefresh?: boolean }) => {
+		const seq = rawLoadSeqRef.current + 1;
+		rawLoadSeqRef.current = seq;
+		const prefetchSeq = rawPrefetchSeqRef.current + 1;
+		rawPrefetchSeqRef.current = prefetchSeq;
+		const currentDimension = dimension;
+		const forceRefresh = Boolean(options?.forceRefresh);
+		const currentPromise = loadDimension(currentDimension, { foreground: true, forceRefresh });
+		try {
+			await currentPromise;
+		} catch {
+			// foreground loader already exposes the error message.
+		} finally {
+			window.setTimeout(() => {
+				if (seq !== rawLoadSeqRef.current || prefetchSeq !== rawPrefetchSeqRef.current) return;
+				void prefetchRemainingDimensions(currentDimension, false, prefetchSeq);
+			}, 1200);
+		}
+	};
+
+	const selectDimension = (nextDimension: GfaRawDimension) => {
+		rawLoadSeqRef.current += 1;
+		setDimension(nextDimension);
+		const cached = getCachedGfaRawAnalysis({ ...rawRequestBase, dimension: nextDimension });
+		if (cached) {
+			setResult(cached);
+			setMessage(null);
+			return;
+		}
+		void loadDimension(nextDimension, { foreground: true });
+	};
+
+	useEffect(() => {
+		void loadAll();
+		return () => {
+			rawPrefetchSeqRef.current += 1;
+			setPrefetching(false);
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dimension, dateState.range, dateState.compareMode]);
+	}, [rawRange.from, rawRange.to, dateState.compareMode]);
 
 	const rows = Array.isArray(result?.dimension_rows) ? result.dimension_rows : [];
 	const columns = Array.isArray(result?.raw_columns) ? result.raw_columns : [];
@@ -3460,21 +4828,38 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 			return true;
 		});
 	}, [canFilterByOperationalState, rawStatusFilter, rows]);
+	const rawTableDisplayLimit = 800;
 
 	const buildRawJudgment = (r: any): RawJudgment => {
 		const cost = Number(r.cost || 0);
 		const impressions = Number(r.impressions || 0);
+		const clicks = Number(r.clicks || 0);
 		const ctr = Number(r.ctr || 0);
+		const totalConversions = Number(r.conversions || r.total_conversions || 0);
+		const totalRevenue = Number(r.revenue || r.total_revenue || 0);
 		const purchaseConversions = Number(r.purchase_conversions || 0);
 		const purchaseRevenue = Number(r.purchase_revenue || 0);
 		const cartConversions = Number(r.cart_conversions || 0);
 		const cartRevenue = Number(r.cart_revenue || 0);
 		const purchaseRoas = Number(r.purchase_roas || 0);
-		if (r.is_active === false) {
+		const dataDays = Math.max(1, Number(r.data_days || 0) || 1);
+		const avgCost = cost / dataDays;
+		const avgImpressions = impressions / dataDays;
+		const avgClicks = clicks / dataDays;
+		const avgTotalConversions = totalConversions / dataDays;
+		const avgTotalRevenue = totalRevenue / dataDays;
+		const avgPurchaseConversions = purchaseConversions / dataDays;
+		const avgPurchaseRevenue = purchaseRevenue / dataDays;
+		const avgText = `운영 ${formatInt(dataDays)}일 평균: 비용 ${formatWon(avgCost)} / 클릭 ${avgClicks.toFixed(1)}회 / 총전환 ${avgTotalConversions.toFixed(2)}건 / 구매 ${avgPurchaseConversions.toFixed(2)}건`;
+		const hasMinimumSample = impressions >= 1000 && clicks >= 30;
+		const hasConversionJudgmentSample = clicks >= 30 && totalConversions >= 3 && totalRevenue > 0;
+		const hasPurchaseJudgmentSample = clicks >= 30 && purchaseConversions >= 2 && purchaseRevenue > 0;
+		const hasPerformanceData = cost > 0 || impressions > 0 || clicks > 0 || totalConversions > 0 || totalRevenue > 0 || purchaseConversions > 0 || purchaseRevenue > 0;
+		if (r.is_active === false && !hasPerformanceData) {
 			return {
 				judgment: '종료 캠페인',
 				grade: '판단보류',
-				reason: '운영 종료 상태이므로 성과 판정 제외',
+				reason: '운영 종료 상태이며 조회 기간 내 성과 데이터가 없어 판정 제외',
 				action: '목록 확인만 수행',
 				priority: '낮음',
 			};
@@ -3488,38 +4873,56 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 				priority: '낮음',
 			};
 		}
-		if (cost >= 10000 && purchaseConversions <= 0 && purchaseRevenue <= 0) {
+		if (!hasMinimumSample) {
+			return {
+				judgment: '표본 부족',
+				grade: '판단보류',
+				reason: `최소 판정 기준 미달: 노출 ${formatInt(impressions)}회 / 클릭 ${formatInt(clicks)}회 / ${avgText}`,
+				action: '충분한 노출/클릭 데이터가 쌓인 뒤 판정',
+				priority: '낮음',
+			};
+		}
+		if (avgCost >= 10000 && purchaseConversions <= 0 && purchaseRevenue <= 0) {
 			return {
 				judgment: '고비용 무구매',
 				grade: '매우주의',
-				reason: `비용 ${formatWon(cost)} / 구매 0건`,
+				reason: `${avgText} / 구매매출 0원`,
 				action: '중지, 예산 축소 또는 소재 교체 검토',
 				priority: '높음',
 			};
 		}
-		if (purchaseRevenue > 0 && purchaseRoas >= 300) {
+		if (!hasPurchaseJudgmentSample && purchaseRoas >= 300) {
+			return {
+				judgment: '구매 표본 부족',
+				grade: '판단보류',
+				reason: `ROAS는 높지만 구매 판정 기준 미달: 구매 ${formatInt(purchaseConversions)}건 / 구매매출 ${formatWon(purchaseRevenue)} / ${avgText}`,
+				action: '구매 2건 이상과 구매매출이 확보된 뒤 매출성장 후보로 판정',
+				priority: '낮음',
+			};
+		}
+		if (hasPurchaseJudgmentSample && avgPurchaseRevenue > 0 && purchaseRoas >= 300) {
 			return {
 				judgment: 'ROAS 우수',
 				grade: '우수',
-				reason: `구매매출 ${formatWon(purchaseRevenue)} / 구매 ROAS ${formatPct(purchaseRoas)}`,
+				reason: `구매 ${formatInt(purchaseConversions)}건 / 구매매출 ${formatWon(purchaseRevenue)} / 일평균 구매매출 ${formatWon(avgPurchaseRevenue)} / 구매 ROAS ${formatPct(purchaseRoas)}`,
 				action: '예산 확장 또는 유사 소재 확장 후보',
 				priority: '낮음',
 			};
 		}
-		if (impressions >= 1000 && ctr < 0.5) {
+		if (avgImpressions >= 1000 && ctr < 0.5) {
 			return {
 				judgment: '저CTR',
 				grade: '점검',
-				reason: `노출 ${formatInt(impressions)} / CTR ${formatPct(ctr)}`,
+				reason: `일평균 노출 ${formatInt(avgImpressions)}회 / CTR ${formatPct(ctr)} / ${avgText}`,
 				action: '소구문구, 이미지, 타겟 점검',
 				priority: '중간',
 			};
 		}
-		if ((cartConversions > 0 || cartRevenue > 0) && purchaseConversions <= 0) {
+		if (hasConversionJudgmentSample && (cartConversions > 0 || cartRevenue > 0) && purchaseConversions <= 0) {
 			return {
 				judgment: '장바구니 유입',
 				grade: '점검',
-				reason: `장바구니 ${formatInt(cartConversions)}건 / ${formatWon(cartRevenue)}`,
+				reason: `총전환 ${formatInt(totalConversions)}건 / 총전환매출 ${formatWon(totalRevenue)} / 일평균 총전환매출 ${formatWon(avgTotalRevenue)} / 장바구니 ${formatInt(cartConversions)}건`,
 				action: '구매 전환 경로와 혜택 점검',
 				priority: '중간',
 			};
@@ -3527,10 +4930,19 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 		return {
 			judgment: '정상',
 			grade: '보통',
-			reason: `비용 ${formatWon(cost)} / 구매 ${formatInt(purchaseConversions)}건`,
+			reason: `${avgText} / 총전환매출 ${formatWon(totalRevenue)} / 구매매출 ${formatWon(purchaseRevenue)}`,
 			action: '현재 추이 모니터링',
 			priority: '낮음',
 		};
+	};
+	const rawJudgmentCache = useMemo(() => new WeakMap<object, RawJudgment>(), [rows]);
+	const getRawJudgment = (r: any): RawJudgment => {
+		if (!r || typeof r !== 'object') return buildRawJudgment(r);
+		const cached = rawJudgmentCache.get(r);
+		if (cached) return cached;
+		const next = buildRawJudgment(r);
+		rawJudgmentCache.set(r, next);
+		return next;
 	};
 	const judgmentGradeMeta = (grade: RawJudgment['grade']) => {
 		if (grade === '매우주의') return { icon: '🔥', bg: '#7f1d1d', color: '#fff', border: '#f97316' };
@@ -3553,7 +4965,7 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 		return 0;
 	};
 	const rawCellValue = (r: any, key: RawMetricColumnKey): unknown => {
-		const judgment = buildRawJudgment(r);
+		const judgment = getRawJudgment(r);
 		if (key === 'status') return r.status || '미상';
 		if (key === 'target') return r.value || r.creative_name || r.creative_id || '-';
 		if (key === 'campaign') return r.campaign_name || '-';
@@ -3571,7 +4983,7 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 		return r[key] ?? 0;
 	};
 	const displayRawCellValue = (r: any, key: RawMetricColumnKey): unknown => {
-		const judgment = buildRawJudgment(r);
+		const judgment = getRawJudgment(r);
 		if (key === 'judgment_grade') return judgment.grade;
 		if (key === 'priority') return judgment.priority;
 		return rawCellValue(r, key);
@@ -3585,8 +4997,8 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 	};
 	const compareRawRows = (a: any, b: any, key: RawMetricColumnKey): number => {
 		if (key === 'judgment_grade') {
-			const aj = buildRawJudgment(a);
-			const bj = buildRawJudgment(b);
+			const aj = getRawJudgment(a);
+			const bj = getRawJudgment(b);
 			const gradeCmp = gradeOrder(aj.grade) - gradeOrder(bj.grade);
 			if (gradeCmp !== 0) return gradeCmp;
 			const priorityCmp = priorityOrder(aj.priority) - priorityOrder(bj.priority);
@@ -3601,7 +5013,25 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 		return Number(av || 0) - Number(bv || 0);
 	};
 	const renderRawCell = (r: any, col: { key: RawMetricColumnKey; valueKind: 'text' | 'int' | 'won' | 'pct' }): React.ReactNode => {
-		const judgment = buildRawJudgment(r);
+		const judgment = getRawJudgment(r);
+		if (dimension === 'creative' && col.key === 'target') {
+			const label = String(displayRawCellValue(r, col.key) || '').trim() || '-';
+			const href = String(r.creative_detail_url || '').trim();
+			if (href) {
+				return (
+					<a
+						href={href}
+						target="_blank"
+						rel="noreferrer"
+						title="네이버 광고센터 소재 페이지 열기"
+						style={{ color: '#93c5fd', fontWeight: 900, textDecoration: 'underline' }}
+					>
+						{label}
+					</a>
+				);
+			}
+			return label;
+		}
 		if (col.key === 'judgment_grade') {
 			const meta = judgmentGradeMeta(judgment.grade);
 			return (
@@ -3632,48 +5062,80 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 		const dir = sortState.dir === 'asc' ? 1 : -1;
 		return [...data].sort((a, b) => compareRawRows(a, b, sortState.key) * dir);
 	};
+	const sortedFilteredRawRows = useMemo(() => sortedRawRows(filteredRows), [filteredRows, sortState, visibleMetricColumns, rawJudgmentCache]);
+	const visibleFilteredRawRows = useMemo(() => sortedFilteredRawRows.slice(0, rawTableDisplayLimit), [sortedFilteredRawRows]);
 	const toggleSort = (key: RawMetricColumnKey) => {
 		setSortState((prev) => prev.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'desc' });
 	};
+	const rawTopScrollRef = useRef<HTMLDivElement | null>(null);
+	const rawTableScrollRef = useRef<HTMLDivElement | null>(null);
+	const [rawTableScrollWidth, setRawTableScrollWidth] = useState(0);
+	const syncRawScroll = (source: 'top' | 'table') => {
+		const top = rawTopScrollRef.current;
+		const table = rawTableScrollRef.current;
+		if (!top || !table) return;
+		if (source === 'top' && table.scrollLeft !== top.scrollLeft) table.scrollLeft = top.scrollLeft;
+		if (source === 'table' && top.scrollLeft !== table.scrollLeft) top.scrollLeft = table.scrollLeft;
+	};
+	useEffect(() => {
+		const update = () => setRawTableScrollWidth(rawTableScrollRef.current?.scrollWidth || 0);
+		update();
+		window.addEventListener('resize', update);
+		return () => window.removeEventListener('resize', update);
+	}, [visibleMetricColumns, filteredRows.length, dimension]);
 
-	const renderMetricTable = (title: string, data: any[], emptyText: string): JSX.Element => (
-		<div className="card" style={{ display: 'grid', gap: 8 }}>
-			<div className="card-title">{title}</div>
-			{data.length === 0 ? (
-				<div style={{ fontSize: 12, color: '#9ca3af' }}>{emptyText}</div>
-			) : (
-				<div style={{ overflowX: 'auto', overflowY: 'hidden' }}>
-					<table className="table" style={{ width: 'max-content', minWidth: '100%', tableLayout: 'auto' }}>
-						<thead>
-							<tr>
-								{visibleMetricColumns.map((col) => (
-									<th key={col.key} style={{ whiteSpace: 'nowrap' }}>
-										<button
-											type="button"
-											className="btn-ghost"
-											style={{ padding: 0, fontSize: 12, fontWeight: 900, color: '#cbd5e1', whiteSpace: 'nowrap' }}
-											onClick={() => toggleSort(col.key)}
-										>
-											{col.label}{sortState.key === col.key ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : ''}
-										</button>
-									</th>
-								))}
-							</tr>
-						</thead>
-						<tbody>
-							{sortedRawRows(data).map((r: any, idx: number) => (
-								<tr key={`${title}-${idx}`}>
-									{visibleMetricColumns.map((col) => (
-										<td key={col.key} style={{ whiteSpace: 'nowrap' }}>{renderRawCell(r, col)}</td>
+	const renderMetricTable = (title: string, data: any[], emptyText: string): JSX.Element => {
+		const tableRows = data === filteredRows ? visibleFilteredRawRows : sortedRawRows(data).slice(0, rawTableDisplayLimit);
+		const hiddenCount = Math.max(0, data.length - tableRows.length);
+		return (
+			<div className="card" style={{ display: 'grid', gap: 8 }}>
+				<div className="card-title">{title}</div>
+				{hiddenCount > 0 ? (
+					<div style={{ fontSize: 12, color: '#fef3c7' }}>
+						초기 렌더링 속도를 위해 정렬 기준 상위 {formatInt(tableRows.length)}건만 표시합니다. 전체 집계/요약은 {formatInt(data.length)}건 기준입니다.
+					</div>
+				) : null}
+				{data.length === 0 ? (
+					<div style={{ fontSize: 12, color: '#9ca3af' }}>{emptyText}</div>
+				) : (
+					<div style={{ display: 'grid', gap: 4 }}>
+						<div ref={rawTopScrollRef} onScroll={() => syncRawScroll('top')} style={{ overflowX: 'auto', overflowY: 'hidden', height: 12 }}>
+							<div style={{ width: rawTableScrollWidth || '100%', height: 1 }} />
+						</div>
+						<div ref={rawTableScrollRef} onScroll={() => syncRawScroll('table')} style={{ overflowX: 'auto', overflowY: 'hidden' }}>
+							<table className="table" style={{ width: 'max-content', minWidth: '100%', tableLayout: 'auto' }}>
+								<thead>
+									<tr>
+										{visibleMetricColumns.map((col) => (
+											<th key={col.key} style={{ whiteSpace: 'nowrap' }}>
+												<button
+													type="button"
+													className="btn-ghost"
+													style={{ padding: 0, fontSize: 12, fontWeight: 900, color: '#cbd5e1', whiteSpace: 'nowrap' }}
+													onClick={() => toggleSort(col.key)}
+												>
+													{col.label}{sortState.key === col.key ? (sortState.dir === 'asc' ? ' ▲' : ' ▼') : ' ↕'}
+												</button>
+											</th>
+										))}
+									</tr>
+								</thead>
+								<tbody>
+									{tableRows.map((r: any, idx: number) => (
+										<tr key={`${title}-${idx}`}>
+											{visibleMetricColumns.map((col) => (
+												<td key={col.key} style={{ whiteSpace: 'nowrap' }}>{renderRawCell(r, col)}</td>
+											))}
+										</tr>
 									))}
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			)}
-		</div>
-	);
+								</tbody>
+							</table>
+						</div>
+					</div>
+				)}
+			</div>
+		);
+	};
 
 	return (
 		<div style={{ display: 'grid', gap: 14 }}>
@@ -3685,15 +5147,10 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 				</div>
 			</div>
 
-			<AdsDateControls value={dateState} onChange={handleRawDateChange} />
-			{rangeNotice ? (
-				<div className="card" style={{ fontSize: 12, color: '#fde68a', borderColor: 'rgba(251,191,36,0.35)' }}>
-					{rangeNotice}
-				</div>
-			) : null}
+			<AdsDateControls value={dateState} onChange={setDateState} />
 			<div className="card" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
 				{dimensions.map(([key, label]) => (
-					<button key={key} type="button" className={dimension === key ? 'btn-primary' : 'btn-ghost'} onClick={() => setDimension(key)}>
+					<button key={key} type="button" className={dimension === key ? 'btn-primary' : 'btn-ghost'} onClick={() => selectDimension(key)}>
 						{label}
 					</button>
 				))}
@@ -3720,9 +5177,10 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 				<button type="button" className="btn-ghost" onClick={() => setColumnSettingsOpen(true)}>
 					컬럼 설정
 				</button>
-				<button type="button" className="btn-primary" onClick={load} disabled={loading}>
+				<button type="button" className="btn-primary" onClick={() => void loadAll({ forceRefresh: true })} disabled={loading}>
 					{loading ? '분석 중...' : '분석 새로고침'}
 				</button>
+				{prefetching ? <span style={{ fontSize: 12, color: '#93c5fd' }}>나머지 탭 백그라운드 분석 중...</span> : null}
 			</div>
 			<AdsColumnSettingsModal
 				open={columnSettingsOpen}
@@ -3761,7 +5219,9 @@ export function GfaRawAnalysisView(props: { apiBaseUrl: string }): JSX.Element {
 
 					<div className="card" style={{ display: 'grid', gap: 8 }}>
 						<div className="card-title">저장된 원본 컬럼</div>
-						<div style={{ fontSize: 12, color: '#9ca3af' }}>CSV에서 들어온 전체 컬럼 중 값이 있는 컬럼과 샘플값입니다.</div>
+						<div style={{ fontSize: 12, color: '#9ca3af' }}>
+							CSV 원본 컬럼 예시입니다. 빠른 표시를 위해 최대 {formatInt(result.raw_columns_sampled_rows || 0)}개 원본 행에서 컬럼 샘플을 추출합니다.
+						</div>
 						<div style={{ overflowX: 'auto' }}>
 							<table className="table">
 								<thead><tr><th>컬럼</th><th>값 있음</th><th>샘플</th></tr></thead>
@@ -3875,25 +5335,10 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 		}
 	});
 	const [selectedTrendRowKey, setSelectedTrendRowKey] = useState<string | null>(null);
-	const [rangeNotice, setRangeNotice] = useState<string | null>(null);
-	const maxCreativeRangeDays = 30;
 	const [gfaOperationalFilter, setGfaOperationalFilter] = useState<'all' | 'purchase' | 'high_cost_no_purchase' | 'good_roas' | 'low_ctr'>('all');
 
 	const handleCreativeDateChange = (next: AdsDateState) => {
-		const r = normalizeRange(next.range);
-		if (rangeLengthDays(r) <= maxCreativeRangeDays) {
-			setDateState({ ...next, range: r });
-			return;
-		}
-		const cappedFrom = new Date(r.to);
-		cappedFrom.setDate(cappedFrom.getDate() - (maxCreativeRangeDays - 1));
-		const capped = { ...next, range: normalizeRange({ from: cappedFrom, to: r.to }) };
-		setRangeNotice(
-			`소재 분석은 성능과 정확도를 위해 최근 ${maxCreativeRangeDays}일까지만 조회합니다. 선택하신 기간(${toYmd(r.from)} ~ ${toYmd(r.to)}) 중 ${toYmd(capped.range.from)} ~ ${toYmd(capped.range.to)}로 적용했습니다.`,
-		);
-		setDateState(capped);
-		// AdsDateControls도 자체 저장을 수행하므로, 마지막에 제한된 기간을 다시 저장한다.
-		window.setTimeout(() => saveAdsDateState(capped), 0);
+		setDateState({ ...next, range: normalizeRange(next.range) });
 	};
 
 	useEffect(() => {
@@ -4029,22 +5474,8 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 						await forceCollectRanges([{ label: '선택기간', from: dateFrom, to: dateTo }]);
 					}
 				} else {
-					// 실제 수집이 필요한 경우에만 ensureAdsDataMulti 내부 메시지가 "자동 수집 중…"으로 바뀐다.
-					// 여기서는 오해를 줄이기 위해 "확인" 문구만 표시한다.
-					setMessage('데이터 확인 중… (creative)');
-					await ensureAdsDataMulti({
-						apiBaseUrl: props.apiBaseUrl,
-						kind: 'creative',
-						platform,
-						ranges: [
-							{ from: dateFrom, to: dateTo },
-							{ from: prevFrom, to: prevTo },
-						],
-						setEnsure: (s) => setMessage(s.message),
-						scopeCampaigns: selectedCampaigns,
-						scopeAdgroups: selectedAdgroups,
-						signal,
-					});
+					// 메뉴 진입은 조회만 수행한다. 누락/메타 재수집은 명시 버튼에서만 실행한다.
+					setMessage(null);
 				}
 			} catch (e) {
 				// REPORT_NOT_READY는 사용자에게 안내만 하고, 콘솔 Uncaught로 남기지 않도록 여기서 처리한다.
@@ -4072,7 +5503,7 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 			const adgroupParam = selectedAdgroups.length === 1 ? selectedAdgroups[0] : undefined;
 
 			// 필터 옵션(드롭다운)은 전체 데이터에서 추출. 필터 적용 fetch와 분리해야 다중 선택 가능.
-			const creativeFetchLimit = 20000;
+			const creativeFetchLimit = platform === 'gfa' ? 8000 : 20000;
 			const yesterday = toYmd(defaultYesterdayRange().from);
 			const [curr0Base, prevBase, optionsRows, creativeInventory, yesterdayStatusRows] = await Promise.all([
 				fetchCreativeDaily({ baseUrl: props.apiBaseUrl, dateFrom, dateTo, includeMetaOnly: false, campaign: campaignParam, adgroup: adgroupParam, limit: creativeFetchLimit, platform }),
@@ -4088,9 +5519,13 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 					: Promise.resolve([] as CreativeDailyRow[]),
 			]);
 			let currActual = curr0Base;
-			if (platform !== 'gfa' && Array.isArray(curr0Base) && curr0Base.length === 0) {
+			const shouldFetchSaMetaOnly =
+				platform !== 'gfa'
+				&& Array.isArray(curr0Base)
+				&& (curr0Base.length === 0 || Boolean(campaignParam && adgroupParam));
+			if (shouldFetchSaMetaOnly) {
 				try {
-					setMessage('소재 목록이 비어 메타 기반으로 보강 중… (creative)');
+					setMessage('소재 목록을 메타 기반으로 보강 중… (creative)');
 					currActual = await fetchCreativeDaily({ baseUrl: props.apiBaseUrl, dateFrom, dateTo, includeMetaOnly: true, campaign: campaignParam, adgroup: adgroupParam, limit: creativeFetchLimit, platform });
 				} finally {
 					setMessage(null);
@@ -4208,6 +5643,16 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 					displayKeyword: (meta as any).display_keyword ?? null,
 					productTitle: meta.product_title ?? null,
 					imageUrl: meta.image_url ?? null,
+					detailCollectedAt: (meta as any).detail_collected_at ?? null,
+					detailLastError: (meta as any).detail_last_error ?? null,
+					creativeType: (meta as any).creative_type ?? null,
+					profileName: (meta as any).profile_name ?? null,
+					profileImageUrl: (meta as any).profile_image_url ?? null,
+					primaryText: (meta as any).primary_text ?? null,
+					headline: (meta as any).headline ?? null,
+					description: (meta as any).description ?? null,
+					cta: (meta as any).cta ?? null,
+					landingUrl: (meta as any).landing_url ?? null,
 					currentBid: meta.current_bid ?? null,
 					prevCurrentBid: metaPrev?.current_bid ?? null,
 					qualityIndex: meta.quality_index ?? null,
@@ -4265,9 +5710,9 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 						adgroups: selectedAdgroups.length ? selectedAdgroups : undefined,
 						dry_run: true,
 					};
-					const res = await axios.post(`${props.apiBaseUrl}/ads/validate-fix`, body, { timeout: 1200000 });
+					const data = await postAdsValidateFixChunked(props.apiBaseUrl, body);
 					const m: Record<string, 'ok' | 'fix' | 'unknown'> = {};
-					for (const day of (res?.data?.processed || []) as any[]) {
+					for (const day of (data?.processed || []) as any[]) {
 						for (const it of (day?.items || []) as any[]) {
 							const camp = String(it?.campaign || '').trim();
 							const grp = String(it?.adgroup || '').trim();
@@ -4523,6 +5968,7 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 		);
 		const keys: CreativeColumnKey[] = [
 			'creative',
+			...(platform === 'gfa' ? (['creativeCondition', 'detailStatus'] as CreativeColumnKey[]) : []),
 			...(platform === 'gfa' ? [] : (['bid', 'quality', 'avgRank'] as CreativeColumnKey[])),
 			...(platform === 'gfa' ? [] : hasShoppingMode ? (['organicRank'] as CreativeColumnKey[]) : []),
 			'impressions',
@@ -4542,6 +5988,8 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 		];
 		const labelMap: Record<CreativeColumnKey, string> = {
 			creative: platform === 'gfa' ? '소재명' : '소재명/키워드',
+			creativeCondition: '소재 컨디션',
+			detailStatus: '상세수집',
 			bid: '현재입찰가(CPC)',
 			quality: '품질/연관지수',
 			avgRank: '평균노출순위/클릭기대지수',
@@ -4564,7 +6012,7 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 		return keys.map((key) => ({
 			key,
 			label: labelMap[key],
-			group: ['creative', 'bid', 'quality', 'avgRank', 'organicRank'].includes(key) ? '기본 정보' : '성과 지표',
+			group: ['creative', 'creativeCondition', 'detailStatus', 'bid', 'quality', 'avgRank', 'organicRank'].includes(key) ? '기본 정보' : '성과 지표',
 		}));
 	}, [filteredGroups, groups]);
 
@@ -4724,26 +6172,6 @@ function AdsCreativeView(props: { apiBaseUrl: string; platform?: AdsPlatform }):
 	return (
 		<div className="space-y-3">
 			<AdsDateControls value={dateState} onChange={handleCreativeDateChange} />
-			{rangeNotice ? (
-				<div className="modal-backdrop" role="dialog" aria-label="소재 분석 기간 안내">
-					<div className="modal-card" style={{ maxWidth: 520 }}>
-						<div className="modal-header">
-							<div className="modal-title">소재 분석 기간 안내</div>
-							<button type="button" className="btn-ghost" onClick={() => setRangeNotice(null)}>
-								닫기
-							</button>
-						</div>
-						<div className="modal-body" style={{ fontSize: 12, color: '#cbd5e1', lineHeight: 1.6 }}>
-							{rangeNotice}
-						</div>
-						<div className="modal-footer" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-							<button type="button" className="btn-primary" onClick={() => setRangeNotice(null)}>
-								확인
-							</button>
-						</div>
-					</div>
-				</div>
-			) : null}
 			<div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 18 }}>
 				<div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
 					<div style={{ fontSize: 12, fontWeight: 900 }}>필터</div>
@@ -5663,39 +7091,9 @@ function AdsCampaignView(props: { apiBaseUrl: string; kind: 'campaign' | 'adgrou
 			// loading 중에도 data를 즉시 반영
 			setData(first as any);
 
-			// 2) 누락이 있으면 자동 수집을 수행하고, 완료 후 한 번 더 조회/반영한다.
-			//    (집계 지연/느림이 있더라도 "표 자체는 즉시 노출"된다.)
-			try {
-				await ensureAdsDataMulti({
-					apiBaseUrl: props.apiBaseUrl,
-					kind: platform === 'gfa' ? props.kind : 'keyword',
-					platform,
-					ranges: [
-						{ from: dateFrom, to: dateTo },
-						{ from: prevFrom, to: prevTo },
-					],
-					setEnsure: (s) => setMessage(s.message),
-					signal,
-				});
-			} catch (e) {
-				// 집계 지연(503) 등으로 자동 수집이 막혀도, 이미 표시 중인 데이터를 유지한다.
-				if (isReportNotReadyError(e)) {
-					setMessage('리포트 집계 지연으로 자동 수집을 잠시 대기합니다. (기존 데이터는 표시 중)');
-					return first as any;
-				}
-				throw e;
-			} finally {
-				setMessage(null);
-			}
-
-			if (platform === 'gfa') {
-				return first as any;
-			}
-
-			const second = await fetchOnce();
-			setData(second as any);
-			// 최종 결과는 second가 최신이므로 이를 반환한다.
-			return second as any;
+			// 메뉴 진입은 조회만 수행한다. 누락 수집은 사용자가 수집 메뉴/명시 버튼에서 실행한다.
+			setMessage(null);
+			return first as any;
 		}).catch(() => {});
 
 		return () => {
@@ -6117,7 +7515,7 @@ function AdsCampaignView(props: { apiBaseUrl: string; kind: 'campaign' | 'adgrou
 					title,
 					period: `${currentRange.from} ~ ${currentRange.to}`,
 					rows: visibleRows,
-					totalRow,
+					totalRow: filteredTotalRow,
 						leftColumns: visibleLeftColumns,
 						metricKeys: visibleMetricKeys,
 						hasPurchaseMetrics,
@@ -6355,13 +7753,13 @@ function AdsCampaignView(props: { apiBaseUrl: string; kind: 'campaign' | 'adgrou
 										date_to: dateTo,
 										dry_run: false,
 									};
-									const res = await axios.post(`${props.apiBaseUrl}/ads/validate-fix`, body, { timeout: 1200000 });
-									const t = res?.data?.totals;
+									const data = await postAdsValidateFixChunked(props.apiBaseUrl, body);
+									const t = data?.totals;
 									// validation map: 캠페인별로 missing_count>0이면 fix
 									try {
 										const byCamp: Record<string, Exclude<ValidationStatus, 'unknown'>> = {};
 										const byGroup: Record<string, Exclude<ValidationStatus, 'unknown'>> = {};
-										const proc = (res?.data?.processed || []) as any[];
+										const proc = (data?.processed || []) as any[];
 										for (const day of proc) {
 											for (const it of (day?.items || []) as any[]) {
 												const camp = String(it?.campaign || '').trim();

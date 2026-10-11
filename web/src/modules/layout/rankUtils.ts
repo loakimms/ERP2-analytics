@@ -1,6 +1,7 @@
 export type RankPoint = {
 	date: string;
 	rank: number;
+	status?: string | null;
 };
 
 export type RankSeries = {
@@ -11,6 +12,7 @@ export type RankSeries = {
 export type RankHistory = {
 	dates: string[];
 	series: RankSeries[];
+	failed_dates?: string[];
 };
 
 export function formatKstDateKey(d: Date): string {
@@ -113,6 +115,7 @@ export type KeywordDailyCell = {
 	date: string;
 	rank: number | null;
 	delta: number | null;
+	status?: string | null;
 };
 
 export type KeywordDailyRow = {
@@ -131,6 +134,7 @@ export function buildRankMatrixData(
 	days?: number,
 ): KeywordDailyRow[] {
 	if (!history || !days || days <= 0) return [];
+	const failedDates = new Set((history.failed_dates || []).map((d) => String(d || '').trim()).filter(Boolean));
 
 	// 오늘 기준으로 days 만큼의 날짜를 생성한다. (예: 7일, 30일 등)
 	// - 표에는 이 날짜들을 모두 보여주고
@@ -160,11 +164,12 @@ export function buildRankMatrixData(
 		}
 
 		const cellsAsc: KeywordDailyCell[] = displayDatesAsc.map((date) => {
-			if (!rankByDate.has(date)) return { date, rank: null, delta: null };
+			const failed = failedDates.has(date);
+			if (!rankByDate.has(date)) return { date, rank: null, delta: null, status: failed ? 'collection_failed' : null };
 			const rank = rankByDate.get(date)!;
 			const prevRank = prevRankByDate.get(date) ?? null;
 			const delta = prevRank == null ? null : prevRank - rank; // +: 순위 상승
-			return { date, rank, delta };
+			return { date, rank, delta, status: failed && rank <= 0 ? 'collection_failed' : null };
 		});
 
 		// 최신 날짜 왼쪽(내림차순)

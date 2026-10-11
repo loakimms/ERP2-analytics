@@ -288,7 +288,7 @@ export function AiOrganicRankA1View(props: { apiBaseUrl: string }): JSX.Element 
 	const [dateRange, setDateRange] = useState<A1DateRange>(() => defaultA1LastNDaysRange(30));
 	const rangePayload = useMemo(() => buildA1RangePayload(dateRange, 90), [dateRange]);
 	const days = rangePayload.days;
-	const [model, setModel] = useState<string>('gpt-5.2');
+	const [model, setModel] = useState<string>('gpt-4o-mini');
 
 	const [running, setRunning] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -660,7 +660,7 @@ export function AiOrganicRankA1View(props: { apiBaseUrl: string }): JSX.Element 
 				days: Math.max(7, Math.min(90, Number(days || 30))),
 				date_from: rangePayload.date_from,
 				date_to: rangePayload.date_to,
-				model: String(model || '').trim() || 'gpt-5.2',
+				model: String(model || '').trim() || 'gpt-4o-mini',
 				keyword_mode: gptMode,
 				top_n: Math.max(1, Math.min(50, Number(gptTopN || 10))),
 			};
@@ -730,11 +730,11 @@ export function AiOrganicRankA1View(props: { apiBaseUrl: string }): JSX.Element 
 					<div style={{ display: 'grid', gap: 6, width: 180 }}>
 						<label className="field-label">GPT 모델</label>
 						<select className="input" value={model} onChange={(e) => setModel(e.target.value)}>
-							<option value="gpt-5.2">gpt-5.2 (기본)</option>
-							<option value="gpt-5">gpt-5</option>
-							<option value="gpt-4.1">gpt-4.1</option>
+							<option value="gpt-4o-mini">gpt-4o-mini (기본)</option>
 							<option value="gpt-4o">gpt-4o</option>
-							<option value="gpt-4o-mini">gpt-4o-mini</option>
+							<option value="gpt-5.4-mini">gpt-5.4-mini</option>
+							<option value="gpt-5.4">gpt-5.4</option>
+							<option value="gpt-5.5">gpt-5.5</option>
 						</select>
 					</div>
 					<div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>

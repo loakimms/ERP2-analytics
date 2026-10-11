@@ -349,7 +349,7 @@ export function AiOrganicRankA1TraceExplorerView(props: { apiBaseUrl: string }):
 					date: String(batchDate || '').trim() || undefined,
 					surface: String(batchSurface || '').trim() || 'mobile_integrated',
 					max_items: 200,
-					model: 'gpt-5.2',
+					model: 'gpt-4o-mini',
 				},
 				{ timeout: 90000 },
 			);
