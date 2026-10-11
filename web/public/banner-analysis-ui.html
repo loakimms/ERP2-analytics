@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GFA 광고 소재 분석</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Pretendard Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f5ff',
+              100: '#e0ecff',
+              600: '#4338ca',
+              700: '#3730a3',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .custom-shadow {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+    }
+    .card-border {
+      border: 1px solid #e2e8f0;
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fcfdfd] text-[#1e293b] antialiased selection:bg-indigo-100">
+
+  <!-- Main Container -->
+  <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24">
+
+    <!-- Top Header -->
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6">
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl sm:text-[26px] font-bold text-gray-900 tracking-tight">GFA 광고 소재 분석</h1>
+          <span class="bg-indigo-50 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-indigo-100">Beta</span>
+        </div>
+        <p class="text-sm text-gray-500 mt-1">광고를 집행하기 전에, 전문가의 분석으로 더 좋은 결과를 만들어보세요.</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2.5 self-start md:self-auto">
+        <button class="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl text-xs font-medium text-gray-700 transition shadow-sm">
+          <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M16 8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          다른 이미지 분석하기
+        </button>
+        <button class="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl text-xs font-medium text-gray-700 transition shadow-sm">
+          <span class="text-amber-500">💡</span>
+          어떻게 사용하나요?
+          <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-400 border border-gray-300 rounded-full font-sans">?</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Hero Banner: High Potential -->
+    <section class="bg-[#e9fbf0] border border-[#c1f3d4] rounded-2xl p-5 mb-5 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Left Banner Info -->
+        <div class="flex items-start sm:items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-[#00c73c] text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <svg class="w-7 h-7 stroke-[2.8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">이 소재는 사용 가능성이 높습니다!</h2>
+            <p class="text-sm text-gray-600 mt-1">전체적으로 좋은 요소가 많습니다. 아래 내용을 참고해 조금만 수정하면 더 좋은 성과를 기대할 수 있어요.</p>
+          </div>
+        </div>
+
+        <!-- Right Overall Score Badge -->
+        <div class="bg-[#d2f6de] border border-[#b2ecc5] rounded-2xl px-7 py-3 flex flex-col items-center justify-center min-w-[170px] self-start md:self-auto">
+          <div class="flex items-center gap-1 text-xs text-gray-600 font-medium mb-0.5">
+            <span>종합 평가</span>
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-500 border border-gray-400 rounded-full">?</span>
+          </div>
+          <div class="flex items-baseline gap-1 text-gray-900">
+            <span class="text-3xl font-extrabold tracking-tight">78</span>
+            <span class="text-sm font-semibold text-gray-500">/ 100</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 Sub Metrics Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <!-- 1. 광고 구성 평가 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-center gap-1">
+              <p class="text-xs text-gray-500 font-medium">광고 구성 평가</p>
+              <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-400 border border-gray-300 rounded-full">?</span>
+            </div>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span class="text-2xl font-bold text-[#0284c7]">82</span>
+              <span class="text-xs text-gray-400 font-normal">/ 100</span>
+            </div>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-500 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">사람들의 관심을 끌기 좋은 소재예요.</p>
+      </div>
+
+      <!-- 2. 과거 데이터 근거 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs text-gray-500 font-medium">과거 데이터 근거</p>
+            <div class="mt-1.5">
+              <span class="inline-block px-3 py-1 bg-[#eafbf0] text-[#16a34a] text-sm font-bold rounded-lg border border-[#c6f6d5]">참고 가능</span>
+            </div>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">비슷한 유형의 광고에서 좋은 성과가 확인됐어요.</p>
+      </div>
+
+      <!-- 3. 네이버 광고 심사 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-center gap-1">
+              <p class="text-xs text-gray-500 font-medium">네이버 광고 심사</p>
+              <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-400 border border-gray-300 rounded-full">?</span>
+            </div>
+            <div class="mt-1.5">
+              <span class="inline-block px-3 py-1 bg-[#fff7ed] text-[#ea580c] text-sm font-bold rounded-lg border border-[#ffedd5]">주의 필요</span>
+            </div>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">일부 항목을 수정하면 더 안전해요.</p>
+      </div>
+
+      <!-- 4. 개선 필요도 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs text-gray-500 font-medium">개선 필요도</p>
+            <div class="mt-1">
+              <span class="text-xl font-bold text-[#ea580c]">일부 수정 권장</span>
+            </div>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">더 좋은 결과를 위해 수정하면 좋아요.</p>
+      </div>
+    </section>
+
+    <!-- 4-Column Main Analysis Section -->
+    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+      <!-- Column 1: 분석한 이미지 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col">
+        <h3 class="text-base font-bold text-gray-900 mb-3">분석한 이미지</h3>
+        
+        <!-- Generated Mock Banner Asset mirroring the original banner -->
+        <div class="rounded-xl overflow-hidden border border-gray-200 bg-[#fbfbfa] relative flex flex-col aspect-square shadow-sm">
+          <!-- Top Banner Copy -->
+          <div class="p-3 text-center bg-gradient-to-b from-white to-gray-50 border-b border-gray-100">
+            <p class="text-[12px] font-bold text-gray-900 leading-snug">
+              새치 염색만 했을 뿐인데 달라진 머릿결
+            </p>
+            <p class="text-[13px] font-extrabold text-[#0066cc] mt-0.5 tracking-tight">
+              두피까지 더 순하게 편안하게 ~
+            </p>
+            <div class="inline-block bg-[#243342] text-white text-[9px] font-medium px-2 py-0.5 rounded-full mt-1.5">
+              천연 100% 저자극 염색약 + 염색도구 기본 제공
+            </div>
+          </div>
+
+          <!-- Before / After Model Visual Representation -->
+          <div class="relative flex-1 grid grid-cols-2 bg-slate-100">
+            <!-- Left: Before (Gray hair, dull) -->
+            <div class="relative overflow-hidden border-r border-white/60 bg-[#e7e5e4] flex items-end justify-center">
+              <svg viewBox="0 0 160 200" class="w-full h-full object-cover">
+                <defs>
+                  <linearGradient id="skin1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#fed7aa"/>
+                    <stop offset="100%" stop-color="#fdba74"/>
+                  </linearGradient>
+                </defs>
+                <!-- Hair (Gray/white streaks) -->
+                <path d="M40 70 Q80 15 120 70 Q135 120 130 180 Q80 160 30 180 Q25 120 40 70" fill="#9ca3af" />
+                <path d="M55 50 Q80 28 105 50 Q115 90 110 140 Q80 130 50 140 Z" fill="#d1d5db" opacity="0.8" />
+                <!-- Face Base -->
+                <ellipse cx="80" cy="98" rx="34" ry="44" fill="url(#skin1)" />
+                <!-- Subtle aging lines / details -->
+                <path d="M60 88 Q80 84 100 88" stroke="#ea580c" stroke-width="1" fill="none" opacity="0.4"/>
+                <circle cx="68" cy="95" r="3" fill="#475569" />
+                <circle cx="92" cy="95" r="3" fill="#475569" />
+                <path d="M72 122 Q80 118 88 122" stroke="#b45309" stroke-width="1.5" fill="none" />
+                <!-- Clothes -->
+                <path d="M30 180 Q80 150 130 180 L140 200 L20 200 Z" fill="#f8fafc" />
+              </svg>
+              <!-- Label Before -->
+              <span class="absolute bottom-2 left-2 bg-black/65 backdrop-blur-[2px] text-white text-[10px] font-semibold px-2 py-0.5 rounded">Before</span>
+            </div>
+
+            <!-- Right: After (Lustrous black hair, rejuvenated) -->
+            <div class="relative overflow-hidden bg-[#fafaf9] flex items-end justify-center">
+              <svg viewBox="0 0 160 200" class="w-full h-full object-cover">
+                <defs>
+                  <linearGradient id="hairDark" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1e293b"/>
+                    <stop offset="100%" stop-color="#0f172a"/>
+                  </linearGradient>
+                  <linearGradient id="skin2" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffedd5"/>
+                    <stop offset="100%" stop-color="#fed7aa"/>
+                  </linearGradient>
+                </defs>
+                <!-- Hair (Silky Black) -->
+                <path d="M38 68 Q80 12 122 68 Q138 115 132 180 Q80 160 28 180 Q22 115 38 68" fill="url(#hairDark)" />
+                <path d="M50 45 Q75 35 95 48 Q85 85 92 120" stroke="#94a3b8" stroke-width="2" fill="none" opacity="0.3" />
+                <!-- Face Base -->
+                <ellipse cx="80" cy="96" rx="33" ry="42" fill="url(#skin2)" />
+                <!-- Eyes & Smile -->
+                <circle cx="68" cy="94" r="3.2" fill="#1e293b" />
+                <circle cx="92" cy="94" r="3.2" fill="#1e293b" />
+                <path d="M70 120 Q80 128 90 120" stroke="#e11d48" stroke-width="2" fill="none" stroke-linecap="round" />
+                <!-- Clothes -->
+                <path d="M28 180 Q80 150 132 180 L140 200 L20 200 Z" fill="#ffffff" />
+              </svg>
+              <!-- Label After -->
+              <span class="absolute bottom-2 right-2 bg-black/65 backdrop-blur-[2px] text-white text-[10px] font-semibold px-2.5 py-0.5 rounded">After</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Info Footer -->
+        <div class="mt-3 text-xs">
+          <p class="font-medium text-gray-700 truncate">KakaoTalk_20260911_174859953.png</p>
+          <p class="text-gray-400 mt-0.5">1.2 MB &nbsp;|&nbsp; 1024 x 1024</p>
+        </div>
+      </div>
+
+      <!-- Column 2: 이런 요소가 보입니다 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-1 mb-3">
+            <h3 class="text-base font-bold text-gray-900">이런 요소가 보입니다</h3>
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-400 border border-gray-300 rounded-full">?</span>
+          </div>
+
+          <!-- Feature Item List -->
+          <div class="space-y-2.5">
+            <!-- Item 1: 인물 -->
+            <div class="flex items-start gap-3 p-2.5 rounded-xl bg-[#f8fafc] border border-gray-100">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-gray-800">인물</div>
+                <div class="text-[11px] text-gray-500 mt-0.5">중년 여성 (45세 이상으로 보임)</div>
+              </div>
+            </div>
+
+            <!-- Item 2: 헤어 상태 -->
+            <div class="flex items-start gap-3 p-2.5 rounded-xl bg-[#f8fafc] border border-gray-100">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-gray-800">헤어 상태</div>
+                <div class="text-[11px] text-gray-500 mt-0.5">새치, 손상모 → 개선된 머릿결</div>
+              </div>
+            </div>
+
+            <!-- Item 3: 제품/사용 -->
+            <div class="flex items-start gap-3 p-2.5 rounded-xl bg-[#f8fafc] border border-gray-100">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-gray-800">제품/사용</div>
+                <div class="text-[11px] text-gray-500 mt-0.5">염색 효과 (전후 비교 느낌)</div>
+              </div>
+            </div>
+
+            <!-- Item 4: 배경/분위기 -->
+            <div class="flex items-start gap-3 p-2.5 rounded-xl bg-[#f8fafc] border border-gray-100">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-gray-800">배경/분위기</div>
+                <div class="text-[11px] text-gray-500 mt-0.5">깔끔한 실내, 신뢰감 있는 분위기</div>
+              </div>
+            </div>
+
+            <!-- Item 5: 문구/카피 -->
+            <div class="flex items-start gap-3 p-2.5 rounded-xl bg-[#f8fafc] border border-gray-100">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-gray-800">문구/카피</div>
+                <div class="text-[11px] text-gray-500 mt-0.5 leading-relaxed">
+                  "새치 염색만 했을 뿐인데..."<br>"천연 100% 저자극 염색약"
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail button -->
+        <button class="w-full mt-4 py-2 border border-gray-200 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-50 flex items-center justify-center gap-1 transition">
+          더 자세히 보기
+          <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Column 3: 비슷한 광고의 실제 성과 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-1">
+            <h3 class="text-base font-bold text-gray-900">비슷한 광고의 실제 성과</h3>
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-400 border border-gray-300 rounded-full">?</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mt-1 mb-4 leading-snug">
+            이와 유사한 특징의 과거 운영 광고 12개를 분석한 결과예요.<br>
+            <span class="text-gray-400">(실제 운영 데이터를 기반으로 한 결과이며, 현재 광고의 예상 성과가 아닙니다.)</span>
+          </p>
+
+          <!-- 3 Stats Metrics Row -->
+          <div class="grid grid-cols-3 gap-1.5 text-center mb-5">
+            <!-- CTR -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mb-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                </svg>
+              </div>
+              <span class="text-[10px] text-gray-400 font-medium">평균 클릭률 (CTR)</span>
+              <span class="text-base font-extrabold text-gray-900 my-0.5">1.6%</span>
+              <span class="text-[9px] text-[#059669] bg-[#eafbf0] px-1.5 py-0.5 rounded font-medium">전체보다 높은 편</span>
+            </div>
+
+            <!-- Conversion Rate -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <span class="text-[10px] text-gray-400 font-medium">구매 전환율</span>
+              <span class="text-base font-extrabold text-gray-900 my-0.5">2.1%</span>
+              <span class="text-[9px] text-[#059669] bg-[#eafbf0] px-1.5 py-0.5 rounded font-medium">비슷한 편</span>
+            </div>
+
+            <!-- ROAS -->
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center mb-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <span class="text-[10px] text-gray-400 font-medium">광고 수익률 (ROAS)</span>
+              <span class="text-base font-extrabold text-[#16a34a] my-0.5">3.4<span class="text-xs">배</span></span>
+              <span class="text-[9px] text-[#059669] bg-[#eafbf0] px-1.5 py-0.5 rounded font-medium">전체보다 높은 편</span>
+            </div>
+          </div>
+
+          <!-- Similar Ads Examples -->
+          <div>
+            <h4 class="text-xs font-bold text-gray-900 mb-2">비슷한 광고 예시</h4>
+            <div class="grid grid-cols-3 gap-2">
+              <!-- Thumb 1 -->
+              <div>
+                <div class="rounded-lg overflow-hidden border border-gray-200 aspect-[3/4] bg-emerald-900 relative p-1.5 flex flex-col justify-between text-white">
+                  <span class="text-[9px] font-bold leading-tight drop-shadow">자연에서 찾은<br><span class="text-emerald-300">순한 염색</span></span>
+                  <div class="w-full h-12 rounded bg-emerald-700/60 mt-auto flex items-center justify-center">
+                    <span class="text-[8px] text-white/80">시안 A</span>
+                  </div>
+                </div>
+                <p class="text-[10px] text-center mt-1 text-gray-600 font-medium">클릭률 <span class="text-[#059669] font-bold">1.8%</span></p>
+              </div>
+
+              <!-- Thumb 2 -->
+              <div>
+                <div class="rounded-lg overflow-hidden border border-gray-200 aspect-[3/4] bg-stone-800 relative p-1.5 flex flex-col justify-between text-white">
+                  <span class="text-[9px] font-bold leading-tight drop-shadow">새치, 이제<br><span class="text-amber-200">걱정 마세요</span></span>
+                  <div class="w-full h-12 rounded bg-stone-700/60 mt-auto flex items-center justify-center">
+                    <span class="text-[8px] text-white/80">시안 B</span>
+                  </div>
+                </div>
+                <p class="text-[10px] text-center mt-1 text-gray-600 font-medium">클릭률 <span class="text-gray-900 font-bold">1.5%</span></p>
+              </div>
+
+              <!-- Thumb 3 -->
+              <div>
+                <div class="rounded-lg overflow-hidden border border-gray-200 aspect-[3/4] bg-amber-900 relative p-1.5 flex flex-col justify-between text-white">
+                  <span class="text-[9px] font-bold leading-tight drop-shadow">두피까지 생각한<br><span class="text-lime-200">자연 염색</span></span>
+                  <div class="w-full h-12 rounded bg-amber-800/60 mt-auto flex items-center justify-center">
+                    <span class="text-[8px] text-white/80">시안 C</span>
+                  </div>
+                </div>
+                <p class="text-[10px] text-center mt-1 text-gray-600 font-medium">클릭률 <span class="text-[#2563eb] font-bold">1.7%</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Row: 근거 수준 & 더보기 -->
+        <div class="mt-4 pt-2 flex items-center justify-between gap-1">
+          <div class="flex items-center gap-1 text-[11px] font-medium text-gray-600 bg-amber-50/70 border border-amber-200/70 rounded-lg px-2 py-1.5">
+            <span>근거 수준 : <strong class="text-gray-900">참고 가능</strong></span>
+            <span class="inline-flex items-center justify-center w-3 h-3 text-[9px] text-gray-400 border border-gray-300 rounded-full">?</span>
+          </div>
+
+          <button class="py-1.5 px-2.5 border border-gray-200 rounded-xl text-xs font-medium text-gray-600 hover:bg-gray-50 flex items-center gap-0.5 transition">
+            비슷한 광고 더보기
+            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Column 4: 광고 정책 검토 결과 -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-1 mb-3">
+            <h3 class="text-base font-bold text-gray-900">광고 정책 검토 결과</h3>
+            <span class="inline-flex items-center justify-center w-3.5 h-3.5 text-[10px] text-gray-400 border border-gray-300 rounded-full">?</span>
+          </div>
+
+          <!-- Usable Pass Banner -->
+          <div class="bg-[#dcfce7] rounded-xl p-3 flex items-center gap-2.5 mb-3 border border-[#bbf7d0]">
+            <div class="w-7 h-7 rounded-full bg-[#16a34a] text-white flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-gray-900">사용 가능</p>
+              <p class="text-[10px] text-gray-600">현재 기준으로 등록에 큰 문제는 없어요.</p>
+            </div>
+          </div>
+
+          <!-- Policy Checklist -->
+          <div class="space-y-2 text-xs">
+            <!-- 1. 과도한 신체 노출 -->
+            <div class="flex items-center justify-between py-1">
+              <div class="flex items-center gap-1.5 text-gray-700">
+                <div class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>과도한 신체 노출</span>
+              </div>
+              <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-medium">문제없음</span>
+            </div>
+
+            <!-- 2. 특정 신체부위 확대 -->
+            <div class="flex items-center justify-between py-1">
+              <div class="flex items-center gap-1.5 text-gray-700">
+                <div class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>특정 신체부위 확대</span>
+              </div>
+              <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-medium">문제없음</span>
+            </div>
+
+            <!-- 3. 전후 비교 이미지 (WARNING) -->
+            <div class="py-1">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-1.5 text-gray-900 font-medium">
+                  <div class="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 text-[10px]">!</div>
+                  <span>전후 비교 이미지</span>
+                </div>
+                <span class="text-[10px] text-amber-700 bg-amber-100 px-2 py-0.5 rounded font-semibold">주의 필요</span>
+              </div>
+              <!-- Warning Subtext -->
+              <div class="mt-1.5 ml-5 p-2 bg-[#fffbeb] border border-[#fef3c7] rounded-lg">
+                <p class="text-[10px] text-amber-800 leading-normal">
+                  전후 표현은 일부 제한될 수 있어요. 문구를 부드럽게 수정하는 것을 권장해요.
+                </p>
+              </div>
+            </div>
+
+            <!-- 4. 의약품 오인 표현 -->
+            <div class="flex items-center justify-between py-1">
+              <div class="flex items-center gap-1.5 text-gray-700">
+                <div class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>의약품 오인 표현</span>
+              </div>
+              <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-medium">문제없음</span>
+            </div>
+
+            <!-- 5. 과장 광고 표현 -->
+            <div class="flex items-center justify-between py-1">
+              <div class="flex items-center gap-1.5 text-gray-700">
+                <div class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>과장 광고 표현</span>
+              </div>
+              <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-medium">문제없음</span>
+            </div>
+
+            <!-- 6. 이미지 내 텍스트 양 -->
+            <div class="flex items-center justify-between py-1">
+              <div class="flex items-center gap-1.5 text-gray-700">
+                <div class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>이미지 내 텍스트 양</span>
+              </div>
+              <span class="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-medium">문제없음</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Policy Guide Button -->
+        <button class="w-full mt-4 py-2 border border-gray-200 rounded-xl text-xs font-medium text-gray-700 hover:bg-gray-50 flex items-center justify-center gap-1 transition">
+          광고 정책 가이드 보기
+          <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </button>
+      </div>
+    </main>
+
+    <!-- Bottom Section: 전문가의 추천 수정 방향 -->
+    <section class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_2px_12px_rgba(0,0,0,0.04)] mb-8">
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-5 border-b border-gray-100 mb-5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-gray-900">전문가의 추천 수정 방향</h3>
+            <p class="text-xs text-gray-500 mt-0.5">지금 이대로도 좋지만, 아래 부분을 수정하면 더 좋은 결과를 기대할 수 있어요.</p>
+          </div>
+        </div>
+
+        <!-- Sample guide badge button -->
+        <button class="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 rounded-full text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 self-start sm:self-auto">
+          <span>💡</span>
+          이런 식으로 수정해보세요
+        </button>
+      </div>
+
+      <!-- 3 Recommendation Columns -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <!-- Card 1: 이런 점은 좋아요! -->
+        <div class="bg-[#f0fdf4] border border-[#dcfce7] rounded-2xl p-4 flex flex-col justify-start">
+          <div class="flex items-center gap-1.5 text-[#16a34a] font-bold text-sm mb-4">
+            <span class="text-base">👍</span>
+            <span>이런 점은 좋아요!</span>
+          </div>
+
+          <ul class="space-y-3">
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#16a34a] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>중년 여성 타겟이 명확해요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#eff6ff] text-[#2563eb] text-[10px] font-medium rounded border border-[#dbeafe] flex-shrink-0">광고 분석</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#16a34a] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>문제 → 해결의 흐름이 잘 보입니다.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#eff6ff] text-[#2563eb] text-[10px] font-medium rounded border border-[#dbeafe] flex-shrink-0">광고 분석</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#16a34a] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>자연유래, 저자극 등 신뢰 요소가 있어요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#eff6ff] text-[#2563eb] text-[10px] font-medium rounded border border-[#dbeafe] flex-shrink-0">광고 분석</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#16a34a] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>현재의 소구 방식은 과거 광고에서도 좋은 성과가 관찰됐어요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#fff1f2] text-[#e11d48] text-[10px] font-medium rounded border border-[#ffe4e6] flex-shrink-0">과거 성과</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card 2: 이렇게 수정하면 더 좋아요! -->
+        <div class="bg-[#fffbeb] border border-[#fef3c7] rounded-2xl p-4 flex flex-col justify-start">
+          <div class="flex items-center gap-1.5 text-[#d97706] font-bold text-sm mb-4">
+            <span class="text-base">💡</span>
+            <span>이렇게 수정하면 더 좋아요!</span>
+          </div>
+
+          <div class="space-y-3.5">
+            <!-- Step 1 -->
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-start gap-2">
+                  <span class="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                  <p class="text-xs font-bold text-gray-900">전후 비교 문구를 더 부드럽게 표현해보세요.</p>
+                </div>
+                <span class="px-2 py-0.5 bg-[#fff1f2] text-[#e11d48] text-[10px] font-medium rounded border border-[#ffe4e6] flex-shrink-0">네이버 심사</span>
+              </div>
+              <div class="ml-6 mt-1 bg-white/70 border border-amber-200/80 rounded-lg p-2">
+                <p class="text-[11px] text-gray-600">예시) "사용 후 달라진 모습" 또는 "이런 변화를 경험해보세요"</p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-start gap-2">
+                  <span class="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                  <p class="text-xs font-bold text-gray-900">핵심 문구를 더 간결하게 줄여보세요.</p>
+                </div>
+                <span class="px-2 py-0.5 bg-[#eff6ff] text-[#2563eb] text-[10px] font-medium rounded border border-[#dbeafe] flex-shrink-0">광고 분석</span>
+              </div>
+              <div class="ml-6 mt-1 bg-white/70 border border-amber-200/80 rounded-lg p-2">
+                <p class="text-[11px] text-gray-600">예시) "순한 염색, 건강한 머릿결"</p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-start gap-2">
+                  <span class="w-4 h-4 rounded-full bg-[#f59e0b] text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                  <p class="text-xs font-bold text-gray-900">제품 이미지를 조금 더 크게 보여주세요.</p>
+                </div>
+                <span class="px-2 py-0.5 bg-[#fff1f2] text-[#e11d48] text-[10px] font-medium rounded border border-[#ffe4e6] flex-shrink-0">과거 성과</span>
+              </div>
+              <p class="text-[11px] text-gray-500 ml-6 mt-1">제품이 잘 보이면 구매 전환에 더 도움이 돼요.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: 이런 시도도 추천해요! -->
+        <div class="bg-[#eff6ff] border border-[#dbeafe] rounded-2xl p-4 flex flex-col justify-start">
+          <div class="flex items-center gap-1.5 text-[#2563eb] font-bold text-sm mb-4">
+            <span class="text-base">🚀</span>
+            <span>이런 시도도 추천해요!</span>
+          </div>
+
+          <ul class="space-y-3">
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#2563eb] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>제품 사용 장면을 추가해보세요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#eff6ff] text-[#2563eb] text-[10px] font-medium rounded border border-[#dbeafe] flex-shrink-0">광고 분석</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#2563eb] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>사용 후 만족한 표정을 보여주세요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#eff6ff] text-[#2563eb] text-[10px] font-medium rounded border border-[#dbeafe] flex-shrink-0">광고 분석</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#2563eb] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>혜택(할인, 추가 증정 등)을 함께 넣어보세요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#fff1f2] text-[#e11d48] text-[10px] font-medium rounded border border-[#ffe4e6] flex-shrink-0">과거 성과</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 text-xs text-gray-800">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded-full bg-[#2563eb] text-white flex items-center justify-center flex-shrink-0 text-[10px]">✓</div>
+                <span>다른 연령대 버전도 테스트해보세요.</span>
+              </div>
+              <span class="px-2 py-0.5 bg-[#fff1f2] text-[#e11d48] text-[10px] font-medium rounded border border-[#ffe4e6] flex-shrink-0">과거 성과</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Bottom Floating Action Bar -->
+    <div class="flex items-center justify-center gap-3 pt-2">
+      <!-- Primary Blue Action Button -->
+      <button onclick="showToast('새 광고 생성 마법사로 이동합니다.')" class="px-6 py-3 bg-[#4f46e5] hover:bg-[#4338ca] text-white text-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm transition active:scale-[0.99]">
+        <span>이 분석을 바탕으로 새 광고 만들기</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+
+      <!-- Secondary White Action Button -->
+      <button onclick="showToast('분석 결과 리포트가 다운로드되었습니다.')" class="px-5 py-3 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl flex items-center gap-2 shadow-sm transition active:scale-[0.99]">
+        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M7 10l5 5m0 0l5-5m-5 5V3" />
+        </svg>
+        <span>분석 결과 저장하기</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-gray-900 text-white text-sm px-4 py-3 rounded-xl shadow-lg flex items-center gap-2">
+      <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span id="toast-message">알림 메시지</span>
+    </div>
+  </div>
+
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
