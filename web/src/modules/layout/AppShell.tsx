@@ -14,6 +14,7 @@ import { buildRankChartData, buildRankMatrixData } from './rankUtils';
 import { Navigate, Route, Routes, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import {
 	RankTrackingListView,
+	type KeywordRankLookupState,
 	type TrackedProductListItem,
 } from './RankTrackingListView';
 import {
@@ -44,6 +45,7 @@ import {
 import { REQUIRED_HOST_AGENT_MANAGE_NO, REQUIRED_HOST_AGENT_VERSION } from '../hostAgentRelease';
 import { summarizeCaptchaSessionDebug } from './cdpDebugSummary';
 import { formatSessionPrepErrorMessage } from './sessionPrepError';
+import { ScrollToTopCard } from './ScrollToTopCard';
 
 const KeywordInsightsView = lazy(async () => await import('../research/KeywordInsightsView').then((m) => ({ default: m.KeywordInsightsView })));
 const SeoOptimizerView = lazy(async () => await import('../research/SeoOptimizerView').then((m) => ({ default: m.SeoOptimizerView })));
@@ -80,6 +82,8 @@ const AiOpsTrendsView = lazy(async () => await import('../ai').then((m) => ({ de
 const AiOpsPoliciesView = lazy(async () => await import('../ai').then((m) => ({ default: m.AiOpsPoliciesView })));
 const AiOpsActionsView = lazy(async () => await import('../ai').then((m) => ({ default: m.AiOpsActionsView })));
 const AiOpsLogsView = lazy(async () => await import('../ai').then((m) => ({ default: m.AiOpsLogsView })));
+const ContentCenterView = lazy(async () => await import('../content/ContentCenterReactView').then((m) => ({ default: m.ContentCenterReactView })));
+const AdRankTrackingView = lazy(async () => await import('./AdRankTrackingView'));
 const CampaignDailyView = lazy(async () => await import('../ads/AdsViews').then((m) => ({ default: m.CampaignDailyView })));
 const AdgroupDailyView = lazy(async () => await import('../ads/AdsViews').then((m) => ({ default: m.AdgroupDailyView })));
 const CreativesDailyView = lazy(async () => await import('../ads/AdsViews').then((m) => ({ default: m.CreativesDailyView })));
@@ -87,6 +91,8 @@ const GfaOperatingCheckView = lazy(async () => await import('../ads/AdsViews').t
 const GfaCreativeAnalysisView = lazy(async () => await import('../ads/AdsViews').then((m) => ({ default: m.GfaCreativeAnalysisView })));
 const GfaStrategyView = lazy(async () => await import('../ads/AdsViews').then((m) => ({ default: m.GfaStrategyView })));
 const GfaRawAnalysisView = lazy(async () => await import('../ads/AdsViews').then((m) => ({ default: m.GfaRawAnalysisView })));
+const GfaCreativeGeneratorView = lazy(async () => await import('../ads/GfaCreativeGeneratorView').then((m) => ({ default: m.GfaCreativeGeneratorView })));
+const GfaBannerAnalysisView = lazy(async () => await import('../ads/GfaCreativeGeneratorView').then((m) => ({ default: m.GfaBannerAnalysisView })));
 const AdsKeywordsPerformanceView = lazy(
 	async () => await import('../ads/AdsViews').then((m) => ({ default: m.AdsKeywordsPerformanceView })),
 );
@@ -102,6 +108,7 @@ const ReviewAnalysisOverviewView = lazy(
 );
 const QnaManagementView = lazy(async () => await import('../reviews/QnaManagementView').then((m) => ({ default: m.QnaManagementView })));
 const QnaAnalysisView = lazy(async () => await import('../reviews/QnaAnalysisView').then((m) => ({ default: m.QnaAnalysisView })));
+const ReviewQnaTagCloudView = lazy(async () => await import('../reviews/ReviewQnaTagCloudView').then((m) => ({ default: m.ReviewQnaTagCloudView })));
 
 // ---------- Firebase Auth 헤더(런타임 안정성) ----------
 // NAS/로컬 공통으로 "Bearer 토큰이 필요한" 호출이 있으며,
@@ -169,6 +176,7 @@ type CompetitorProduct = {
 type ProductRankPoint = {
 	date: string;
 	rank: number;
+	status?: string | null;
 };
 
 type ProductRankSeries = {
@@ -179,6 +187,16 @@ type ProductRankSeries = {
 type ProductRankHistoryResponse = {
 	dates: string[];
 	series: ProductRankSeries[];
+	failed_dates?: string[];
+};
+
+type ProductKeywordRankLookupResponse = {
+	keyword: string;
+	dates: string[];
+	items: Array<{
+		product_url: string;
+		ranks: Array<{ date: string; rank: number | null }>;
+	}>;
 };
 
 type ComparisonSeries = {
@@ -210,7 +228,8 @@ type ActiveMenu =
 	| 'menu6-settings'
 	| 'menu7-sales'
 	| 'menu8-review-qa'
-	| 'menu9-gfa';
+	| 'menu9-gfa'
+	| 'menu10-ai-content';
 
 type SubMenuId =
 	| 'ai-home'
@@ -237,15 +256,32 @@ type SubMenuId =
 	| 'review-analysis'
 	| 'qna-management'
 	| 'qna-analysis'
+	| 'review-qna-tag-cloud'
 	| 'campaigns-daily'
 	| 'adgroups-daily'
 	| 'creatives-daily'
 	| 'gfa-operating-check'
 	| 'gfa-creative-analysis'
 	| 'gfa-strategy'
+	| 'gfa-creative-generator'
+	| 'gfa-banner-analysis'
 	| 'gfa-raw-analysis'
+	| 'content-today'
+	| 'content-insights'
+	| 'content-product-info'
+	| 'content-product-images'
+	| 'content-detail-pages'
+	| 'content-reference-media'
+	| 'content-appeals'
+	| 'content-planning'
+	| 'content-generation'
+	| 'content-review'
+	| 'content-publish'
+	| 'content-learning'
+	| 'content-settings'
 	| 'search-overview'
 	| 'search-tracking'
+	| 'ad-search-tracking'
 	| 'research-product'
 	| 'research-hashtag'
 	| 'research-product-index'
@@ -284,6 +320,7 @@ const MENU_LIST: MenuConfig[] = [
 	{ id: 'menu2-performance', label: '키워드(광고/오가닉) 분석' },
 	{ id: 'menu3-campaign', label: 'SA 광고분석' },
 	{ id: 'menu9-gfa', label: 'GFA 광고분석' },
+	{ id: 'menu10-ai-content', label: 'AI 콘텐츠 센터' },
 	{ id: 'menu4-rank', label: '검색·쇼핑 순위 분석' },
 	{ id: 'menu7-sales', label: '판매 분석' },
 	{ id: 'menu8-review-qa', label: '리뷰 Q&A' },
@@ -314,6 +351,7 @@ const SUB_MENUS: Record<ActiveMenu, SubMenuConfig[]> = {
 		{ id: 'review-analysis', label: '리뷰 분석' },
 		{ id: 'qna-management', label: 'Q&A 관리' },
 		{ id: 'qna-analysis', label: 'Q&A 분석' },
+		{ id: 'review-qna-tag-cloud', label: '태그 클라우드' },
 	],
 	'menu3-campaign': [
 		{ id: 'campaigns-daily', label: '캠페인 분석' },
@@ -325,10 +363,28 @@ const SUB_MENUS: Record<ActiveMenu, SubMenuConfig[]> = {
 		{ id: 'gfa-raw-analysis', label: '원본 분석' },
 		{ id: 'gfa-creative-analysis', label: '소재 분석' },
 		{ id: 'gfa-strategy', label: '전략 도출' },
+		{ id: 'gfa-creative-generator', label: '소재 생성' },
+		{ id: 'gfa-banner-analysis', label: '배너분석' },
+	],
+	'menu10-ai-content': [
+		{ id: 'content-today', label: '오늘의 콘텐츠' },
+		{ id: 'content-insights', label: '고객·시장 인사이트' },
+		{ id: 'content-product-info', label: '제품정보' },
+		{ id: 'content-product-images', label: '제품 이미지 업로드' },
+		{ id: 'content-detail-pages', label: '상세페이지 업로드' },
+		{ id: 'content-reference-media', label: '관련 이미지/동영상 업로드' },
+		{ id: 'content-appeals', label: '소구 포인트' },
+		{ id: 'content-planning', label: '콘텐츠 기획' },
+		{ id: 'content-generation', label: '콘텐츠 생성' },
+		{ id: 'content-review', label: '검수·내보내기' },
+		{ id: 'content-publish', label: '게시·성과 연결' },
+		{ id: 'content-learning', label: '학습·개선' },
+		{ id: 'content-settings', label: '운영 설정' },
 	],
 	'menu4-rank': [
 		{ id: 'search-overview', label: '키워드 인사이트' },
 		{ id: 'search-tracking', label: '내 상품 추적' },
+		{ id: 'ad-search-tracking', label: '내 광고 상품 추적' },
 	],
 	'menu5-research': [
 		{ id: 'research-product', label: '상품명 SEO' },
@@ -362,11 +418,30 @@ const AI_OPS_SUBMENU_GROUPS: SubMenuGroupConfig[] = [
 
 function getGroupedSubMenus(menuId: ActiveMenu): Array<{ id: string; label: string; items: SubMenuConfig[] }> {
 	const subs = SUB_MENUS[menuId] || [];
+	if (menuId === 'menu10-ai-content') {
+		return getContentCenterGroupedSubMenus(subs);
+	}
 	if (menuId !== 'menu1-dashboard') {
 		return subs.length ? [{ id: `${menuId}-default`, label: '', items: subs }] : [];
 	}
 	const subMap = new Map(subs.map((sub) => [sub.id, sub] as const));
 	return AI_OPS_SUBMENU_GROUPS.map((group) => ({
+		id: group.id,
+		label: group.label,
+		items: group.items.map((subId) => subMap.get(subId)).filter(Boolean) as SubMenuConfig[],
+	})).filter((group) => group.items.length > 0);
+}
+
+const CONTENT_CENTER_SUBMENU_GROUPS: SubMenuGroupConfig[] = [
+	{ id: 'situation', label: '상황판', items: ['content-today'] },
+	{ id: 'analysis', label: '분석', items: ['content-insights', 'content-product-info', 'content-product-images', 'content-detail-pages', 'content-reference-media', 'content-appeals'] },
+	{ id: 'production', label: '생산', items: ['content-planning', 'content-generation'] },
+	{ id: 'operation', label: '운영', items: ['content-review', 'content-publish', 'content-learning', 'content-settings'] },
+];
+
+function getContentCenterGroupedSubMenus(subs: SubMenuConfig[]): Array<{ id: string; label: string; items: SubMenuConfig[] }> {
+	const subMap = new Map(subs.map((sub) => [sub.id, sub] as const));
+	return CONTENT_CENTER_SUBMENU_GROUPS.map((group) => ({
 		id: group.id,
 		label: group.label,
 		items: group.items.map((subId) => subMap.get(subId)).filter(Boolean) as SubMenuConfig[],
@@ -431,6 +506,8 @@ function subPath(sub: SubMenuId): string {
 			return `${ANALYTICS_BASE}/reviews/qna`;
 		case 'qna-analysis':
 			return `${ANALYTICS_BASE}/reviews/qna-analysis`;
+		case 'review-qna-tag-cloud':
+			return `${ANALYTICS_BASE}/reviews/tag-cloud`;
 		case 'campaigns-daily':
 			return `${ANALYTICS_BASE}/campaign/campaigns`;
 		case 'adgroups-daily':
@@ -443,12 +520,44 @@ function subPath(sub: SubMenuId): string {
 			return `${ANALYTICS_BASE}/gfa/creative-analysis`;
 		case 'gfa-strategy':
 			return `${ANALYTICS_BASE}/gfa/strategy`;
+		case 'gfa-creative-generator':
+			return `${ANALYTICS_BASE}/gfa/creative-generator`;
+		case 'gfa-banner-analysis':
+			return `${ANALYTICS_BASE}/gfa/banner-analysis`;
 		case 'gfa-raw-analysis':
 			return `${ANALYTICS_BASE}/gfa/raw-analysis`;
+		case 'content-today':
+			return `${ANALYTICS_BASE}/content/today`;
+		case 'content-insights':
+			return `${ANALYTICS_BASE}/content/insights`;
+		case 'content-product-info':
+			return `${ANALYTICS_BASE}/content/product-info`;
+		case 'content-product-images':
+			return `${ANALYTICS_BASE}/content/product-images`;
+		case 'content-detail-pages':
+			return `${ANALYTICS_BASE}/content/detail-pages`;
+		case 'content-reference-media':
+			return `${ANALYTICS_BASE}/content/reference-media`;
+		case 'content-appeals':
+			return `${ANALYTICS_BASE}/content/appeals`;
+		case 'content-planning':
+			return `${ANALYTICS_BASE}/content/planning`;
+		case 'content-generation':
+			return `${ANALYTICS_BASE}/content/generation`;
+		case 'content-review':
+			return `${ANALYTICS_BASE}/content/review`;
+		case 'content-publish':
+			return `${ANALYTICS_BASE}/content/publish`;
+		case 'content-learning':
+			return `${ANALYTICS_BASE}/content/learning`;
+		case 'content-settings':
+			return `${ANALYTICS_BASE}/content/settings`;
 		case 'search-overview':
 			return `${ANALYTICS_BASE}/rank/insights`;
 		case 'search-tracking':
 			return `${ANALYTICS_BASE}/rank/tracking`;
+		case 'ad-search-tracking':
+			return `${ANALYTICS_BASE}/rank/ad-tracking`;
 		case 'research-product':
 			return `${ANALYTICS_BASE}/seo/product`;
 		case 'research-hashtag':
@@ -496,6 +605,7 @@ const SUB_ROUTE_DEFS: SubRoute[] = [
 	{ menu: 'menu8-review-qa', sub: 'review-analysis', label: '리뷰 분석', path: subPath('review-analysis') },
 	{ menu: 'menu8-review-qa', sub: 'qna-management', label: 'Q&A 관리', path: subPath('qna-management') },
 	{ menu: 'menu8-review-qa', sub: 'qna-analysis', label: 'Q&A 분석', path: subPath('qna-analysis') },
+	{ menu: 'menu8-review-qa', sub: 'review-qna-tag-cloud', label: '태그 클라우드', path: subPath('review-qna-tag-cloud') },
 	{ menu: 'menu3-campaign', sub: 'campaigns-daily', label: '캠페인 분석', path: subPath('campaigns-daily') },
 	{ menu: 'menu3-campaign', sub: 'adgroups-daily', label: '광고 그룹 분석', path: subPath('adgroups-daily') },
 	{ menu: 'menu3-campaign', sub: 'creatives-daily', label: '소재 분석', path: subPath('creatives-daily') },
@@ -503,8 +613,24 @@ const SUB_ROUTE_DEFS: SubRoute[] = [
 	{ menu: 'menu9-gfa', sub: 'gfa-raw-analysis', label: '원본 분석', path: subPath('gfa-raw-analysis') },
 	{ menu: 'menu9-gfa', sub: 'gfa-creative-analysis', label: '소재 분석', path: subPath('gfa-creative-analysis') },
 	{ menu: 'menu9-gfa', sub: 'gfa-strategy', label: '전략 도출', path: subPath('gfa-strategy') },
+	{ menu: 'menu9-gfa', sub: 'gfa-creative-generator', label: '소재 생성', path: subPath('gfa-creative-generator') },
+	{ menu: 'menu9-gfa', sub: 'gfa-banner-analysis', label: '배너분석', path: subPath('gfa-banner-analysis') },
+	{ menu: 'menu10-ai-content', sub: 'content-today', label: '오늘의 콘텐츠', path: subPath('content-today') },
+	{ menu: 'menu10-ai-content', sub: 'content-insights', label: '고객·시장 인사이트', path: subPath('content-insights') },
+	{ menu: 'menu10-ai-content', sub: 'content-product-info', label: '제품정보', path: subPath('content-product-info') },
+	{ menu: 'menu10-ai-content', sub: 'content-product-images', label: '제품 이미지 업로드', path: subPath('content-product-images') },
+	{ menu: 'menu10-ai-content', sub: 'content-detail-pages', label: '상세페이지 업로드', path: subPath('content-detail-pages') },
+	{ menu: 'menu10-ai-content', sub: 'content-reference-media', label: '관련 이미지/동영상 업로드', path: subPath('content-reference-media') },
+	{ menu: 'menu10-ai-content', sub: 'content-appeals', label: '소구 포인트', path: subPath('content-appeals') },
+	{ menu: 'menu10-ai-content', sub: 'content-planning', label: '콘텐츠 기획', path: subPath('content-planning') },
+	{ menu: 'menu10-ai-content', sub: 'content-generation', label: '콘텐츠 생성', path: subPath('content-generation') },
+	{ menu: 'menu10-ai-content', sub: 'content-review', label: '검수·내보내기', path: subPath('content-review') },
+	{ menu: 'menu10-ai-content', sub: 'content-publish', label: '게시·성과 연결', path: subPath('content-publish') },
+	{ menu: 'menu10-ai-content', sub: 'content-learning', label: '학습·개선', path: subPath('content-learning') },
+	{ menu: 'menu10-ai-content', sub: 'content-settings', label: '운영 설정', path: subPath('content-settings') },
 	{ menu: 'menu4-rank', sub: 'search-overview', label: '키워드 인사이트', path: subPath('search-overview') },
 	{ menu: 'menu4-rank', sub: 'search-tracking', label: '내 상품 추적', path: subPath('search-tracking') },
+	{ menu: 'menu4-rank', sub: 'ad-search-tracking', label: '내 광고 상품 추적', path: subPath('ad-search-tracking') },
 	{ menu: 'menu5-research', sub: 'research-product', label: '상품명 SEO', path: subPath('research-product') },
 	{ menu: 'menu5-research', sub: 'research-hashtag', label: '해시태그 SEO', path: subPath('research-hashtag') },
 	{ menu: 'menu5-research', sub: 'research-product-index', label: '상품지수분석', path: subPath('research-product-index') },
@@ -534,6 +660,7 @@ function resolveActive(pathname: string): { activeMenu: ActiveMenu; activeSub: S
 	// legacy(구 URL) 대응: /search-tracking, /search-overview 등
 	const legacy = pathname.replace(/^\//, '');
 	if (legacy === 'search-tracking') return { activeMenu: 'menu4-rank', activeSub: 'search-tracking' };
+	if (legacy === 'ad-search-tracking') return { activeMenu: 'menu4-rank', activeSub: 'ad-search-tracking' };
 	if (legacy === 'search-overview') return { activeMenu: 'menu4-rank', activeSub: 'search-overview' };
 	if (legacy === 'research-keyword') return { activeMenu: 'menu5-research', activeSub: 'research-product' };
 	if (legacy === 'analytics/settings' || legacy === 'analytics/settings/') return { activeMenu: 'menu6-settings', activeSub: 'settings-category-dict' };
@@ -607,6 +734,16 @@ function getMenuIcon(menuId: ActiveMenu): React.ReactNode {
 					<path d="M7 9v6" />
 					<path d="M11 6v12" />
 					<path d="M11 8l10-3v14l-10-3" />
+				</IconSvg>
+			);
+		case 'menu10-ai-content':
+			return (
+				<IconSvg>
+					<path d="M4 5h16" />
+					<path d="M4 12h10" />
+					<path d="M4 19h7" />
+					<path d="M17 11l3 3-3 3" />
+					<path d="M14 14h6" />
 				</IconSvg>
 			);
 		case 'menu4-rank':
@@ -749,6 +886,15 @@ function getSubMenuIcon(sub: SubMenuId): React.ReactNode {
 					<path d="M6 8h12" />
 					<path d="M6 13h12" />
 					<path d="M6 18h12" />
+				</SubIconSvg>
+			);
+		case 'ad-search-tracking':
+			return (
+				<SubIconSvg>
+					<path d="M5 17V9" />
+					<path d="M12 17V5" />
+					<path d="M19 17v-6" />
+					<path d="M4 20h16" />
 				</SubIconSvg>
 			);
 		case 'research-product':
@@ -922,6 +1068,13 @@ export const AppShell: React.FC = () => {
 	const [hoverPos, setHoverPos] = useState<{ left: number; top: number } | null>(null);
 	const hoverMenuRef = useRef<HTMLDivElement | null>(null);
 	const closeTimerRef = useRef<number | null>(null);
+	const appContentRef = useRef<HTMLElement | null>(null);
+
+	useEffect(() => {
+		const el = appContentRef.current;
+		if (!el) return;
+		el.scrollTo({ top: 0 });
+	}, [location.pathname]);
 
 	const closeHoverMenu = () => {
 		if (closeTimerRef.current) {
@@ -1013,6 +1166,8 @@ export const AppShell: React.FC = () => {
 				return <QnaManagementView apiBaseUrl={API_BASE} />;
 			case 'qna-analysis':
 				return <QnaAnalysisView apiBaseUrl={API_BASE} />;
+			case 'review-qna-tag-cloud':
+				return <ReviewQnaTagCloudView apiBaseUrl={API_BASE} />;
 			case 'campaigns-daily':
 				return <CampaignDailySection />;
 			case 'adgroups-daily':
@@ -1025,13 +1180,45 @@ export const AppShell: React.FC = () => {
 				return <GfaCreativeAnalysisSection />;
 			case 'gfa-strategy':
 				return <GfaStrategySection />;
+			case 'gfa-creative-generator':
+				return <GfaCreativeGeneratorView apiBaseUrl={API_BASE} />;
+			case 'gfa-banner-analysis':
+				return <GfaBannerAnalysisView apiBaseUrl={API_BASE} />;
 			case 'gfa-raw-analysis':
 				return <GfaRawAnalysisSection />;
+			case 'content-today':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="today" />;
+			case 'content-insights':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="insights" />;
+			case 'content-product-info':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="product-info" />;
+			case 'content-product-images':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="product-images" />;
+			case 'content-detail-pages':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="detail-pages" />;
+			case 'content-reference-media':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="reference-media" />;
+			case 'content-appeals':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="appeals" />;
+			case 'content-planning':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="planning" />;
+			case 'content-generation':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="generation" />;
+			case 'content-review':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="review" />;
+			case 'content-publish':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="publish" />;
+			case 'content-learning':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="learning" />;
+			case 'content-settings':
+				return <ContentCenterView apiBaseUrl={API_BASE} initialTab="settings" />;
 			case 'search-overview':
 				// (원복) 메뉴 4-1: 키워드 인사이트 화면
 				return <KeywordInsightsView apiBaseUrl={API_BASE} />;
 			case 'search-tracking':
 				return <SearchRankTrackingSection apiBaseUrl={API_BASE} />;
+			case 'ad-search-tracking':
+				return <AdRankTrackingView apiBaseUrl={API_BASE} />;
 			case 'research-product':
 				return <SeoOptimizerView apiBaseUrl={API_BASE} />;
 			case 'research-hashtag':
@@ -1303,7 +1490,7 @@ export const AppShell: React.FC = () => {
 				</header>
 
 				{/* 컨텐츠 */}
-				<section className="app-content">
+				<section className="app-content" ref={appContentRef}>
 					<Suspense fallback={<RouteLoadingFallback />}>
 						<Routes>
 						{/* 기본 진입 */}
@@ -1349,6 +1536,7 @@ export const AppShell: React.FC = () => {
 						</Routes>
 					</Suspense>
 				</section>
+				<ScrollToTopCard scrollParentRef={appContentRef} resetKey={location.pathname} />
 			</main>
 		</div>
 	);
@@ -1591,6 +1779,24 @@ type CollectorBackgroundStatus = {
 	apiBaseUrl?: string;
 };
 
+const COLLECTOR_DEVICE_ID_KEY = 'analytics:collector:device-id:v1';
+
+function getOrCreateCollectorDeviceId(): string {
+	try {
+		const existing = String(window.localStorage.getItem(COLLECTOR_DEVICE_ID_KEY) || '').trim();
+		if (existing) return existing;
+		const rand = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+			? crypto.randomUUID()
+			: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+		const host = String(window.location.hostname || 'unknown').replace(/[^A-Za-z0-9_.:-]+/g, '-').slice(0, 48);
+		const next = `settings-data-collection:${host}:${rand}`.slice(0, 120);
+		window.localStorage.setItem(COLLECTOR_DEVICE_ID_KEY, next);
+		return next;
+	} catch {
+		return `settings-data-collection:ephemeral:${Date.now().toString(36)}`;
+	}
+}
+
 type CollectorEventItem = {
 	job_id?: string | null;
 	device_id?: string | null;
@@ -1617,6 +1823,7 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 
 	const [trackedKeywords, setTrackedKeywords] = useState<TrackedProductKeyword[]>([]);
 	const [history, setHistory] = useState<ProductRankHistoryResponse | null>(null);
+	const [keywordRankLookup, setKeywordRankLookup] = useState<KeywordRankLookupState | null>(null);
 	// 상세 화면: 수기 입력(source='text') 히스토리(추적/공식 히스토리와 분리)
 	const [manualHistory, setManualHistory] = useState<ProductRankHistoryResponse | null>(null);
 	// 상품(URL)별 개별 랭킹 히스토리 (상품+키워드 조합 기준 순위 변화용)
@@ -1696,6 +1903,7 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 	const hostAgentAutoUpdateAttemptedRef = React.useRef(false);
 	const hostAgentOutdatedAlertedRef = React.useRef<string>('');
 	const hostCdpAutoStartRef = React.useRef(false);
+	const collectorDeviceId = useMemo(() => getOrCreateCollectorDeviceId(), []);
 	const canAttemptHostAgentAutoUpdate = useCallback(() => {
 		try {
 			const last = Number(window.localStorage.getItem(HOST_AGENT_AUTO_UPDATE_KEY) || 0);
@@ -2364,7 +2572,7 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 				method: 'POST',
 				cache: 'no-store',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ apiBaseUrl: apiBase, bearerToken, collectorToken, deviceId: `web-${uiTarget}` }),
+				body: JSON.stringify({ apiBaseUrl: apiBase, bearerToken, collectorToken, deviceId: collectorDeviceId }),
 			});
 			const data = await res.json().catch(() => ({} as any));
 			if (!res.ok || data?.ok !== true) throw new Error(String(data?.error || `HTTP ${res.status}`));
@@ -4298,6 +4506,10 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 			const dateLabel = todayLocalStr.replace(/-/g, '/');
 			const baseOk = isTodayBaseMetricsOk(metrics);
 			const salesOk = isValidTodayPageMetrics(metrics);
+			const rankStatus = rankStatusMap[group.id] ?? rankStatusMap[group.productUrl] ?? null;
+			const rankComplete = Boolean((rankStatus as any)?.is_complete);
+			const rankTotal = Number((rankStatus as any)?.total_keywords ?? 0);
+			const rankCovered = Number((rankStatus as any)?.covered_keywords ?? 0);
 			const noBadge = (() => {
 				const st = String((metrics as any)?.recent_purchase_status ?? '').trim();
 				return st === 'no_badge';
@@ -4305,10 +4517,21 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 			const full = isFullTodayPageMetrics(metrics);
 			const http = typeof metrics?.http_status === 'number' ? `HTTP ${metrics.http_status}` : 'HTTP ?';
 			const err = metrics?.error ? ` / ${metrics.error}` : '';
-			const statusTitle = `${http}${err}`;
+			const rankTitle = rankTotal > 0 ? ` / 순위 ${rankCovered}/${rankTotal}` : '';
+			const statusTitle = `${http}${err}${rankTitle}`;
 			// 정상수집: 구매(판매정보)까지 포함해 충분히 수집됨
 			// 부분수집: 리뷰/평점/가격 등은 있지만 구매(판매정보)가 비어있음(재수집 필요)
-			const statusLabel = full ? '정상수집' : noBadge ? '배지없음' : salesOk || baseOk ? '부분수집' : '미수집';
+			const statusLabel = full
+				? rankComplete
+					? '정상수집'
+					: '상품메트릭 수집'
+				: rankComplete
+					? '순위 정상수집'
+					: noBadge
+						? '배지없음'
+						: salesOk || baseOk
+							? '부분수집'
+							: '미수집';
 			const estSales7d = estimatePurchase7d(metrics);
 			const estRepurchase3m = estimateRepurchase3m(metrics);
 			const displayName = deriveTrackedProductLabel({
@@ -4332,7 +4555,7 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 				rating: metrics?.rating ?? null,
 				keywords,
 				pageMetricsStatusText: `${dateLabel} ${statusLabel}`,
-				pageMetricsStatusOk: baseOk,
+				pageMetricsStatusOk: rankComplete || baseOk,
 				pageMetricsStatusTitle: statusTitle,
 				pageMetricsDate: metrics?.date ? String(metrics.date) : null,
 				pageMetricsTitle: metrics?.title ?? null,
@@ -4351,7 +4574,7 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 				pageMetricsError: metrics?.error ?? null,
 			};
 		});
-	}, [productGroups, history, listSummaries, perProductHistory, listMetas, pageMetrics, todayLocalStr]);
+	}, [productGroups, history, listSummaries, perProductHistory, listMetas, pageMetrics, rankStatusMap, todayLocalStr]);
 
 	const selectedGroup: ProductGroup | null = useMemo(
 		() =>
@@ -4688,6 +4911,48 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 			console.error(e);
 			const msg = e?.response?.data?.detail ?? '상품/키워드 등록 중 오류가 발생했습니다.';
 			setError(String(msg));
+		}
+	};
+
+	const handleLookupKeywordRanks = async (keyword: string) => {
+		const kw = String(keyword || '').trim();
+		if (!kw) return;
+		setKeywordRankLookup({
+			keyword: kw,
+			dates: [],
+			byProduct: {},
+			loading: true,
+			error: null,
+		});
+		try {
+			const res = await axios.get<ProductKeywordRankLookupResponse>(
+				`${apiBaseUrl}/search-rank/tracked/keyword-ranks`,
+				{ params: { keyword: kw, days: 7 } },
+			);
+			const data = res.data;
+			const byProduct: Record<string, Array<number | null>> = {};
+			for (const item of Array.isArray(data.items) ? data.items : []) {
+				const url0 = String(item.product_url || '').trim();
+				if (!url0) continue;
+				byProduct[url0] = (Array.isArray(item.ranks) ? item.ranks : []).map((r) => (
+					typeof r.rank === 'number' && r.rank > 0 ? r.rank : null
+				));
+			}
+			setKeywordRankLookup({
+				keyword: String(data.keyword || kw).trim() || kw,
+				dates: Array.isArray(data.dates) ? data.dates : [],
+				byProduct,
+				loading: false,
+				error: null,
+			});
+		} catch (e: any) {
+			setKeywordRankLookup({
+				keyword: kw,
+				dates: [],
+				byProduct: {},
+				loading: false,
+				error: String(e?.response?.data?.detail ?? e?.message ?? '키워드 순위 조회 실패'),
+			});
 		}
 	};
 
@@ -5067,6 +5332,8 @@ const SearchRankTrackingSection: React.FC<SearchRankTrackingSectionProps> = ({ a
 						channel="naver"
 						products={listItems}
 						onAddProduct={handleAddProduct}
+						onLookupKeywordRanks={handleLookupKeywordRanks}
+						keywordRankLookup={keywordRankLookup}
 						onOpenCollectModal={async () => {
 							if (productGroups.length === 0) return;
 							const urls = productGroups.map((g) => g.productUrl).filter(Boolean);

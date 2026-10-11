@@ -38,6 +38,56 @@ body {
   line-height: 1.45;
 }
 
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body,
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body {
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .app-shell-root,
+  .app-main,
+  .app-content {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .app-sidebar,
+  .app-header {
+    display: none !important;
+  }
+
+  .gfa-banner-print-area {
+    width: 100% !important;
+  }
+
+  .gfa-banner-print-area section,
+  .gfa-banner-print-area main,
+  .gfa-banner-print-area article,
+  .gfa-banner-print-area [style*="border-radius"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-hide,
+  .print-hide * {
+    display: none !important;
+  }
+}
+
 .app-sidebar {
   width: 280px;
   min-width: 280px;
@@ -1022,6 +1072,51 @@ body {
   overflow-y: auto;
   min-height: 0; /* flex 컨테이너에서 overflow-y가 깨지는 케이스 방지 */
   min-width: 0;
+}
+
+/* 모든 메뉴 공통: 스크롤 시 상단 이동 카드 */
+.scroll-to-top-card {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px 0 12px;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  color: #e2e8f0;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.scroll-to-top-card:hover {
+  border-color: rgba(45, 212, 191, 0.6);
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.98);
+}
+
+.scroll-to-top-card-arrow {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(45, 212, 191, 0.18);
+  color: #5eead4;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.scroll-to-top-card-label {
+  letter-spacing: -0.02em;
 }
 
 /* -------- AI / A-1 오가닉 순위 분석 레이아웃 -------- */
@@ -4333,6 +4428,102 @@ body {
 .rank-product-main {
   flex: 1;
   min-width: 0;
+}
+
+.rank-product-lookup {
+  flex: 0 1 560px;
+  min-width: 500px;
+  max-width: 620px;
+  align-self: center;
+  display: grid;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(30, 64, 175, 0.55);
+  background-color: rgba(15, 23, 42, 0.52);
+}
+
+.rank-lookup-form {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.rank-lookup-filter {
+  position: relative;
+  min-width: 150px;
+  display: grid;
+  gap: 4px;
+}
+
+.rank-lookup-filter-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #cbd5e1;
+}
+
+.rank-lookup-filter-button {
+  min-height: 36px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  background: rgba(15, 23, 42, 0.74);
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.rank-lookup-filter-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 30;
+  min-width: 190px;
+  max-height: 280px;
+  overflow-y: auto;
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 10px;
+  background: #0f172a;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38);
+}
+
+.rank-lookup-filter-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+
+.rank-lookup-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.rank-lookup-filter-empty {
+  color: #94a3b8;
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.rank-lookup-submit {
+  min-height: 36px;
+  min-width: 86px;
 }
 
 /* 리스트 우측: 페이지 메트릭 수집 상태(정상수집/미수집) */

@@ -15,6 +15,7 @@ from sqlalchemy import (
     Numeric,
     Integer,
     String,
+    Text,
     Boolean,
     BigInteger,
     Index,
@@ -323,6 +324,14 @@ class NaverAdSearchwordDaily(Base):
         server_default=text("CURRENT_TIMESTAMP"),
     )
 
+    __table_args__ = (
+        Index("ix_ad_searchword_date_campaign_adgroup", "date", "campaign_name", "adgroup_name"),
+        Index("ix_ad_searchword_date_matched_keyword", "date", "matched_keyword"),
+        Index("ix_ad_searchword_searchword_date", "searchword", "date"),
+        Index("ix_ad_searchword_source_date", "source", "date"),
+        Index("ix_ad_searchword_kind_date", "campaign_kind", "date"),
+    )
+
 
 class NaverAdCreativeDaily(Base):
     """
@@ -370,6 +379,13 @@ class NaverAdCreativeDaily(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ix_ad_creative_date_campaign_adgroup", "date", "campaign_name", "adgroup_name"),
+        Index("ix_ad_creative_creative_date", "creative_id", "date"),
+        Index("ix_ad_creative_keyword_date", "display_keyword", "date"),
+        Index("ix_ad_creative_source_date", "source", "date"),
     )
 
 
@@ -525,6 +541,46 @@ class NaverGfaCreativeMeta(Base):
     )
 
 
+class NaverGfaCreativeDetail(Base):
+    """
+    GFA 소재 상세 페이지(CDP)에서 자동 수집한 소재 컨디션.
+
+    성과/게재위치 지표는 naver_gfa_performance_daily를 기준으로 두고,
+    이 테이블은 이미지/카피/소재 타입 등 정적 조건만 보존한다.
+    """
+
+    __tablename__ = "naver_gfa_creative_detail"
+
+    ad_account_no = Column(String, primary_key=True, default="")
+    campaign_id = Column(String, primary_key=True, default="")
+    adgroup_id = Column(String, primary_key=True, default="")
+    creative_id = Column(String, primary_key=True, default="")
+
+    detail_url = Column(String, nullable=False, default="")
+    creative_name = Column(String, nullable=False, default="")
+    creative_type = Column(String, nullable=True)
+    profile_name = Column(String, nullable=True)
+    profile_image_url = Column(String, nullable=True)
+    image_url = Column(String, nullable=True)
+    image_path = Column(String, nullable=True)
+    primary_text = Column(String, nullable=True)
+    headline = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    cta = Column(String, nullable=True)
+    landing_url = Column(String, nullable=True)
+    raw_payload_json = Column(String, nullable=True)
+    content_hash = Column(String, nullable=True)
+    last_error = Column(String, nullable=True)
+    collected_at = Column(DateTime(timezone=True), nullable=True)
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_creative_detail_creative", "creative_id"),
+        Index("ix_gfa_creative_detail_hash", "content_hash"),
+        Index("ix_gfa_creative_detail_collected", "collected_at"),
+    )
+
+
 class CreativeOrganicDerived(Base):
     """
     소재(AD) 일간 스냅샷(`naver_ad_creative_daily`)에 대해
@@ -571,6 +627,593 @@ class CreativeOrganicDerived(Base):
     )
 
 
+class NaverGfaCreativeImageAnalysis(Base):
+    """
+    GFA 소재 이미지 자체에서 보이는 시각 요소 분석 결과.
+
+    카피 문구 분석과 섞지 않고 이미지의 장면/인물/구도/제품 노출만 보존한다.
+    """
+
+    __tablename__ = "naver_gfa_creative_image_analysis"
+
+    creative_id = Column(String, primary_key=True)
+    image_url = Column(String, nullable=True)
+    visual_subjects = Column(String, nullable=True)  # JSON array string
+    hair_condition_tags = Column(String, nullable=True)  # JSON array string
+    scene_tags = Column(String, nullable=True)  # JSON array string
+    emotion_tags = Column(String, nullable=True)  # JSON array string
+    composition_tags = Column(String, nullable=True)  # JSON array string
+    color_mood_tags = Column(String, nullable=True)  # JSON array string
+    product_visibility = Column(String, nullable=True)
+    analysis_json = Column(String, nullable=True)
+    confidence = Column(Float, nullable=False, default=0.0)
+    model_name = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="generated")
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    analyzed_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_creative_image_analysis_status", "status"),
+        Index("ix_gfa_creative_image_analysis_analyzed", "analyzed_at"),
+    )
+
+
+class NaverGfaCreativeCopyAnalysis(Base):
+    """
+    GFA 소재 작성 카피 문구 분석 결과.
+
+    이미지 분석과 분리해 핵심 키워드/고객 고민/소구 방식/문장 톤만 보존한다.
+    """
+
+    __tablename__ = "naver_gfa_creative_copy_analysis"
+
+    creative_id = Column(String, primary_key=True)
+    primary_text = Column(String, nullable=True)
+    headline = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    cta = Column(String, nullable=True)
+    core_keywords = Column(String, nullable=True)  # JSON array string
+    pain_points = Column(String, nullable=True)  # JSON array string
+    appeal_types = Column(String, nullable=True)  # JSON array string
+    message_tone = Column(String, nullable=True)
+    cta_type = Column(String, nullable=True)
+    analysis_json = Column(String, nullable=True)
+    confidence = Column(Float, nullable=False, default=0.0)
+    model_name = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="generated")
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    analyzed_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_creative_copy_analysis_status", "status"),
+        Index("ix_gfa_creative_copy_analysis_analyzed", "analyzed_at"),
+    )
+
+
+class NaverGfaAnalysisResult(Base):
+    """
+    GFA 원본/전략 분석 산출물 저장소.
+
+    캐시가 아니라 사용자가 실행한 기간/조건별 분석 결과 자체를 DB에 보존한다.
+    같은 조건의 최신 결과는 is_latest=true로 표시하고, source_fingerprint로 원천 데이터 기준을 남긴다.
+    """
+
+    __tablename__ = "naver_gfa_analysis_result"
+
+    analysis_id = Column(String, primary_key=True)
+    latest_key = Column(String, nullable=False)
+    analysis_type = Column(String, nullable=False)
+    date_from = Column(Date, nullable=True)
+    date_to = Column(Date, nullable=True)
+    params_json = Column(String, nullable=False, default="{}")
+    params_hash = Column(String, nullable=False)
+    analysis_version = Column(String, nullable=False)
+    source_fingerprint = Column(String, nullable=False)
+    result_json = Column(String, nullable=False)
+    row_count = Column(Integer, nullable=False, default=0)
+    is_latest = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_analysis_result_latest", "latest_key", "is_latest"),
+        Index("ix_gfa_analysis_result_type_dates", "analysis_type", "date_from", "date_to"),
+        Index("ix_gfa_analysis_result_fingerprint", "source_fingerprint"),
+        Index("ix_gfa_analysis_result_updated", "updated_at"),
+    )
+
+
+class NaverGfaStrategySnapshot(Base):
+    """
+    GFA 전략 도출 화면이 읽는 불변 전략 스냅샷.
+
+    기존 naver_gfa_analysis_result는 기간/조건별 saved result 역할을 유지하고,
+    이 테이블은 검증 후 발행된 PUBLISHED 결과만 UI 조회 기준선으로 사용한다.
+    """
+
+    __tablename__ = "naver_gfa_strategy_snapshot"
+
+    snapshot_id = Column(String, primary_key=True)
+    as_of_date = Column(Date, nullable=False)
+    period_start = Column(Date, nullable=False)
+    period_end = Column(Date, nullable=False)
+    status = Column(String, nullable=False, default="BUILDING")
+    analysis_version = Column(String, nullable=False)
+    source_fingerprint = Column(String, nullable=False)
+    source_result_id = Column(String, nullable=True)
+    snapshot_origin = Column(String, nullable=False, default="BASELINE_PROMOTION")
+    payload_json = Column(Text, nullable=True)
+    payload_hash = Column(String, nullable=False)
+    source_manifest_json = Column(Text, nullable=False, default="{}")
+    validation_json = Column(Text, nullable=False, default="{}")
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    validated_at = Column(DateTime(timezone=True), nullable=True)
+    published_at = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        Index("ix_gfa_strategy_snapshot_status", "status", "published_at"),
+        Index("ix_gfa_strategy_snapshot_as_of", "as_of_date"),
+        Index("ix_gfa_strategy_snapshot_source", "source_result_id", "snapshot_origin", unique=True),
+        Index("ix_gfa_strategy_snapshot_payload_hash", "payload_hash"),
+    )
+
+
+class NaverGfaStrategySnapshotPointer(Base):
+    """
+    최신 PUBLISHED 전략 스냅샷 포인터.
+    """
+
+    __tablename__ = "naver_gfa_strategy_snapshot_pointer"
+
+    pointer_key = Column(String, primary_key=True)
+    snapshot_id = Column(String, nullable=False)
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_strategy_snapshot_pointer_snapshot", "snapshot_id"),
+    )
+
+
+class GfaBannerAnalysisHistory(Base):
+    """
+    신규 배너 이미지 업로드 분석 이력.
+
+    운영 중인 GFA 소재 분석 원본과 분리해, 사용자가 직접 업로드한 신규 배너 검토 결과만 보존한다.
+    """
+
+    __tablename__ = "gfa_banner_analysis_history"
+
+    history_id = Column(String, primary_key=True)
+    filename = Column(String, nullable=False, default="")
+    content_type = Column(String, nullable=False, default="")
+    image_size_bytes = Column(Integer, nullable=False, default=0)
+    image_base64 = Column(Text, nullable=True)
+    note = Column(Text, nullable=True)
+    model = Column(String, nullable=True)
+    overall_score = Column(Float, nullable=False, default=0.0)
+    grade = Column(String, nullable=True)
+    verdict = Column(Text, nullable=True)
+    result_json = Column(Text, nullable=False, default="{}")
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_banner_analysis_history_created", "created_at"),
+        Index("ix_gfa_banner_analysis_history_score", "overall_score"),
+    )
+
+
+class NaverGfaCreativeGenerationRun(Base):
+    """
+    GFA 전략 분석 결과를 바탕으로 생성한 광고 이미지/카피/CTA 시안.
+
+    원천 성과/분석 데이터와 생성물을 분리해, 어떤 분석 근거와 프롬프트로
+    어떤 시안이 만들어졌는지 추적한다.
+    """
+
+    __tablename__ = "naver_gfa_creative_generation_run"
+
+    id = Column(String, primary_key=True)
+    batch_id = Column(String, nullable=True)
+    candidate_index = Column(Integer, nullable=False, default=1)
+    candidate_count = Column(Integer, nullable=False, default=1)
+    goal = Column(String, nullable=False, default="")
+    goal_label = Column(String, nullable=False, default="")
+    template_type = Column(String, nullable=False, default="")
+    template_label = Column(String, nullable=False, default="")
+    source_creative_id = Column(String, nullable=True)
+    source_creative_name = Column(String, nullable=True)
+
+    source_snapshot_json = Column(String, nullable=True)
+    guide_rules_json = Column(String, nullable=True)
+    brief_json = Column(String, nullable=True)
+    combination_strategy_json = Column(String, nullable=True)
+    generation_explanation_json = Column(String, nullable=True)
+    copy_prompt = Column(String, nullable=True)
+    image_prompt = Column(String, nullable=True)
+    copy_result_json = Column(String, nullable=True)
+
+    image_path = Column(String, nullable=True)
+    image_mime_type = Column(String, nullable=True)
+    openai_model = Column(String, nullable=True)
+    gemini_model = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="generated")
+    error = Column(String, nullable=True)
+    reviewer_status = Column(String, nullable=False, default="pending")
+    reviewer_note = Column(String, nullable=True)
+    usage_status = Column(String, nullable=False, default="not_used")
+    used_campaign_name = Column(String, nullable=True)
+    used_adgroup_name = Column(String, nullable=True)
+    used_creative_name = Column(String, nullable=True)
+    used_at = Column(DateTime(timezone=True), nullable=True)
+    feedback_summary = Column(String, nullable=True)
+    generation_source = Column(String, nullable=False, default="existing")
+    appeal_point_id = Column(String, nullable=True)
+
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_creative_generation_batch", "batch_id"),
+        Index("ix_gfa_creative_generation_goal", "goal"),
+        Index("ix_gfa_creative_generation_source", "source_creative_id"),
+        Index("ix_gfa_creative_generation_status", "status"),
+        Index("ix_gfa_creative_generation_usage", "usage_status"),
+        Index("ix_gfa_creative_generation_created", "created_at"),
+        Index("ix_gfa_creative_generation_appeal", "appeal_point_id"),
+        Index("ix_gfa_creative_generation_source_type", "generation_source"),
+    )
+
+
+class NaverGfaCreativeGenerationEvent(Base):
+    """
+    GFA 생성 소재의 생애주기 이벤트 로그.
+
+    생성, 선택, 검수, 광고 소재 사용, 피드백 등 모든 행동을 append-only로 남겨
+    시간이 지나도 어떤 후보가 왜 선택/폐기/사용됐는지 추적한다.
+    """
+
+    __tablename__ = "naver_gfa_creative_generation_event"
+
+    event_id = Column(String, primary_key=True)
+    run_id = Column(String, nullable=False)
+    batch_id = Column(String, nullable=True)
+    event_type = Column(String, nullable=False, default="")
+    actor = Column(String, nullable=True)
+    note = Column(String, nullable=True)
+    payload_json = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_gfa_creative_generation_event_run", "run_id"),
+        Index("ix_gfa_creative_generation_event_batch", "batch_id"),
+        Index("ix_gfa_creative_generation_event_type", "event_type"),
+        Index("ix_gfa_creative_generation_event_created", "created_at"),
+    )
+
+
+class ContentSkuScope(Base):
+    """AI 콘텐츠 센터가 다루는 SKU 화이트리스트."""
+
+    __tablename__ = "content_sku_scope"
+
+    sku_id = Column(String, primary_key=True)
+    product_url = Column(String, nullable=True)
+    product_id_catalog = Column(BigInteger, nullable=True)
+    title = Column(String, nullable=True)
+    product_group = Column(String, nullable=False, default="other")  # henna | herb_pack | other
+    phase1_enabled = Column(Boolean, nullable=False, default=False, server_default=text("false"))
+    alias_json = Column(String, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True, server_default=text("true"))
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_sku_scope_group", "product_group"),
+        Index("ix_content_sku_scope_phase1", "phase1_enabled"),
+        Index("ix_content_sku_scope_pid", "product_id_catalog"),
+    )
+
+
+class ContentSkuAsset(Base):
+    """AI 콘텐츠 센터에서 SKU별로 업로드한 제품/상세페이지 자산."""
+
+    __tablename__ = "content_sku_asset"
+
+    asset_id = Column(String, primary_key=True)
+    sku_id = Column(String, nullable=False)
+    product_url = Column(String, nullable=True)
+    asset_type = Column(String, nullable=False, default="product_image")  # product_image | detail_page | reference_media
+    asset_group_id = Column(String, nullable=True)
+    group_name = Column(String, nullable=True)
+    category = Column(String, nullable=True)
+    keywords = Column(String, nullable=True)
+    sku_ids = Column(String, nullable=True)
+    filename = Column(String, nullable=False)
+    original_filename = Column(String, nullable=True)
+    mime_type = Column(String, nullable=True)
+    file_path = Column(String, nullable=False)
+    file_url = Column(String, nullable=False)
+    sort_order = Column(Integer, nullable=False, default=0)
+    is_primary = Column(Boolean, nullable=False, default=False, server_default=text("false"))
+    analysis_status = Column(String, nullable=False, default="PENDING")
+    analysis_json = Column(String, nullable=True)
+    error_message = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_sku_asset_sku_type", "sku_id", "asset_type"),
+        Index("ix_content_sku_asset_url_type", "product_url", "asset_type"),
+        Index("ix_content_sku_asset_group_type", "asset_group_id", "asset_type"),
+        Index("ix_content_sku_asset_category_type", "category", "asset_type"),
+        Index("ix_content_sku_asset_primary", "sku_id", "asset_type", "is_primary"),
+        Index("ix_content_sku_asset_created", "created_at"),
+    )
+
+
+class ContentProductInfo(Base):
+    """AI 콘텐츠 센터에서 SKU별로 관리하는 제품 성분/원료 정보."""
+
+    __tablename__ = "content_product_info"
+
+    sku_id = Column(String, primary_key=True)
+    product_url = Column(String, nullable=True)
+    full_ingredients = Column(String, nullable=True)
+    product_items_json = Column(String, nullable=True)
+    ingredient_note = Column(String, nullable=True)
+    source_note = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_product_info_url", "product_url"),
+        Index("ix_content_product_info_updated", "updated_at"),
+    )
+
+
+class ContentInsight(Base):
+    __tablename__ = "content_insight"
+
+    insight_id = Column(String, primary_key=True)
+    sku_id = Column(String, nullable=False)
+    theme_key = Column(String, nullable=False, default="")
+    problem = Column(String, nullable=False, default="")
+    desire = Column(String, nullable=False, default="")
+    barrier = Column(String, nullable=False, default="")
+    motivation = Column(String, nullable=False, default="")
+    usage_situation = Column(String, nullable=False, default="")
+    customer_language_json = Column(String, nullable=True)
+    trend = Column(String, nullable=False, default="new")  # new | strengthened | weakened
+    evidence_count = Column(Integer, nullable=False, default=0)
+    as_of_date = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_insight_sku_theme", "sku_id", "theme_key"),
+        Index("ix_content_insight_date", "as_of_date"),
+    )
+
+
+class ContentAppealPoint(Base):
+    __tablename__ = "content_appeal_point"
+
+    appeal_id = Column(String, primary_key=True)
+    sku_id = Column(String, nullable=False)
+    insight_id = Column(String, nullable=True)
+    theme_key = Column(String, nullable=False, default="")
+    label = Column(String, nullable=False, default="")
+    appeal_text = Column(String, nullable=False, default="")
+    target = Column(String, nullable=True)
+    demand_score = Column(Float, nullable=False, default=0.0)
+    purchase_intent_score = Column(Float, nullable=False, default=0.0)
+    evidence_score = Column(Float, nullable=False, default=0.0)
+    conversion_score = Column(Float, nullable=False, default=0.0)
+    novelty_score = Column(Float, nullable=False, default=0.0)
+    freshness_score = Column(Float, nullable=False, default=0.0)
+    overall_score = Column(Float, nullable=False, default=0.0)
+    legal_risk = Column(String, nullable=False, default="LOW")
+    claim_class = Column(String, nullable=False, default="MARKETING_INTERPRETATION")
+    status = Column(String, nullable=False, default="ACTIVE")
+    admin_review_status = Column(String, nullable=True)
+    admin_review_note = Column(String, nullable=True)
+    admin_reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    learning_verdict = Column(String, nullable=False, default="OBSERVE")
+    as_of_date = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_appeal_sku_score", "sku_id", "overall_score"),
+        Index("ix_content_appeal_status", "status"),
+        Index("ix_content_appeal_theme", "theme_key"),
+    )
+
+
+class ContentAppealEvidence(Base):
+    __tablename__ = "content_appeal_evidence"
+
+    evidence_id = Column(String, primary_key=True)
+    appeal_id = Column(String, nullable=False)
+    insight_id = Column(String, nullable=True)
+    sku_id = Column(String, nullable=False)
+    source_type = Column(String, nullable=False, default="")
+    source_pk = Column(String, nullable=False, default="")
+    snippet = Column(String, nullable=False, default="")
+    metric_json = Column(String, nullable=True)
+    is_excluded = Column(Boolean, nullable=False, default=False, server_default=text("false"))
+    excluded_reason = Column(String, nullable=True)
+    excluded_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_appeal_evidence_appeal", "appeal_id"),
+        Index("ix_content_appeal_evidence_sku", "sku_id"),
+        Index("ix_content_appeal_evidence_source", "source_type", "source_pk"),
+    )
+
+
+class ContentTopic(Base):
+    __tablename__ = "content_topic"
+
+    topic_id = Column(String, primary_key=True)
+    sku_id = Column(String, nullable=False)
+    appeal_id = Column(String, nullable=False)
+    title = Column(String, nullable=False, default="")
+    angle = Column(String, nullable=True)
+    as_of_date = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (Index("ix_content_topic_sku_date", "sku_id", "as_of_date"),)
+
+
+class ContentPlanItem(Base):
+    __tablename__ = "content_plan_item"
+
+    plan_id = Column(String, primary_key=True)
+    plan_date = Column(Date, nullable=False)
+    sku_id = Column(String, nullable=False)
+    appeal_id = Column(String, nullable=False)
+    topic_id = Column(String, nullable=True)
+    channel = Column(String, nullable=False, default="")
+    status = Column(String, nullable=False, default="queued")
+    reason = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_plan_date_sku", "plan_date", "sku_id"),
+        Index("ix_content_plan_appeal", "appeal_id"),
+    )
+
+
+class ContentArtifact(Base):
+    __tablename__ = "content_artifact"
+
+    artifact_id = Column(String, primary_key=True)
+    parent_artifact_id = Column(String, nullable=True)
+    original_artifact_id = Column(String, nullable=True)
+    revision_no = Column(Integer, nullable=False, default=1)
+    revision_reason = Column(String, nullable=True)
+    source = Column(String, nullable=False, default="ai_original")
+    is_published_version = Column(Boolean, nullable=False, default=False, server_default=text("false"))
+    plan_id = Column(String, nullable=True)
+    sku_id = Column(String, nullable=False)
+    appeal_id = Column(String, nullable=False)
+    topic_id = Column(String, nullable=True)
+    channel = Column(String, nullable=False, default="")
+    title = Column(String, nullable=False, default="")
+    body_json = Column(String, nullable=True)
+    export_text = Column(String, nullable=True)
+    gfa_run_id = Column(String, nullable=True)
+    reviewer_status = Column(String, nullable=False, default="pending")
+    reviewer_note = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_artifact_sku_channel", "sku_id", "channel"),
+        Index("ix_content_artifact_appeal", "appeal_id"),
+        Index("ix_content_artifact_status", "reviewer_status"),
+        Index("ix_content_artifact_original", "original_artifact_id"),
+        Index("ix_content_artifact_parent", "parent_artifact_id"),
+        Index("ix_content_artifact_published", "is_published_version"),
+    )
+
+
+class ContentReviewEvent(Base):
+    __tablename__ = "content_review_event"
+
+    event_id = Column(String, primary_key=True)
+    artifact_id = Column(String, nullable=False)
+    event_type = Column(String, nullable=False, default="")
+    actor = Column(String, nullable=True)
+    note = Column(String, nullable=True)
+    payload_json = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (Index("ix_content_review_event_artifact", "artifact_id"),)
+
+
+class ContentPublishLink(Base):
+    __tablename__ = "content_publish_link"
+
+    link_id = Column(String, primary_key=True)
+    artifact_id = Column(String, nullable=False)
+    channel = Column(String, nullable=False, default="")
+    published_url = Column(String, nullable=False, default="")
+    published_external_id = Column(String, nullable=True)
+    posted_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (Index("ix_content_publish_link_artifact", "artifact_id"),)
+
+
+class ContentPerformanceDaily(Base):
+    __tablename__ = "content_performance_daily"
+
+    perf_id = Column(String, primary_key=True)
+    artifact_id = Column(String, nullable=False)
+    appeal_id = Column(String, nullable=False)
+    sku_id = Column(String, nullable=False)
+    channel = Column(String, nullable=False, default="")
+    metric_date = Column(Date, nullable=False)
+    impressions = Column(Float, nullable=False, default=0.0)
+    clicks = Column(Float, nullable=False, default=0.0)
+    ctr = Column(Float, nullable=False, default=0.0)
+    cvr = Column(Float, nullable=False, default=0.0)
+    saves = Column(Float, nullable=False, default=0.0)
+    shares = Column(Float, nullable=False, default=0.0)
+    completion_rate = Column(Float, nullable=False, default=0.0)
+    purchases = Column(Float, nullable=False, default=0.0)
+    extra_json = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_perf_appeal_date", "appeal_id", "metric_date"),
+        Index("ix_content_perf_artifact", "artifact_id"),
+    )
+
+
+class ContentGfaCreativeBinding(Base):
+    __tablename__ = "content_gfa_creative_binding"
+
+    binding_id = Column(String, primary_key=True)
+    artifact_id = Column(String, nullable=False)
+    gfa_run_id = Column(String, nullable=True)
+    campaign_id = Column(String, nullable=True)
+    campaign_name = Column(String, nullable=True)
+    adgroup_id = Column(String, nullable=True)
+    adgroup_name = Column(String, nullable=True)
+    creative_id = Column(String, nullable=False)
+    creative_name = Column(String, nullable=True)
+    bound_by = Column(String, nullable=True)
+    note = Column(String, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True, server_default=text("true"))
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_content_gfa_binding_artifact", "artifact_id"),
+        Index("ix_content_gfa_binding_creative", "creative_id"),
+        Index("ix_content_gfa_binding_active", "is_active"),
+    )
+
+
+class ContentClaimPolicy(Base):
+    __tablename__ = "content_claim_policy"
+
+    policy_id = Column(String, primary_key=True)
+    claim_class = Column(String, nullable=False, default="PROHIBITED")
+    pattern = Column(String, nullable=False, default="")
+    note = Column(String, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True, server_default=text("true"))
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (Index("ix_content_claim_policy_class", "claim_class"),)
+
+
 class NaverProductRankDaily(Base):
     """
     네이버 쇼핑 검색 결과에서 수집한 일자/키워드/상품 순위 스냅샷.
@@ -592,6 +1235,8 @@ class NaverProductRankDaily(Base):
     # OpenAPI 에서 제공되는 부가 정보
     # - 네이버 쇼핑 productId 는 32bit 정수를 초과하는 경우가 많아 BIGINT 로 저장한다.
     product_id = Column(BigInteger, nullable=True)
+    # Host Agent shopping_rank_cdp: smartstore main/products/<ID> URL (순위 SoT)
+    product_url = Column(String, nullable=True)
     image_url = Column(String, nullable=True)
 
     # 쇼핑 검색 API에서 제공되는 추가 메타 정보
@@ -602,12 +1247,30 @@ class NaverProductRankDaily(Base):
     brand = Column(String, nullable=True)
     maker = Column(String, nullable=True)
 
+    # CDP mobile organic shopping evidence fields. These preserve the exact
+    # card condition used to decide whether a rank is valid.
+    card_type = Column(String, nullable=True)
+    source_type = Column(String, nullable=True)
+    sas_type = Column(String, nullable=True)
+    channel_product_id = Column(String, nullable=True)
+    original_mall_product_id = Column(String, nullable=True)
+    nv_mid = Column(BigInteger, nullable=True)
+    rank_source = Column(String, nullable=True)
+    card_json = Column(Text, nullable=True)
+
     is_our_brand = Column(Boolean, nullable=False, default=False)
 
     created_at = Column(
         DateTime(timezone=True),
         nullable=False,
         server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ix_product_rank_keyword_date", "keyword", "date"),
+        Index("ix_product_rank_product_id_date", "product_id", "date"),
+        Index("ix_product_rank_product_url_date", "product_url", "date"),
+        Index("ix_product_rank_date_our_brand", "date", "is_our_brand"),
     )
 
 
@@ -742,6 +1405,15 @@ class ReviewReplyDraft(Base):
     rejection_comment = Column(String, nullable=True)
     rejection_analyzed_at = Column(DateTime(timezone=True), nullable=True)
     rejection_analysis_json = Column(String, nullable=True)
+    # Lineage: ORIGINAL_AI_DRAFT is immutable once set; draft_text holds the current (human edited) final.
+    original_ai_text = Column(String, nullable=True)
+    lineage_origin = Column(String, nullable=True)
+    human_edit_count = Column(Integer, nullable=False, default=0, server_default=text("0"))
+    human_edited_at = Column(DateTime(timezone=True), nullable=True)
+    approved_text = Column(String, nullable=True)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+    published_text = Column(String, nullable=True)
+    published_at = Column(DateTime(timezone=True), nullable=True)
 
     generated_at = Column(
         DateTime(timezone=True),
@@ -757,6 +1429,291 @@ class ReviewReplyDraft(Base):
     __table_args__ = (
         Index("ix_review_reply_draft_review_key", "review_key"),
         Index("ix_review_reply_draft_status", "status"),
+    )
+
+
+class ReviewReplyDraftRevision(Base):
+    """Append-only lineage events: ORIGINAL_AI_DRAFT -> HUMAN_EDITED_FINAL -> APPROVED_REPLY -> PUBLISHED_REPLY."""
+
+    __tablename__ = "review_reply_draft_revision"
+
+    revision_id = Column(String, primary_key=True)
+    draft_id = Column(String, nullable=False)
+    review_key = Column(String, nullable=False)
+    stage = Column(String, nullable=False)
+    revision_text = Column(String, nullable=False, default="")
+    text_sha256 = Column(String, nullable=False, default="")
+    source = Column(String, nullable=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ix_review_reply_draft_revision_draft_id", "draft_id"),
+        Index("ix_review_reply_draft_revision_review_key", "review_key"),
+    )
+
+
+class ReviewReplyBodyAudit(Base):
+    """Audit trail for rejected or replaced invalid seller reply bodies. Never deleted."""
+
+    __tablename__ = "review_reply_body_audit"
+
+    audit_id = Column(String, primary_key=True)
+    review_key = Column(String, nullable=True)
+    review_id_original = Column(String, nullable=True)
+    event = Column(String, nullable=False)
+    body_verdict = Column(String, nullable=False)
+    invalid_text = Column(String, nullable=True)
+    replacement_text = Column(String, nullable=True)
+    source = Column(String, nullable=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ix_review_reply_body_audit_review_key", "review_key"),
+        Index("ix_review_reply_body_audit_event", "event"),
+    )
+
+
+class ReviewReplyKnowledgeValidation(Base):
+    """Append-only human content validation of a historical reply. Authorship is never changed here."""
+
+    __tablename__ = "review_reply_knowledge_validation"
+
+    validation_id = Column(String, primary_key=True)
+    knowledge_id = Column(String, nullable=False)
+    review_key = Column(String, nullable=False)
+    content_validation = Column(String, nullable=False)
+    reply_appropriate = Column(String, nullable=True)
+    guidance_accurate = Column(String, nullable=True)
+    currently_valid = Column(String, nullable=True)
+    reference_worthy = Column(String, nullable=True)
+    note = Column(String, nullable=True)
+    reviewer = Column(String, nullable=True)
+    reviewer_uid = Column(String, nullable=True)
+    reviewer_email = Column(String, nullable=True)
+    reviewer_role = Column(String, nullable=True)
+    knowhow_snapshot_json = Column(String, nullable=True)
+    corpus_version = Column(String, nullable=True)
+    authorship_class_at_validation = Column(String, nullable=True)
+    reply_sha256_at_validation = Column(String, nullable=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ix_review_reply_knowledge_validation_knowledge_id", "knowledge_id"),
+        Index("ix_review_reply_knowledge_validation_review_key", "review_key"),
+    )
+
+
+class ReviewReplyKnowledgeUnitFactValidation(Base):
+    """Append-only human fact validation of one extracted guidance unit against registered official sources."""
+
+    __tablename__ = "review_reply_knowledge_unit_fact_validation"
+
+    unit_fact_validation_id = Column(String, primary_key=True)
+    unit_key = Column(String, nullable=False)
+    knowledge_id = Column(String, nullable=False)
+    review_key = Column(String, nullable=False)
+    reply_sha256_at_validation = Column(String, nullable=False)
+    extraction_version = Column(String, nullable=False)
+    source_span_start = Column(Integer, nullable=True)
+    source_span_end = Column(Integer, nullable=True)
+    unit_text = Column(String, nullable=False)
+    unit_text_sha256 = Column(String, nullable=False)
+    unit_snapshot_json = Column(String, nullable=False)
+    fact_status = Column(String, nullable=False)
+    statement_accurate = Column(String, nullable=True)
+    product_applicable = Column(String, nullable=True)
+    condition_accurate = Column(String, nullable=True)
+    sequence_accurate = Column(String, nullable=True)
+    numeric_accurate = Column(String, nullable=True)
+    generator_reference_allowed = Column(String, nullable=True)
+    evidence_json = Column(String, nullable=True)
+    source_registry_version = Column(String, nullable=True)
+    verified_scope = Column(String, nullable=True)
+    hold_reason = Column(String, nullable=True)
+    note = Column(String, nullable=True)
+    reviewer_uid = Column(String, nullable=True)
+    reviewer_email = Column(String, nullable=True)
+    reviewer_role = Column(String, nullable=True)
+    parent_authority_at_validation = Column(String, nullable=True)
+    corpus_version = Column(String, nullable=True)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ix_rrk_unit_fact_validation_unit_key", "unit_key"),
+        Index("ix_rrk_unit_fact_validation_knowledge_id", "knowledge_id"),
+    )
+
+
+class ReviewReplyKnowledgeSourceApplicability(Base):
+    """Append-only Gate B (current product applicability) decision for one official entry x products x condition.
+
+    Never updated or deleted; the effective state is derived at read time from the latest record per product.
+    supersedes_record_id is the entry's latest record id seen by the reviewer ("ROOT" for the first) so two
+    concurrent decisions on the same view cannot both be stored.
+    """
+
+    __tablename__ = "review_reply_knowledge_source_applicability"
+
+    applicability_id = Column(String, primary_key=True)
+    request_id = Column(String, nullable=False)
+    request_payload_sha256 = Column(String, nullable=False)
+    supersedes_record_id = Column(String, nullable=False)
+    source_id = Column(String, nullable=False)
+    source_version = Column(String, nullable=True)
+    source_sha256 = Column(String, nullable=True)
+    registry_version = Column(String, nullable=True)
+    registry_file_sha256 = Column(String, nullable=True)
+    entry_key = Column(String, nullable=False)
+    entry_kind = Column(String, nullable=False)
+    entry_content_sha256 = Column(String, nullable=False)
+    original_text = Column(Text, nullable=False)
+    source_location_json = Column(Text, nullable=True)
+    gate_a_status = Column(String, nullable=True)
+    decision = Column(String, nullable=False)
+    products_json = Column(Text, nullable=False)
+    skus_json = Column(Text, nullable=True)
+    application_modes_json = Column(Text, nullable=True)
+    condition = Column(Text, nullable=True)
+    numeric_tokens_json = Column(Text, nullable=True)
+    procedure_json = Column(Text, nullable=True)
+    approved_fact_scope = Column(Text, nullable=True)
+    limitations_exceptions = Column(Text, nullable=True)
+    product_applicable = Column(String, nullable=True)
+    usage_accurate = Column(String, nullable=True)
+    exceptions_checked = Column(String, nullable=True)
+    scope_clear = Column(String, nullable=True)
+    company_standard_confirmed = Column(String, nullable=True)
+    basis_type = Column(String, nullable=True)
+    basis_reference = Column(Text, nullable=True)
+    basis_summary = Column(Text, nullable=True)
+    note = Column(Text, nullable=False)
+    reviewer_uid = Column(String, nullable=True)
+    reviewer_email = Column(String, nullable=True)
+    reviewer_role = Column(String, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ux_rrk_source_applicability_request_id", "request_id", unique=True),
+        Index("ux_rrk_source_applicability_chain", "source_id", "entry_key", "supersedes_record_id", unique=True),
+        Index("ix_rrk_source_applicability_entry", "source_id", "entry_key"),
+    )
+
+
+class ReviewReplyKnowledgeClaimFactValidation(Base):
+    """Append-only human fact validation of one claim split out of a composite guidance unit.
+
+    Separate from unit fact records: a claim record never verifies its parent unit. supersedes_record_id is the claim's
+    latest record id seen by the reviewer ("ROOT" for the first, never NULL) so two concurrent decisions on the same view
+    cannot both be stored.
+    """
+
+    __tablename__ = "review_reply_knowledge_claim_fact_validation"
+
+    claim_validation_id = Column(String, primary_key=True)
+    request_id = Column(String, nullable=False)
+    request_payload_sha256 = Column(String, nullable=False)
+    supersedes_record_id = Column(String, nullable=False)
+    claim_key = Column(String, nullable=False)
+    claim_decomposition_version = Column(String, nullable=False)
+    claim_text = Column(Text, nullable=False)
+    claim_text_sha256 = Column(String, nullable=False)
+    claim_spans_json = Column(Text, nullable=False)
+    claim_snapshot_json = Column(Text, nullable=False)
+    parent_unit_key = Column(String, nullable=False)
+    parent_unit_text_sha256 = Column(String, nullable=False)
+    knowledge_id = Column(String, nullable=False)
+    review_key = Column(String, nullable=False)
+    reply_sha256_at_validation = Column(String, nullable=False)
+    fact_status = Column(String, nullable=False)
+    statement_accurate = Column(String, nullable=True)
+    product_applicable = Column(String, nullable=True)
+    condition_accurate = Column(String, nullable=True)
+    sequence_accurate = Column(String, nullable=True)
+    numeric_accurate = Column(String, nullable=True)
+    target_color_accurate = Column(String, nullable=True)
+    official_color_label = Column(String, nullable=True)
+    generator_reference_allowed = Column(String, nullable=False)
+    evidence_json = Column(Text, nullable=True)
+    source_registry_version = Column(String, nullable=True)
+    verified_scope = Column(Text, nullable=True)
+    hold_reason = Column(String, nullable=True)
+    note = Column(Text, nullable=False)
+    reviewer_uid = Column(String, nullable=True)
+    reviewer_email = Column(String, nullable=True)
+    reviewer_role = Column(String, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ux_rrk_claim_fact_validation_request_id", "request_id", unique=True),
+        Index("ux_rrk_claim_fact_validation_chain", "claim_key", "supersedes_record_id", unique=True),
+        Index("ix_rrk_claim_fact_validation_knowledge_id", "knowledge_id"),
+        Index("ix_rrk_claim_fact_validation_parent", "parent_unit_key"),
+    )
+
+
+class ReviewReplyKnowledgePolicyDecision(Base):
+    """Append-only admin policy decision for one guide-first question (D01~D13 and later questions).
+
+    Never verifies replies or changes authorship. supersedes_record_id is the question's latest decision id seen by the
+    admin ("ROOT" for the first) so two concurrent decisions on the same view cannot both be stored.
+    """
+
+    __tablename__ = "review_reply_knowledge_policy_decision"
+
+    decision_id = Column(String, primary_key=True)
+    request_id = Column(String, nullable=False)
+    request_payload_sha256 = Column(String, nullable=False)
+    supersedes_record_id = Column(String, nullable=False)
+    question_id = Column(String, nullable=False)
+    question_version = Column(String, nullable=False)
+    question_sha256 = Column(String, nullable=False)
+    decision = Column(String, nullable=False)
+    decision_text = Column(Text, nullable=False)
+    products_json = Column(Text, nullable=False)
+    issue_ids_json = Column(Text, nullable=False)
+    condition_key = Column(String, nullable=False)
+    exceptions_json = Column(Text, nullable=False)
+    evidence_json = Column(Text, nullable=False)
+    source_registry_version = Column(String, nullable=True)
+    linked_refs_json = Column(Text, nullable=False)
+    note = Column(Text, nullable=False)
+    reviewer_uid = Column(String, nullable=True)
+    reviewer_email = Column(String, nullable=True)
+    reviewer_role = Column(String, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
+
+    __table_args__ = (
+        Index("ux_rrk_policy_decision_request_id", "request_id", unique=True),
+        Index("ux_rrk_policy_decision_chain", "question_id", "supersedes_record_id", unique=True),
+        Index("ix_rrk_policy_decision_question", "question_id"),
     )
 
 
@@ -1208,6 +2165,132 @@ class TrackedProductAutoKeyword(Base):
         Index("ix_tpak_url_active", "product_url", "is_active"),
         Index("ix_tpak_url_group", "product_url", "group_type"),
         Index("ix_tpak_url_keyword", "product_url", "keyword"),
+    )
+
+
+class AdTrackedProduct(Base):
+    """
+    메뉴4 '내 광고 상품 추적'에서 사용하는 광고 진단 대상 상품 테이블.
+
+    - 기존 오가닉 `tracked_product_*` 테이블과 분리해 광고 노출 진단 전용 설정을 보관한다.
+    - product_url은 화면/수집에서 상품을 식별하는 기준이다.
+    """
+
+    __tablename__ = "ad_tracked_product"
+
+    product_url = Column(String, primary_key=True)
+    name = Column(String, nullable=False)
+    campaign_label = Column(String, nullable=True)
+    is_active = Column(Boolean, nullable=False, server_default=text("true"), default=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_ad_tracked_product_active", "is_active"),
+        Index("ix_ad_tracked_product_updated", "updated_at"),
+    )
+
+
+class AdTrackedKeyword(Base):
+    """
+    광고 노출 진단 대상 키워드.
+    """
+
+    __tablename__ = "ad_tracked_keyword"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    product_url = Column(String, nullable=False)
+    keyword = Column(String, nullable=False)
+    is_active = Column(Boolean, nullable=False, server_default=text("true"), default=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_ad_tracked_keyword_url_active", "product_url", "is_active"),
+        Index("ix_ad_tracked_keyword_url_keyword", "product_url", "keyword"),
+    )
+
+
+class AdRankDiagnosisPreset(Base):
+    """
+    광고 노출 진단 조건 프리셋.
+
+    - core: 매일/오전·오후 모니터링할 핵심 조건
+    - expanded: 이상 감지 또는 수동 확장 시 사용할 전체 조건
+    """
+
+    __tablename__ = "ad_rank_diagnosis_preset"
+
+    condition_id = Column(String, primary_key=True)
+    gender = Column(String, nullable=False)
+    age_band = Column(String, nullable=False)
+    placement = Column(String, nullable=False)
+    target_rank = Column(Integer, nullable=False, server_default=text("20"), default=20)
+    scope = Column(String, nullable=False, default="core")
+    is_active = Column(Boolean, nullable=False, server_default=text("true"), default=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_ad_rank_diag_preset_scope", "scope", "is_active"),
+        Index("ix_ad_rank_diag_preset_condition", "gender", "age_band", "placement"),
+    )
+
+
+class AdRankKeywordTargetRank(Base):
+    """
+    광고 노출 진단 기준 순위.
+
+    실제 운영 기준은 "키워드 + 성별 + 연령 + 노출 지면" 단위다.
+    예: 헤나 / 여성 / 45-49 / 통합검색 모바일 = 2위 이내
+    """
+
+    __tablename__ = "ad_rank_keyword_target_rank"
+
+    keyword = Column(String, primary_key=True)
+    gender = Column(String, primary_key=True)
+    age_band = Column(String, primary_key=True)
+    placement = Column(String, primary_key=True)
+    target_rank = Column(Integer, nullable=False, server_default=text("20"), default=20)
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_ad_rank_kw_target_keyword", "keyword"),
+        Index("ix_ad_rank_kw_target_condition", "gender", "age_band", "placement"),
+    )
+
+
+class AdRankDiagnosisDaily(Base):
+    """
+    CDP 광고 노출 진단 결과 스냅샷.
+    """
+
+    __tablename__ = "ad_rank_diagnosis_daily"
+
+    date = Column(Date, primary_key=True)
+    time_slot = Column(String, primary_key=True, default="daily")
+    product_url = Column(String, primary_key=True)
+    keyword = Column(String, primary_key=True)
+    gender = Column(String, primary_key=True)
+    age_band = Column(String, primary_key=True)
+    placement = Column(String, primary_key=True)
+
+    visible = Column(Boolean, nullable=False, server_default=text("false"), default=False)
+    rank = Column(Integer, nullable=True)
+    competitor_count_above = Column(Integer, nullable=True)
+    ad_type = Column(String, nullable=True)
+    status = Column(String, nullable=False, default="pending")
+    page_url = Column(String, nullable=True)
+    raw_text_sample = Column(String, nullable=True)
+    screenshot_path = Column(String, nullable=True)
+    error = Column(String, nullable=True)
+    collected_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+
+    __table_args__ = (
+        Index("ix_ad_rank_diag_daily_product_date", "product_url", "date"),
+        Index("ix_ad_rank_diag_daily_keyword_date", "keyword", "date"),
+        Index("ix_ad_rank_diag_daily_status", "status"),
     )
 
 
@@ -1840,6 +2923,12 @@ class TrackedProductRankDaily(Base):
         server_default=text("CURRENT_TIMESTAMP"),
     )
 
+    __table_args__ = (
+        Index("ix_tracked_rank_product_date", "product_url", "date"),
+        Index("ix_tracked_rank_keyword_date", "keyword", "date"),
+        Index("ix_tracked_rank_source_date", "source", "date"),
+    )
+
 
 def acquire_daily_job_run(session, *, job_name: str, run_date: date) -> bool:
     """
@@ -2169,10 +3258,16 @@ def upsert_product_ranks_for_keyword(
       - price: int
       - purchase_cnt: int
       - product_id: int | None
+      - product_url: str | None  # smartstore main/products/<ID>
       - image_url: str | None
       - category1~4: str | None
       - brand: str | None
       - maker: str | None
+      - card_type/source_type/sas_type: str | None
+      - channel_product_id/original_mall_product_id: str | None
+      - nv_mid: int | None
+      - rank_source: str | None
+      - card_json: str | None
       - is_our_brand: bool (선택, 기본 False)
     """
     if not products:
@@ -2192,6 +3287,7 @@ def upsert_product_ranks_for_keyword(
         price = int(p.get("price") or 0)
         purchase_cnt = int(p.get("purchase_cnt") or p.get("purchaseCnt") or 0)
         product_id = p.get("product_id")
+        product_url = str(p.get("product_url") or p.get("productUrl") or "").strip() or None
         image_url = p.get("image_url")
         category1 = (p.get("category1") or "").strip() or None
         category2 = (p.get("category2") or "").strip() or None
@@ -2199,10 +3295,23 @@ def upsert_product_ranks_for_keyword(
         category4 = (p.get("category4") or "").strip() or None
         brand = (p.get("brand") or "").strip() or None
         maker = (p.get("maker") or "").strip() or None
+        card_type = (p.get("card_type") or p.get("cardType") or "").strip() or None
+        source_type = (p.get("source_type") or p.get("sourceType") or "").strip() or None
+        sas_type = (p.get("sas_type") or p.get("sasType") or "").strip() or None
+        channel_product_id = str(p.get("channel_product_id") or p.get("channelProductId") or "").strip() or None
+        original_mall_product_id = str(p.get("original_mall_product_id") or p.get("originalMallProductId") or "").strip() or None
+        try:
+            nv_mid = int(p.get("nv_mid") or p.get("nvMid") or 0) or None
+        except (TypeError, ValueError):
+            nv_mid = None
+        rank_source = (p.get("rank_source") or p.get("rankSource") or "").strip() or None
+        card_json = str(p.get("card_json") or p.get("cardJson") or "").strip() or None
         is_our_brand = bool(p.get("is_our_brand") or False)
 
-        if not title:
+        if not title and not product_url and product_id in (None, ""):
             continue
+        if not title:
+            title = product_url or str(product_id or "")
 
         records.append(
             {
@@ -2214,6 +3323,7 @@ def upsert_product_ranks_for_keyword(
                 "price": price,
                 "purchase_cnt": purchase_cnt,
                 "product_id": product_id,
+                "product_url": product_url,
                 "image_url": image_url,
                 "category1": category1,
                 "category2": category2,
@@ -2221,6 +3331,14 @@ def upsert_product_ranks_for_keyword(
                 "category4": category4,
                 "brand": brand,
                 "maker": maker,
+                "card_type": card_type,
+                "source_type": source_type,
+                "sas_type": sas_type,
+                "channel_product_id": channel_product_id,
+                "original_mall_product_id": original_mall_product_id,
+                "nv_mid": nv_mid,
+                "rank_source": rank_source,
+                "card_json": card_json,
                 "is_our_brand": is_our_brand,
             }
         )
@@ -3163,15 +4281,219 @@ def init_db() -> None:
     # 기존 테이블에 새 컬럼/타입이 없을 수도 있으므로 방어적으로 추가/변환
     with engine.connect() as conn:
         try:
+            # High-volume fact tables are queried mainly by date ranges plus campaign,
+            # keyword, product, or source filters. create_all() does not add indexes to
+            # existing Postgres tables, so keep these operational indexes idempotent.
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_searchword_date_campaign_adgroup ON naver_ad_searchword_daily (date, campaign_name, adgroup_name)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_searchword_date_matched_keyword ON naver_ad_searchword_daily (date, matched_keyword)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_searchword_searchword_date ON naver_ad_searchword_daily (searchword, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_searchword_source_date ON naver_ad_searchword_daily (source, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_searchword_kind_date ON naver_ad_searchword_daily (campaign_kind, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_creative_date_campaign_adgroup ON naver_ad_creative_daily (date, campaign_name, adgroup_name)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_creative_creative_date ON naver_ad_creative_daily (creative_id, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_creative_keyword_date ON naver_ad_creative_daily (display_keyword, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_creative_source_date ON naver_ad_creative_daily (source, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_product_rank_keyword_date ON naver_product_rank_daily (keyword, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_product_rank_product_id_date ON naver_product_rank_daily (product_id, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_product_rank_product_url_date ON naver_product_rank_daily (product_url, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_product_rank_date_our_brand ON naver_product_rank_daily (date, is_our_brand)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_tracked_rank_product_date ON tracked_product_rank_daily (product_url, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_tracked_rank_keyword_date ON tracked_product_rank_daily (keyword, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_tracked_rank_source_date ON tracked_product_rank_daily (source, date)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_collection_job_task_status_started ON collection_job_run (task_id, status, started_at)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_collection_job_event_job_created ON collection_job_event (job_id, created_at)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_collection_job_event_task_created ON collection_job_event (task_id, created_at)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("CREATE high-volume fact indexes failed:", e)
+
+        try:
+            conn.execute(text("ALTER TABLE ad_rank_diagnosis_daily ADD COLUMN IF NOT EXISTS ad_type VARCHAR"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_ad_rank_diag_daily_ad_type ON ad_rank_diagnosis_daily (ad_type)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE ad_rank_diagnosis_daily failed:", e)
+
+        try:
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS batch_id VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS candidate_index INTEGER NOT NULL DEFAULT 1"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS candidate_count INTEGER NOT NULL DEFAULT 1"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS combination_strategy_json VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS generation_explanation_json VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS usage_status VARCHAR NOT NULL DEFAULT 'not_used'"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS used_campaign_name VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS used_adgroup_name VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS used_creative_name VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS used_at TIMESTAMPTZ"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS feedback_summary VARCHAR"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS generation_source VARCHAR NOT NULL DEFAULT 'existing'"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_generation_run ADD COLUMN IF NOT EXISTS appeal_point_id VARCHAR"))
+            conn.execute(
+                text(
+                    "CREATE INDEX IF NOT EXISTS ix_gfa_creative_generation_batch "
+                    "ON naver_gfa_creative_generation_run (batch_id)"
+                )
+            )
+            conn.execute(
+                text(
+                    "CREATE INDEX IF NOT EXISTS ix_gfa_creative_generation_usage "
+                    "ON naver_gfa_creative_generation_run (usage_status)"
+                )
+            )
+            conn.execute(
+                text(
+                    "CREATE TABLE IF NOT EXISTS naver_gfa_creative_generation_event ("
+                    "event_id VARCHAR PRIMARY KEY, "
+                    "run_id VARCHAR NOT NULL, "
+                    "batch_id VARCHAR, "
+                    "event_type VARCHAR NOT NULL DEFAULT '', "
+                    "actor VARCHAR, "
+                    "note VARCHAR, "
+                    "payload_json VARCHAR, "
+                    "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
+                    ")"
+                )
+            )
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_generation_event_run ON naver_gfa_creative_generation_event (run_id)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_generation_event_batch ON naver_gfa_creative_generation_event (batch_id)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_generation_event_type ON naver_gfa_creative_generation_event (event_type)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_generation_event_created ON naver_gfa_creative_generation_event (created_at)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE naver_gfa_creative_generation_run failed:", e)
+
+        try:
+            conn.execute(text("ALTER TABLE naver_gfa_strategy_snapshot ALTER COLUMN payload_json DROP NOT NULL"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE naver_gfa_strategy_snapshot payload nullable failed:", e)
+
+        try:
+            conn.execute(text("ALTER TABLE content_artifact ADD COLUMN IF NOT EXISTS parent_artifact_id VARCHAR"))
+            conn.execute(text("ALTER TABLE content_artifact ADD COLUMN IF NOT EXISTS original_artifact_id VARCHAR"))
+            conn.execute(text("ALTER TABLE content_artifact ADD COLUMN IF NOT EXISTS revision_no INTEGER NOT NULL DEFAULT 1"))
+            conn.execute(text("ALTER TABLE content_artifact ADD COLUMN IF NOT EXISTS revision_reason VARCHAR"))
+            conn.execute(text("ALTER TABLE content_artifact ADD COLUMN IF NOT EXISTS source VARCHAR NOT NULL DEFAULT 'ai_original'"))
+            conn.execute(text("ALTER TABLE content_artifact ADD COLUMN IF NOT EXISTS is_published_version BOOLEAN NOT NULL DEFAULT false"))
+            conn.execute(text("UPDATE content_artifact SET original_artifact_id = artifact_id WHERE original_artifact_id IS NULL"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_artifact_original ON content_artifact (original_artifact_id)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_artifact_parent ON content_artifact (parent_artifact_id)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_artifact_published ON content_artifact (is_published_version)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE content_artifact revision fields failed:", e)
+
+        try:
+            conn.execute(text("ALTER TABLE content_appeal_point ADD COLUMN IF NOT EXISTS admin_review_status VARCHAR"))
+            conn.execute(text("ALTER TABLE content_appeal_point ADD COLUMN IF NOT EXISTS admin_review_note VARCHAR"))
+            conn.execute(text("ALTER TABLE content_appeal_point ADD COLUMN IF NOT EXISTS admin_reviewed_at TIMESTAMPTZ"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE content_appeal_point admin review fields failed:", e)
+
+        try:
+            conn.execute(text("ALTER TABLE content_appeal_evidence ADD COLUMN IF NOT EXISTS is_excluded BOOLEAN NOT NULL DEFAULT false"))
+            conn.execute(text("ALTER TABLE content_appeal_evidence ADD COLUMN IF NOT EXISTS excluded_reason VARCHAR"))
+            conn.execute(text("ALTER TABLE content_appeal_evidence ADD COLUMN IF NOT EXISTS excluded_at TIMESTAMPTZ"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_appeal_evidence_excluded ON content_appeal_evidence (is_excluded)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE content_appeal_evidence exclude fields failed:", e)
+
+        try:
+            conn.execute(
+                text(
+                    "CREATE TABLE IF NOT EXISTS content_sku_asset ("
+                    "asset_id VARCHAR PRIMARY KEY, "
+                    "sku_id VARCHAR NOT NULL, "
+                    "product_url VARCHAR, "
+                    "asset_type VARCHAR NOT NULL DEFAULT 'product_image', "
+                    "asset_group_id VARCHAR, "
+                    "group_name VARCHAR, "
+                    "category VARCHAR, "
+                    "keywords VARCHAR, "
+                    "sku_ids VARCHAR, "
+                    "filename VARCHAR NOT NULL, "
+                    "original_filename VARCHAR, "
+                    "mime_type VARCHAR, "
+                    "file_path VARCHAR NOT NULL, "
+                    "file_url VARCHAR NOT NULL, "
+                    "sort_order INTEGER NOT NULL DEFAULT 0, "
+                    "is_primary BOOLEAN NOT NULL DEFAULT false, "
+                    "analysis_status VARCHAR NOT NULL DEFAULT 'PENDING', "
+                    "analysis_json VARCHAR, "
+                    "error_message VARCHAR, "
+                    "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                    "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
+                    ")"
+                )
+            )
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_sku_asset_sku_type ON content_sku_asset (sku_id, asset_type)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_sku_asset_url_type ON content_sku_asset (product_url, asset_type)"))
+            conn.execute(text("ALTER TABLE content_sku_asset ADD COLUMN IF NOT EXISTS asset_group_id VARCHAR"))
+            conn.execute(text("ALTER TABLE content_sku_asset ADD COLUMN IF NOT EXISTS group_name VARCHAR"))
+            conn.execute(text("ALTER TABLE content_sku_asset ADD COLUMN IF NOT EXISTS category VARCHAR"))
+            conn.execute(text("ALTER TABLE content_sku_asset ADD COLUMN IF NOT EXISTS keywords VARCHAR"))
+            conn.execute(text("ALTER TABLE content_sku_asset ADD COLUMN IF NOT EXISTS sku_ids VARCHAR"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_sku_asset_group_type ON content_sku_asset (asset_group_id, asset_type)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_sku_asset_category_type ON content_sku_asset (category, asset_type)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_sku_asset_primary ON content_sku_asset (sku_id, asset_type, is_primary)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_sku_asset_created ON content_sku_asset (created_at)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("CREATE TABLE content_sku_asset failed:", e)
+
+        try:
+            conn.execute(
+                text(
+                    "CREATE TABLE IF NOT EXISTS content_product_info ("
+                    "sku_id VARCHAR PRIMARY KEY, "
+                    "product_url VARCHAR, "
+                    "full_ingredients VARCHAR, "
+                    "product_items_json VARCHAR, "
+                    "ingredient_note VARCHAR, "
+                    "source_note VARCHAR, "
+                    "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+                    "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
+                    ")"
+                )
+            )
+            conn.execute(text("ALTER TABLE content_product_info ADD COLUMN IF NOT EXISTS product_url VARCHAR"))
+            conn.execute(text("ALTER TABLE content_product_info ADD COLUMN IF NOT EXISTS full_ingredients VARCHAR"))
+            conn.execute(text("ALTER TABLE content_product_info ADD COLUMN IF NOT EXISTS product_items_json VARCHAR"))
+            conn.execute(text("ALTER TABLE content_product_info ADD COLUMN IF NOT EXISTS ingredient_note VARCHAR"))
+            conn.execute(text("ALTER TABLE content_product_info ADD COLUMN IF NOT EXISTS source_note VARCHAR"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_product_info_url ON content_product_info (product_url)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_content_product_info_updated ON content_product_info (updated_at)"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("CREATE TABLE content_product_info failed:", e)
+
+        try:
             conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS style_level INTEGER NOT NULL DEFAULT 3"))
             conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS style_preset_id VARCHAR"))
             conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS style_controls_json VARCHAR"))
             conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS rejection_comment VARCHAR"))
             conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS rejection_analyzed_at TIMESTAMPTZ"))
             conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS rejection_analysis_json VARCHAR"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS original_ai_text VARCHAR"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS lineage_origin VARCHAR"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS human_edit_count INTEGER NOT NULL DEFAULT 0"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS human_edited_at TIMESTAMPTZ"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS approved_text VARCHAR"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS published_text VARCHAR"))
+            conn.execute(text("ALTER TABLE review_reply_draft ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ"))
             conn.commit()
         except Exception as e:  # pragma: no cover
             print("ALTER TABLE review_reply_draft failed:", e)
+
+        try:
+            for column in ("reviewer_uid", "reviewer_email", "reviewer_role", "knowhow_snapshot_json", "corpus_version"):
+                conn.execute(text(f"ALTER TABLE review_reply_knowledge_validation ADD COLUMN IF NOT EXISTS {column} VARCHAR"))
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE review_reply_knowledge_validation failed:", e)
 
         try:
             conn.execute(
@@ -3410,12 +4732,132 @@ def init_db() -> None:
                     "ADD COLUMN IF NOT EXISTS collected_at TIMESTAMPTZ"
                 )
             )
+            conn.execute(
+                text(
+                    """
+                    CREATE TABLE IF NOT EXISTS naver_gfa_creative_detail (
+                        ad_account_no VARCHAR NOT NULL DEFAULT '',
+                        campaign_id VARCHAR NOT NULL DEFAULT '',
+                        adgroup_id VARCHAR NOT NULL DEFAULT '',
+                        creative_id VARCHAR NOT NULL DEFAULT '',
+                        detail_url VARCHAR NOT NULL DEFAULT '',
+                        creative_name VARCHAR NOT NULL DEFAULT '',
+                        creative_type VARCHAR,
+                        profile_name VARCHAR,
+                        profile_image_url VARCHAR,
+                        image_url VARCHAR,
+                        image_path VARCHAR,
+                        primary_text VARCHAR,
+                        headline VARCHAR,
+                        description VARCHAR,
+                        cta VARCHAR,
+                        landing_url VARCHAR,
+                        raw_payload_json VARCHAR,
+                        content_hash VARCHAR,
+                        last_error VARCHAR,
+                        collected_at TIMESTAMPTZ,
+                        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        PRIMARY KEY (ad_account_no, campaign_id, adgroup_id, creative_id)
+                    )
+                    """
+                )
+            )
+            conn.execute(text("ALTER TABLE naver_gfa_creative_detail ADD COLUMN IF NOT EXISTS profile_image_url VARCHAR"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_detail_creative ON naver_gfa_creative_detail (creative_id)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_detail_hash ON naver_gfa_creative_detail (content_hash)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_detail_collected ON naver_gfa_creative_detail (collected_at)"))
+            conn.execute(
+                text(
+                    """
+                    CREATE TABLE IF NOT EXISTS naver_gfa_creative_image_analysis (
+                        creative_id VARCHAR PRIMARY KEY,
+                        image_url VARCHAR,
+                        visual_subjects VARCHAR,
+                        hair_condition_tags VARCHAR,
+                        scene_tags VARCHAR,
+                        emotion_tags VARCHAR,
+                        composition_tags VARCHAR,
+                        color_mood_tags VARCHAR,
+                        product_visibility VARCHAR,
+                        analysis_json VARCHAR,
+                        confidence DOUBLE PRECISION NOT NULL DEFAULT 0,
+                        model_name VARCHAR,
+                        status VARCHAR NOT NULL DEFAULT 'generated',
+                        reviewed_at TIMESTAMPTZ,
+                        analyzed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """
+                )
+            )
+            conn.execute(
+                text(
+                    """
+                    CREATE TABLE IF NOT EXISTS naver_gfa_creative_copy_analysis (
+                        creative_id VARCHAR PRIMARY KEY,
+                        primary_text VARCHAR,
+                        headline VARCHAR,
+                        description VARCHAR,
+                        cta VARCHAR,
+                        core_keywords VARCHAR,
+                        pain_points VARCHAR,
+                        appeal_types VARCHAR,
+                        message_tone VARCHAR,
+                        cta_type VARCHAR,
+                        analysis_json VARCHAR,
+                        confidence DOUBLE PRECISION NOT NULL DEFAULT 0,
+                        model_name VARCHAR,
+                        status VARCHAR NOT NULL DEFAULT 'generated',
+                        reviewed_at TIMESTAMPTZ,
+                        analyzed_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """
+                )
+            )
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_image_analysis_status ON naver_gfa_creative_image_analysis (status)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_image_analysis_analyzed ON naver_gfa_creative_image_analysis (analyzed_at)"))
+            conn.execute(text("ALTER TABLE naver_gfa_creative_image_analysis ADD COLUMN IF NOT EXISTS color_mood_tags VARCHAR"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_copy_analysis_status ON naver_gfa_creative_copy_analysis (status)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_creative_copy_analysis_analyzed ON naver_gfa_creative_copy_analysis (analyzed_at)"))
+            conn.execute(
+                text(
+                    """
+                    CREATE TABLE IF NOT EXISTS naver_gfa_analysis_result (
+                        analysis_id VARCHAR PRIMARY KEY,
+                        latest_key VARCHAR NOT NULL,
+                        analysis_type VARCHAR NOT NULL,
+                        date_from DATE,
+                        date_to DATE,
+                        params_json VARCHAR NOT NULL DEFAULT '{}',
+                        params_hash VARCHAR NOT NULL,
+                        analysis_version VARCHAR NOT NULL,
+                        source_fingerprint VARCHAR NOT NULL,
+                        result_json VARCHAR NOT NULL,
+                        row_count INTEGER NOT NULL DEFAULT 0,
+                        is_latest BOOLEAN NOT NULL DEFAULT TRUE,
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """
+                )
+            )
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_analysis_result_latest ON naver_gfa_analysis_result (latest_key, is_latest)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_analysis_result_type_dates ON naver_gfa_analysis_result (analysis_type, date_from, date_to)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_analysis_result_fingerprint ON naver_gfa_analysis_result (source_fingerprint)"))
+            conn.execute(text("CREATE INDEX IF NOT EXISTS ix_gfa_analysis_result_updated ON naver_gfa_analysis_result (updated_at)"))
 
             # product_id / image_url 컬럼이 없으면 추가
             conn.execute(
                 text(
                     "ALTER TABLE naver_product_rank_daily "
                     "ADD COLUMN IF NOT EXISTS product_id BIGINT"
+                )
+            )
+            conn.execute(
+                text(
+                    "ALTER TABLE naver_product_rank_daily "
+                    "ADD COLUMN IF NOT EXISTS product_url VARCHAR"
                 )
             )
             conn.execute(
@@ -3461,6 +4903,24 @@ def init_db() -> None:
                     "ADD COLUMN IF NOT EXISTS maker VARCHAR"
                 )
             )
+            # CDP rank evidence fields. Keep the original card condition so
+            # ranks can be re-derived without recollecting.
+            for column_sql in (
+                "card_type VARCHAR",
+                "source_type VARCHAR",
+                "sas_type VARCHAR",
+                "channel_product_id VARCHAR",
+                "original_mall_product_id VARCHAR",
+                "nv_mid BIGINT",
+                "rank_source VARCHAR",
+                "card_json TEXT",
+            ):
+                conn.execute(
+                    text(
+                        "ALTER TABLE naver_product_rank_daily "
+                        f"ADD COLUMN IF NOT EXISTS {column_sql}"
+                    )
+                )
 
             # 기존 INTEGER product_id 컬럼이 있을 수 있으므로 BIGINT 로 승격
             try:
@@ -3503,6 +4963,18 @@ def init_db() -> None:
             conn.commit()
         except Exception as e:  # pragma: no cover
             print("ALTER TABLE tracked_product_meta failed:", e)
+
+        # ad_rank_diagnosis_preset: 조건별 광고 기준 순위 컬럼 추가
+        try:
+            conn.execute(
+                text(
+                    "ALTER TABLE ad_rank_diagnosis_preset "
+                    "ADD COLUMN IF NOT EXISTS target_rank INTEGER NOT NULL DEFAULT 20"
+                )
+            )
+            conn.commit()
+        except Exception as e:  # pragma: no cover
+            print("ALTER TABLE ad_rank_diagnosis_preset failed:", e)
 
         # tracked_product_page_daily: 구매/재구매 배지(best-effort) 컬럼 추가
         try:
