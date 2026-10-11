@@ -46,7 +46,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-301',
 					draft_status: 'generated',
 					draft_text: '기존 초안 1',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					last_submit_success: null,
 					last_submit_status_code: null,
 					last_submit_error: null,
@@ -70,7 +70,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-302',
 					draft_status: 'rejected',
 					draft_text: '기존 초안 2',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					last_submit_success: null,
 					last_submit_status_code: null,
 					last_submit_error: null,
@@ -94,7 +94,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-303',
 					draft_status: 'submitted',
 					draft_text: '등록된 답변',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					last_submit_success: true,
 					last_submit_status_code: 200,
 					last_submit_error: null,
@@ -126,12 +126,12 @@ describe('QnaManagementView regenerate/approval', () => {
 			expect(regenerateCalls).toHaveLength(2);
 			expect(regenerateCalls[0]?.[1]).toEqual({
 				qna_key: 'customer:301',
-				model: 'gpt-5.2',
+				model: 'gpt-4o-mini',
 				force_regenerate: true,
 			});
 			expect(regenerateCalls[1]?.[1]).toEqual({
 				qna_key: 'product:302',
-				model: 'gpt-5.2',
+				model: 'gpt-4o-mini',
 				force_regenerate: true,
 			});
 		});
@@ -171,7 +171,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-401',
 					draft_status: 'generated',
 					draft_text: '안녕하세요 고객님, 주문 정보를 확인한 뒤 배송 일정을 다시 안내드리겠습니다.',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					validation_result: {
 						status: 'rewritten_passed',
 						initial_issues: ['근거 없는 확정 표현을 쓰지 마세요.'],
@@ -232,7 +232,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-501',
 					draft_status: 'generated',
 					draft_text: '기존 초안입니다.',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					validation_result: {
 						status: 'needs_recheck',
 						initial_issues: [],
@@ -321,7 +321,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-601',
 					draft_status: 'generated',
 					draft_text: '초안 1',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					validation_result: {
 						status: 'failed',
 						initial_issues: [],
@@ -352,7 +352,7 @@ describe('QnaManagementView regenerate/approval', () => {
 					draft_id: 'draft-602',
 					draft_status: 'generated',
 					draft_text: '초안 2',
-					model_name: 'gpt-5.2',
+					model_name: 'gpt-4o-mini',
 					validation_result: {
 						status: 'needs_recheck',
 						initial_issues: [],

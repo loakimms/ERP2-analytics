@@ -98,7 +98,7 @@ describe('ReviewAnalysisView', () => {
 						draft_id: 'draft-generated',
 						status: 'generated',
 						draft_text: '재생성된 초안입니다.',
-						model_name: body?.model || 'gpt-5.2',
+						model_name: body?.model || 'gpt-4o-mini',
 						generated_now: true,
 						style_level: body?.style_level || 3,
 						style_preset_name: body?.style_level === 6 ? '사용자정의' : '균형형',

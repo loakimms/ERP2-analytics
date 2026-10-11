@@ -425,7 +425,7 @@ describe('ReviewAnalysisView rejection flow', () => {
 						draft_id: 'draft-rewritten-2',
 						status: 'generated',
 						draft_text: '불편을 드려 죄송합니다. 남겨주신 내용을 확인해 더 나은 답변을 드리겠습니다.',
-						model_name: 'gpt-5.2',
+						model_name: 'gpt-4o-mini',
 						generated_now: true,
 						rejection_comment: '공감이 없고 감사만 반복합니다.',
 						rejection_problem_summary: '공감이 빠진 답글 패턴',

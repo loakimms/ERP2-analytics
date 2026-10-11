@@ -1,0 +1,3635 @@
+{
+ "schema": "official_knowledge_units_v2",
+ "registryFile": "official_usage_guide_v2",
+ "extractionVersion": "official_usage_guide_extraction_v2",
+ "sources": [
+  {
+   "sourceId": "sujata_usage_guide_html",
+   "sourceType": "OFFICIAL_HTML_SOURCE",
+   "authorityClass": "OFFICIAL_PRODUCT_GUIDE",
+   "sourceVersion": "sha256:6ebf556af916d3db",
+   "fileName": "수자타헤나 사용가이드_자사몰배포용.html",
+   "sourceHash": "6ebf556af916d3db476dda3316c8ec318475bdfb78ff366a74779c7253fe6a61",
+   "bytes": 5694131,
+   "documentDate": null,
+   "documentDateNote": "원문에 작성일 없음. 작성일을 부여하지 않음.",
+   "locationScheme": "quotes[].offset = UTF-8 디코딩 문자열의 문자 위치(Python str index)",
+   "excludedFiles": [
+    "수자타헤나 사용가이드 PC_old(사용금지).html",
+    "수자타헤나 사용가이드_전체배포용.html (동일 안내, 구매처 링크만 다름)",
+    "이미지 파일"
+   ],
+   "units": [
+    {
+     "unitKey": "html:product:수자타 레드",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5435750,
+        "text": "수자타 레드"
+       },
+       {
+        "offset": 5435760,
+        "text": "따뜻한 오렌지·레드 계열의 기본 헤나"
+       }
+      ]
+     },
+     "originalText": "수자타 레드 / 따뜻한 오렌지·레드 계열의 기본 헤나",
+     "productScope": [
+      "수자타 레드"
+     ],
+     "products": [
+      "레드 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:수자타 브라운",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5435796,
+        "text": "수자타 브라운"
+       },
+       {
+        "offset": 5435807,
+        "text": "갈색과 흑갈색 톤을 위한 브라운 계열"
+       }
+      ]
+     },
+     "originalText": "수자타 브라운 / 갈색과 흑갈색 톤을 위한 브라운 계열",
+     "productScope": [
+      "수자타 브라운"
+     ],
+     "products": [
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:수자타 내추럴",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5435843,
+        "text": "수자타 내추럴"
+       },
+       {
+        "offset": 5435854,
+        "text": "컬러 부담 없이 사용하는 기본 케어"
+       }
+      ]
+     },
+     "originalText": "수자타 내추럴 / 컬러 부담 없이 사용하는 기본 케어",
+     "productScope": [
+      "수자타 내추럴"
+     ],
+     "products": [],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 제품 태그가 없어 어떤 개별 안내의 근거로도 연결되지 않음(염색 시간·색상 연결 금지)."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:두피 케어 헤어팩",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5435889,
+        "text": "두피 케어 헤어팩"
+       },
+       {
+        "offset": 5435902,
+        "text": "두피 컨디션을 편안하게 관리하는 케어 제품"
+       }
+      ]
+     },
+     "originalText": "두피 케어 헤어팩 / 두피 컨디션을 편안하게 관리하는 케어 제품",
+     "productScope": [
+      "두피 케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:딥클린 헤어팩",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5435941,
+        "text": "딥클린 헤어팩"
+       },
+       {
+        "offset": 5435952,
+        "text": "두피와 모발을 산뜻하게 정돈하는 케어 제품"
+       }
+      ]
+     },
+     "originalText": "딥클린 헤어팩 / 두피와 모발을 산뜻하게 정돈하는 케어 제품",
+     "productScope": [
+      "딥클린 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:볼륨업 헤어팩",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5435991,
+        "text": "볼륨업 헤어팩"
+       },
+       {
+        "offset": 5436002,
+        "text": "가는 모발과 뿌리 볼륨 연출을 돕는 케어 제품"
+       }
+      ]
+     },
+     "originalText": "볼륨업 헤어팩 / 가는 모발과 뿌리 볼륨 연출을 돕는 케어 제품",
+     "productScope": [
+      "볼륨업 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:손상케어 헤어팩",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5436043,
+        "text": "손상케어 헤어팩"
+       },
+       {
+        "offset": 5436055,
+        "text": "건조하고 푸석한 모발을 부드럽게 관리하는 케어 제품"
+       }
+      ]
+     },
+     "originalText": "손상케어 헤어팩 / 건조하고 푸석한 모발을 부드럽게 관리하는 케어 제품",
+     "productScope": [
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:맥주효모 샴푸",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5436099,
+        "text": "맥주효모 샴푸"
+       },
+       {
+        "offset": 5436110,
+        "text": "헤나 전후 세정 보조 제품"
+       }
+      ]
+     },
+     "originalText": "맥주효모 샴푸 / 헤나 전후 세정 보조 제품",
+     "productScope": [
+      "맥주효모 샴푸"
+     ],
+     "products": [
+      "맥주효모 샴푸"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:product:호호바 오일",
+     "factType": "PRODUCT_DESCRIPTION",
+     "kind": "variant",
+     "sourceLocation": {
+      "section": "productLabel",
+      "quotes": [
+       {
+        "offset": 5436140,
+        "text": "호호바 오일"
+       },
+       {
+        "offset": 5436150,
+        "text": "헤어라인 보호와 마무리 보습"
+       }
+      ]
+     },
+     "originalText": "호호바 오일 / 헤어라인 보호와 마무리 보습",
+     "productScope": [
+      "호호바 오일"
+     ],
+     "products": [
+      "호호바 오일"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:procedure:order",
+     "factType": "PROCEDURE_ORDER",
+     "kind": "procedure",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 01~07",
+      "quotes": [
+       {
+        "offset": 5684424,
+        "text": "마요네즈 농도로 반죽하기"
+       },
+       {
+        "offset": 5684479,
+        "text": "샴푸로 깨끗이 감기"
+       },
+       {
+        "offset": 5684535,
+        "text": "젖은 머리에 반죽 바르기"
+       },
+       {
+        "offset": 5684590,
+        "text": "헤어캡 쓰고 기다리기"
+       },
+       {
+        "offset": 5684648,
+        "text": "충분한 시간 두기"
+       },
+       {
+        "offset": 5684706,
+        "text": "샴푸 후 충분히 헹구기"
+       },
+       {
+        "offset": 5684755,
+        "text": "드라이로 잘 말리기"
+       }
+      ]
+     },
+     "originalText": "마요네즈 농도로 반죽하기 / 샴푸로 깨끗이 감기 / 젖은 머리에 반죽 바르기 / 헤어캡 쓰고 기다리기 / 충분한 시간 두기 / 샴푸 후 충분히 헹구기 / 드라이로 잘 말리기",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": [
+      {
+       "order": 1,
+       "action": "마요네즈 농도로 반죽하기"
+      },
+      {
+       "order": 2,
+       "action": "샴푸로 깨끗이 감기"
+      },
+      {
+       "order": 3,
+       "action": "젖은 머리에 반죽 바르기"
+      },
+      {
+       "order": 4,
+       "action": "헤어캡 쓰고 기다리기"
+      },
+      {
+       "order": 5,
+       "action": "충분한 시간 두기"
+      },
+      {
+       "order": 6,
+       "action": "샴푸 후 충분히 헹구기"
+      },
+      {
+       "order": 7,
+       "action": "드라이로 잘 말리기"
+      }
+     ],
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:01",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 01",
+      "quotes": [
+       {
+        "offset": 5684424,
+        "text": "마요네즈 농도로 반죽하기"
+       },
+       {
+        "offset": 5684440,
+        "text": "물은 한 번에 붓지 말고 조금씩 넣어 부드럽게 섞어주세요."
+       }
+      ]
+     },
+     "originalText": "마요네즈 농도로 반죽하기 / 물은 한 번에 붓지 말고 조금씩 넣어 부드럽게 섞어주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:02",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 02",
+      "quotes": [
+       {
+        "offset": 5684479,
+        "text": "샴푸로 깨끗이 감기"
+       },
+       {
+        "offset": 5684492,
+        "text": "린스나 컨디셔너 없이 샴푸만 사용한 뒤 물기를 가볍게 남겨주세요."
+       }
+      ]
+     },
+     "originalText": "샴푸로 깨끗이 감기 / 린스나 컨디셔너 없이 샴푸만 사용한 뒤 물기를 가볍게 남겨주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:03",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 03",
+      "quotes": [
+       {
+        "offset": 5684535,
+        "text": "젖은 머리에 반죽 바르기"
+       },
+       {
+        "offset": 5684551,
+        "text": "모발과 두피 가까운 부분에 충분한 양을 골고루 발라주세요."
+       }
+      ]
+     },
+     "originalText": "젖은 머리에 반죽 바르기 / 모발과 두피 가까운 부분에 충분한 양을 골고루 발라주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:04",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 04",
+      "quotes": [
+       {
+        "offset": 5684590,
+        "text": "헤어캡 쓰고 기다리기"
+       },
+       {
+        "offset": 5684604,
+        "text": "반죽이 마르지 않도록 헤어캡을 쓰고 안내 시간에 맞춰 기다려주세요."
+       }
+      ]
+     },
+     "originalText": "헤어캡 쓰고 기다리기 / 반죽이 마르지 않도록 헤어캡을 쓰고 안내 시간에 맞춰 기다려주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:05",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 05",
+      "quotes": [
+       {
+        "offset": 5684648,
+        "text": "충분한 시간 두기"
+       },
+       {
+        "offset": 5684660,
+        "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+       }
+      ]
+     },
+     "originalText": "충분한 시간 두기 / 처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:06",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 06",
+      "quotes": [
+       {
+        "offset": 5684706,
+        "text": "샴푸 후 충분히 헹구기"
+       },
+       {
+        "offset": 5684721,
+        "text": "반죽이 남지 않도록 미온수로 꼼꼼하게 헹궈주세요."
+       }
+      ]
+     },
+     "originalText": "샴푸 후 충분히 헹구기 / 반죽이 남지 않도록 미온수로 꼼꼼하게 헹궈주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:step:07",
+     "factType": "PROCEDURE_STEP",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 07",
+      "quotes": [
+       {
+        "offset": 5684755,
+        "text": "드라이로 잘 말리기"
+       },
+       {
+        "offset": 5684768,
+        "text": "수건으로 물기를 줄인 뒤 드라이로 전체를 잘 말려주세요."
+       }
+      ]
+     },
+     "originalText": "드라이로 잘 말리기 / 수건으로 물기를 줄인 뒤 드라이로 전체를 잘 말려주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:tip:paste",
+     "factType": "APPLICATION_TIP",
+     "kind": "tip",
+     "sourceLocation": {
+      "section": "사진처럼 쉽게 따라 하세요",
+      "quotes": [
+       {
+        "offset": 5683613,
+        "text": "반죽 농도"
+       },
+       {
+        "offset": 5683681,
+        "text": "너무 되거나 묽지 않게, 마요네즈처럼 부드럽게 맞춥니다."
+       }
+      ]
+     },
+     "originalText": "반죽 농도 / 너무 되거나 묽지 않게, 마요네즈처럼 부드럽게 맞춥니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:tip:amount",
+     "factType": "APPLICATION_TIP",
+     "kind": "tip",
+     "sourceLocation": {
+      "section": "사진처럼 쉽게 따라 하세요",
+      "quotes": [
+       {
+        "offset": 5683940,
+        "text": "충분한 도포량"
+       },
+       {
+        "offset": 5684010,
+        "text": "모발과 두피 가까운 부분까지 빈 곳 없이 바릅니다."
+       }
+      ]
+     },
+     "originalText": "충분한 도포량 / 모발과 두피 가까운 부분까지 빈 곳 없이 바릅니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:tip:split",
+     "factType": "APPLICATION_TIP",
+     "kind": "tip",
+     "sourceLocation": {
+      "section": "사진처럼 쉽게 따라 하세요",
+      "quotes": [
+       {
+        "offset": 5684268,
+        "text": "나눠서 바르기"
+       },
+       {
+        "offset": 5684338,
+        "text": "전체 도포는 손으로, 뿌리 부분은 빗솔로 나눠 바릅니다."
+       }
+      ]
+     },
+     "originalText": "나눠서 바르기 / 전체 도포는 손으로, 뿌리 부분은 빗솔로 나눠 바릅니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:duration:dye",
+     "factType": "STANDARD_DURATION",
+     "kind": "duration",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 05 배지",
+      "quotes": [
+       {
+        "offset": 5684648,
+        "text": "충분한 시간 두기"
+       },
+       {
+        "offset": 5448687,
+        "text": "염색약 - 2시간"
+       }
+      ]
+     },
+     "originalText": "충분한 시간 두기 / 염색약 - 2시간",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": "'염색약'은 진단 추천 로직의 염색 제품(수자타 레드·수자타 브라운)으로 한정. 수자타 내추럴은 염색 추천 로직에 등장하지 않음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 2,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [
+      "2|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      },
+      {
+       "unitKey": "html:step:04",
+       "text": "반죽이 마르지 않도록 헤어캡을 쓰고 안내 시간에 맞춰 기다려주세요."
+      },
+      {
+       "unitKey": "html:limitation:diagnosis-notice",
+       "text": "본 진단은 일반적인 제품 선택 가이드입니다. 색상과 사용감은 개인의 모발 상태, 사용량, 방치 시간에 따라 달라질 수 있습니다."
+      }
+     ],
+     "notes": [
+      "원문은 단독·혼합·순차 사용을 구분하지 않음. 순차 사용의 단계별 시간 근거로 쓰지 않음.",
+      "3시간·2~3시간은 원문에 없음."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:duration:pack",
+     "factType": "STANDARD_DURATION",
+     "kind": "duration",
+     "sourceLocation": {
+      "section": "사용 방법 STEP 05 배지",
+      "quotes": [
+       {
+        "offset": 5684648,
+        "text": "충분한 시간 두기"
+       },
+       {
+        "offset": 5448727,
+        "text": "헤어팩 - 1시간"
+       }
+      ]
+     },
+     "originalText": "충분한 시간 두기 / 헤어팩 - 1시간",
+     "productScope": [
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 1,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [
+      "1|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      },
+      {
+       "unitKey": "html:step:04",
+       "text": "반죽이 마르지 않도록 헤어캡을 쓰고 안내 시간에 맞춰 기다려주세요."
+      },
+      {
+       "unitKey": "html:limitation:diagnosis-notice",
+       "text": "본 진단은 일반적인 제품 선택 가이드입니다. 색상과 사용감은 개인의 모발 상태, 사용량, 방치 시간에 따라 달라질 수 있습니다."
+      }
+     ],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:ratio:orange",
+     "factType": "RATIO",
+     "kind": "ratio",
+     "sourceLocation": {
+      "section": "진단 추천 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5442105,
+        "text": "오렌지 레드"
+       },
+       {
+        "offset": 5442121,
+        "text": "레드 100%"
+       },
+       {
+        "offset": 5445097,
+        "text": "수자타 레드만 반죽해 사용하세요."
+       }
+      ]
+     },
+     "originalText": "오렌지 레드 / 레드 100% / 수자타 레드만 반죽해 사용하세요.",
+     "productScope": [
+      "수자타 레드"
+     ],
+     "products": [
+      "레드 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "single"
+     ],
+     "condition": "원하는 색상: 오렌지 레드",
+     "conditionBasis": "진단에서 '원하는 색상' 선택(염색 목적)",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:ratio:red_brown",
+     "factType": "RATIO",
+     "kind": "ratio",
+     "sourceLocation": {
+      "section": "진단 추천 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5442160,
+        "text": "붉은 갈색"
+       },
+       {
+        "offset": 5442175,
+        "text": "레드 50% + 브라운 50%"
+       },
+       {
+        "offset": 5445133,
+        "text": "비율로 섞어 반죽해 사용하세요."
+       }
+      ]
+     },
+     "originalText": "붉은 갈색 / 레드 50% + 브라운 50% / 비율로 섞어 반죽해 사용하세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "mixed"
+     ],
+     "condition": "원하는 색상: 붉은 갈색",
+     "conditionBasis": "진단에서 '원하는 색상' 선택(염색 목적)",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": [
+      "1:1|RATIO"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "진단 코드는 색상 미선택 시 이 배합을 기본값으로 사용(코드 관찰, 고객 안내 문구 아님)."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:ratio:natural_brown",
+     "factType": "RATIO",
+     "kind": "ratio",
+     "sourceLocation": {
+      "section": "진단 추천 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5442226,
+        "text": "연한 갈색"
+       },
+       {
+        "offset": 5442241,
+        "text": "레드 20% + 브라운 80%"
+       },
+       {
+        "offset": 5445133,
+        "text": "비율로 섞어 반죽해 사용하세요."
+       }
+      ]
+     },
+     "originalText": "연한 갈색 / 레드 20% + 브라운 80% / 비율로 섞어 반죽해 사용하세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "mixed"
+     ],
+     "condition": "원하는 색상: 연한 갈색",
+     "conditionBasis": "진단에서 '원하는 색상' 선택(염색 목적)",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": [
+      "1:4|RATIO"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:sequence:dark_brown",
+     "factType": "SEQUENTIAL_APPLICATION",
+     "kind": "sequence",
+     "sourceLocation": {
+      "section": "진단 추천 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5442296,
+        "text": "진한 흑갈색"
+       },
+       {
+        "offset": 5442312,
+        "text": "레드 후 브라운 2단계"
+       },
+       {
+        "offset": 5445036,
+        "text": "1차 레드 도포 후 헹구고, 2차 브라운을 다시 도포하세요."
+       },
+       {
+        "offset": 5444632,
+        "text": "1차 색감 형성을 위한 단계로 사용합니다."
+       },
+       {
+        "offset": 5444848,
+        "text": "2차 진한 흑갈색 톤을 맞추는 단계로 사용합니다."
+       }
+      ]
+     },
+     "originalText": "진한 흑갈색 / 레드 후 브라운 2단계 / 1차 레드 도포 후 헹구고, 2차 브라운을 다시 도포하세요. / 1차 색감 형성을 위한 단계로 사용합니다. / 2차 진한 흑갈색 톤을 맞추는 단계로 사용합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "sequential"
+     ],
+     "condition": "원하는 색상: 진한 흑갈색",
+     "conditionBasis": "진단에서 '원하는 색상' 선택(염색 목적)",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": [
+      {
+       "order": 1,
+       "product": "레드 헤나",
+       "action": "1차 레드 도포 후 헹굼",
+       "duration": "UNKNOWN"
+      },
+      {
+       "order": 2,
+       "product": "브라운 헤나",
+       "action": "2차 브라운을 다시 도포",
+       "duration": "UNKNOWN"
+      }
+     ],
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "단계별 사용 시간은 원문에 없음(UNKNOWN). 단계별 시간은 운영자 확인 자료에서만 별도 관리."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:faq:gray_or_dark_brown_sequence",
+     "factType": "SEQUENTIAL_APPLICATION",
+     "kind": "sequence",
+     "sourceLocation": {
+      "section": "Q&A 상담",
+      "quotes": [
+       {
+        "offset": 5446021,
+        "text": "흰머리가 많으면 어떻게 하나요?"
+       },
+       {
+        "offset": 5446045,
+        "text": "흰머리가 많거나 진한 흑갈색을 원하면 1차 레드, 2차 브라운 순서로 안내합니다. 색상은 모발 상태와 사용 방법에 따라 개인차가 있을 수 있습니다."
+       }
+      ]
+     },
+     "originalText": "흰머리가 많으면 어떻게 하나요? / 흰머리가 많거나 진한 흑갈색을 원하면 1차 레드, 2차 브라운 순서로 안내합니다. 색상은 모발 상태와 사용 방법에 따라 개인차가 있을 수 있습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "sequential"
+     ],
+     "condition": "흰머리가 많거나 진한 흑갈색을 원하는 경우",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": [
+      {
+       "order": 1,
+       "product": "레드 헤나",
+       "action": "1차 레드",
+       "duration": "UNKNOWN"
+      },
+      {
+       "order": 2,
+       "product": "브라운 헤나",
+       "action": "2차 브라운",
+       "duration": "UNKNOWN"
+      }
+     ],
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [
+      "색상은 모발 상태와 사용 방법에 따라 개인차가 있을 수 있습니다."
+     ],
+     "qualifiers": [],
+     "notes": [
+      "진단 로직은 '진한 흑갈색' 선택에만 2단계를 적용하고, 흰머리 많음은 주의 문구만 추가함. FAQ와 조건 범위가 다르므로 두 항목을 병합하지 않음."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:packmix:single",
+     "factType": "MIXING_RULE",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "진단 케어 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5443757,
+        "text": "단독 사용"
+       },
+       {
+        "offset": 5443945,
+        "text": "해당 제품을 단독으로 반죽해 사용하세요."
+       }
+      ]
+     },
+     "originalText": "단독 사용 / 해당 제품을 단독으로 반죽해 사용하세요.",
+     "productScope": [
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "선택된 케어 제품 1개",
+     "conditionBasis": "진단 '두피·모발 케어' 목적에서 선택된 케어 제품 수",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:packmix:two",
+     "factType": "MIXING_RULE",
+     "kind": "ratio",
+     "sourceLocation": {
+      "section": "진단 케어 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5443996,
+        "text": "두 제품을 50:50으로 섞어 반죽해 사용하세요."
+       }
+      ]
+     },
+     "originalText": "두 제품을 50:50으로 섞어 반죽해 사용하세요.",
+     "productScope": [
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "선택된 케어 제품 2개",
+     "conditionBasis": "진단 '두피·모발 케어' 목적에서 선택된 케어 제품 수",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": [
+      "1:1|RATIO"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:packmix:three_plus",
+     "factType": "MIXING_RULE",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "진단 케어 배합 (buildRecommendation)",
+      "quotes": [
+       {
+        "offset": 5443887,
+        "text": "같은 비율"
+       },
+       {
+        "offset": 5444028,
+        "text": "선택된 제품을 같은 비율로 나눠 섞어 사용하세요."
+       }
+      ]
+     },
+     "originalText": "같은 비율 / 선택된 제품을 같은 비율로 나눠 섞어 사용하세요.",
+     "productScope": [
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "선택된 케어 제품 3개 이상",
+     "conditionBasis": "진단 '두피·모발 케어' 목적에서 선택된 케어 제품 수 (코드 분기: 1개·2개가 아닌 경우)",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:01",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436250,
+        "text": "두피가 자주 가렵고 열감이 느껴져요"
+       },
+       {
+        "offset": 5436279,
+        "text": "두피 케어 헤어팩"
+       }
+      ]
+     },
+     "originalText": "두피가 자주 가렵고 열감이 느껴져요 / 두피 케어 헤어팩",
+     "productScope": [
+      "두피 케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 두피가 자주 가렵고 열감이 느껴져요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:02",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436373,
+        "text": "비듬이 자주 보이고 냄새가 신경 쓰여요"
+       },
+       {
+        "offset": 5436404,
+        "text": "두피 케어 헤어팩"
+       }
+      ]
+     },
+     "originalText": "비듬이 자주 보이고 냄새가 신경 쓰여요 / 두피 케어 헤어팩",
+     "productScope": [
+      "두피 케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 비듬이 자주 보이고 냄새가 신경 쓰여요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:03",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436502,
+        "text": "두피가 쉽게 예민해지는 편이에요"
+       },
+       {
+        "offset": 5436529,
+        "text": "두피 케어 헤어팩"
+       }
+      ]
+     },
+     "originalText": "두피가 쉽게 예민해지는 편이에요 / 두피 케어 헤어팩",
+     "productScope": [
+      "두피 케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 두피가 쉽게 예민해지는 편이에요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:04",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436628,
+        "text": "두피와 모발이 금방 기름져요"
+       },
+       {
+        "offset": 5436653,
+        "text": "딥클린 헤어팩"
+       }
+      ]
+     },
+     "originalText": "두피와 모발이 금방 기름져요 / 딥클린 헤어팩",
+     "productScope": [
+      "딥클린 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 두피와 모발이 금방 기름져요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:05",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436742,
+        "text": "각질과 노폐물이 남은 느낌이 있어요"
+       },
+       {
+        "offset": 5436771,
+        "text": "딥클린 헤어팩"
+       }
+      ]
+     },
+     "originalText": "각질과 노폐물이 남은 느낌이 있어요 / 딥클린 헤어팩",
+     "productScope": [
+      "딥클린 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 각질과 노폐물이 남은 느낌이 있어요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:06",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436862,
+        "text": "샴푸 후에도 개운함이 부족해요"
+       },
+       {
+        "offset": 5436888,
+        "text": "딥클린 헤어팩"
+       }
+      ]
+     },
+     "originalText": "샴푸 후에도 개운함이 부족해요 / 딥클린 헤어팩",
+     "productScope": [
+      "딥클린 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 샴푸 후에도 개운함이 부족해요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:07",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5436980,
+        "text": "정수리 볼륨이 쉽게 꺼져요"
+       },
+       {
+        "offset": 5437004,
+        "text": "볼륨업 헤어팩"
+       }
+      ]
+     },
+     "originalText": "정수리 볼륨이 쉽게 꺼져요 / 볼륨업 헤어팩",
+     "productScope": [
+      "볼륨업 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 정수리 볼륨이 쉽게 꺼져요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:08",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5437097,
+        "text": "모발이 가늘고 힘이 없어 보여요"
+       },
+       {
+        "offset": 5437124,
+        "text": "볼륨업 헤어팩"
+       }
+      ]
+     },
+     "originalText": "모발이 가늘고 힘이 없어 보여요 / 볼륨업 헤어팩",
+     "productScope": [
+      "볼륨업 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 모발이 가늘고 힘이 없어 보여요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:09",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5437217,
+        "text": "전체적으로 풍성해 보였으면 해요"
+       },
+       {
+        "offset": 5437244,
+        "text": "볼륨업 헤어팩"
+       }
+      ]
+     },
+     "originalText": "전체적으로 풍성해 보였으면 해요 / 볼륨업 헤어팩",
+     "productScope": [
+      "볼륨업 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 전체적으로 풍성해 보였으면 해요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:10",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5437337,
+        "text": "염색·펌 후 모발이 푸석해 보여요"
+       },
+       {
+        "offset": 5437365,
+        "text": "손상케어 헤어팩"
+       }
+      ]
+     },
+     "originalText": "염색·펌 후 모발이 푸석해 보여요 / 손상케어 헤어팩",
+     "productScope": [
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 염색·펌 후 모발이 푸석해 보여요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:11",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5437459,
+        "text": "끝부분이 건조하고 거칠게 느껴져요"
+       },
+       {
+        "offset": 5437487,
+        "text": "손상케어 헤어팩"
+       }
+      ]
+     },
+     "originalText": "끝부분이 건조하고 거칠게 느껴져요 / 손상케어 헤어팩",
+     "productScope": [
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 끝부분이 건조하고 거칠게 느껴져요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:care:12",
+     "factType": "RECOMMENDATION",
+     "kind": "recommendation",
+     "sourceLocation": {
+      "section": "CARE_OPTIONS",
+      "quotes": [
+       {
+        "offset": 5437580,
+        "text": "윤기와 부드러움이 부족해 보여요"
+       },
+       {
+        "offset": 5437607,
+        "text": "손상케어 헤어팩"
+       }
+      ]
+     },
+     "originalText": "윤기와 부드러움이 부족해 보여요 / 손상케어 헤어팩",
+     "productScope": [
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "고민 선택: 윤기와 부드러움이 부족해 보여요",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "추출기 태그 '헤어팩'은 4종을 구분하지 못함. 효능 표현 정확성 미확인."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:amount:짧은 머리",
+     "factType": "USAGE_AMOUNT",
+     "kind": "amount",
+     "sourceLocation": {
+      "section": "진단 질문: 머리 길이",
+      "quotes": [
+       {
+        "offset": 5439950,
+        "text": "구매 수량 계산에 사용됩니다."
+       },
+       {
+        "offset": 5439989,
+        "text": "짧은 머리"
+       },
+       {
+        "offset": 5440004,
+        "text": "약 1/2봉 사용"
+       }
+      ]
+     },
+     "originalText": "구매 수량 계산에 사용됩니다. / 짧은 머리 / 약 1/2봉 사용",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "머리 길이: 짧은 머리",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 0.5,
+     "numericRange": null,
+     "unit": "봉",
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:amount:단발",
+     "factType": "USAGE_AMOUNT",
+     "kind": "amount",
+     "sourceLocation": {
+      "section": "진단 질문: 머리 길이",
+      "quotes": [
+       {
+        "offset": 5439950,
+        "text": "구매 수량 계산에 사용됩니다."
+       },
+       {
+        "offset": 5440044,
+        "text": "단발"
+       },
+       {
+        "offset": 5440056,
+        "text": "약 1봉 사용"
+       }
+      ]
+     },
+     "originalText": "구매 수량 계산에 사용됩니다. / 단발 / 약 1봉 사용",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "머리 길이: 단발",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 1,
+     "numericRange": null,
+     "unit": "봉",
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:amount:어깨 길이",
+     "factType": "USAGE_AMOUNT",
+     "kind": "amount",
+     "sourceLocation": {
+      "section": "진단 질문: 머리 길이",
+      "quotes": [
+       {
+        "offset": 5439950,
+        "text": "구매 수량 계산에 사용됩니다."
+       },
+       {
+        "offset": 5440095,
+        "text": "어깨 길이"
+       },
+       {
+        "offset": 5440110,
+        "text": "약 2봉 사용"
+       }
+      ]
+     },
+     "originalText": "구매 수량 계산에 사용됩니다. / 어깨 길이 / 약 2봉 사용",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "머리 길이: 어깨 길이",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 2,
+     "numericRange": null,
+     "unit": "봉",
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:amount:긴 머리",
+     "factType": "USAGE_AMOUNT",
+     "kind": "amount",
+     "sourceLocation": {
+      "section": "진단 질문: 머리 길이",
+      "quotes": [
+       {
+        "offset": 5439950,
+        "text": "구매 수량 계산에 사용됩니다."
+       },
+       {
+        "offset": 5440151,
+        "text": "긴 머리"
+       },
+       {
+        "offset": 5440165,
+        "text": "약 2~3봉 사용"
+       }
+      ]
+     },
+     "originalText": "구매 수량 계산에 사용됩니다. / 긴 머리 / 약 2~3봉 사용",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "머리 길이: 긴 머리",
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": {
+      "min": 2,
+      "max": 3
+     },
+     "unit": "봉",
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "진단 코드 내부 계산값은 2.5봉(코드 관찰). 고객 안내 문구는 '약 2~3봉'."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:faq:amount",
+     "factType": "USAGE_AMOUNT",
+     "kind": "amount",
+     "sourceLocation": {
+      "section": "Q&A 상담",
+      "quotes": [
+       {
+        "offset": 5446167,
+        "text": "몇 개를 사야 하나요?"
+       },
+       {
+        "offset": 5446186,
+        "text": "짧은 머리는 약 1/2봉, 단발은 1봉, 어깨 길이는 2봉, 긴 머리는 2~3봉을 기준으로 계산합니다. 섞어 쓰는 색상은 제품 종류별로 최소 1개가 필요할 수 있습니다."
+       }
+      ]
+     },
+     "originalText": "몇 개를 사야 하나요? / 짧은 머리는 약 1/2봉, 단발은 1봉, 어깨 길이는 2봉, 긴 머리는 2~3봉을 기준으로 계산합니다. 섞어 쓰는 색상은 제품 종류별로 최소 1개가 필요할 수 있습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": "봉",
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "'2~3봉'은 사용량이며 사용 시간이 아님."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:patch-test",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "진단 결과: 사용 전 꼭 확인하세요",
+      "quotes": [
+       {
+        "offset": 5442937,
+        "text": "사용 전 팔 안쪽 패치 테스트와 작은 모발 테스트를 먼저 권장합니다."
+       }
+      ]
+     },
+     "originalText": "사용 전 팔 안쪽 패치 테스트와 작은 모발 테스트를 먼저 권장합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "모든 진단 결과(염색·케어)에 기본 포함",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:bleached",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "진단 결과: 사용 전 꼭 확인하세요",
+      "quotes": [
+       {
+        "offset": 5445255,
+        "text": "탈색·하이라이트 모발은 색이 강하거나 얼룩질 수 있으니 전체 사용 전 모발 테스트가 필요합니다."
+       }
+      ]
+     },
+     "originalText": "탈색·하이라이트 모발은 색이 강하거나 얼룩질 수 있으니 전체 사용 전 모발 테스트가 필요합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "염색 목적 + 최근 시술 또는 현재 머리색이 탈색·하이라이트",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:gray-high",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "진단 결과: 사용 전 꼭 확인하세요",
+      "quotes": [
+       {
+        "offset": 5445370,
+        "text": "흰머리가 많은 경우 충분한 도포량과 방치 시간을 지켜 주세요."
+       }
+      ]
+     },
+     "originalText": "흰머리가 많은 경우 충분한 도포량과 방치 시간을 지켜 주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "염색 목적 + 흰머리 비율 '많이 있음(전체의 70% 이상)'",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:sensitive",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "진단 결과: 사용 전 꼭 확인하세요",
+      "quotes": [
+       {
+        "offset": 5445468,
+        "text": "피부가 예민하다면 먼저 짧은 시간으로 테스트하고 불편감이 있으면 사용을 중단하세요."
+       }
+      ]
+     },
+     "originalText": "피부가 예민하다면 먼저 짧은 시간으로 테스트하고 불편감이 있으면 사용을 중단하세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "염색 목적 + 두피 '예민한 편입니다' 선택",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:current-color",
+     "factType": "CONDITION",
+     "kind": "condition",
+     "sourceLocation": {
+      "section": "진단 질문",
+      "quotes": [
+       {
+        "offset": 5441078,
+        "text": "헤나 컬러는 현재 색에 따라 결과가 달라질 수 있습니다."
+       }
+      ]
+     },
+     "originalText": "헤나 컬러는 현재 색에 따라 결과가 달라질 수 있습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "진단 질문: 현재 머리색 안내문",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:gray-test-time",
+     "factType": "CONDITION",
+     "kind": "condition",
+     "sourceLocation": {
+      "section": "진단 질문",
+      "quotes": [
+       {
+        "offset": 5441463,
+        "text": "흰머리가 많을수록 테스트와 충분한 시간이 중요합니다."
+       }
+      ]
+     },
+     "originalText": "흰머리가 많을수록 테스트와 충분한 시간이 중요합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "진단 질문: 흰머리 비율 안내문",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:caution:bleach-check",
+     "factType": "CONDITION",
+     "kind": "condition",
+     "sourceLocation": {
+      "section": "진단 질문",
+      "quotes": [
+       {
+        "offset": 5441753,
+        "text": "탈색모는 색이 다르게 나올 수 있어 꼭 확인이 필요합니다."
+       }
+      ]
+     },
+     "originalText": "탈색모는 색이 다르게 나올 수 있어 꼭 확인이 필요합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": "진단 질문: 최근 염색·탈색 안내문",
+     "conditionBasis": "HTML 진단 로직 분기",
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:faq:first-use",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "Q&A 상담",
+      "quotes": [
+       {
+        "offset": 5445881,
+        "text": "처음 쓰는데 무엇부터 하면 되나요?"
+       },
+       {
+        "offset": 5445907,
+        "text": "먼저 맞춤진단을 하고, 추천 결과에서 필수 제품만 확인하세요. 사용 전에는 팔 안쪽 패치 테스트와 작은 모발 테스트를 먼저 하시면 좋습니다."
+       }
+      ]
+     },
+     "originalText": "처음 쓰는데 무엇부터 하면 되나요? / 먼저 맞춤진단을 하고, 추천 결과에서 필수 제품만 확인하세요. 사용 전에는 팔 안쪽 패치 테스트와 작은 모발 테스트를 먼저 하시면 좋습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:faq:sensitive-skin",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "Q&A 상담",
+      "quotes": [
+       {
+        "offset": 5446321,
+        "text": "피부가 예민하면 어떻게 하나요?"
+       },
+       {
+        "offset": 5446345,
+        "text": "사용 전 팔 안쪽에 소량을 발라 피부 반응을 먼저 확인하세요. 따가움, 붉어짐, 가려움 등 불편감이 있으면 사용하지 않는 것이 좋습니다."
+       }
+      ]
+     },
+     "originalText": "피부가 예민하면 어떻게 하나요? / 사용 전 팔 안쪽에 소량을 발라 피부 반응을 먼저 확인하세요. 따가움, 붉어짐, 가려움 등 불편감이 있으면 사용하지 않는 것이 좋습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:faq:bleached-hair",
+     "factType": "CAUTION",
+     "kind": "caution",
+     "sourceLocation": {
+      "section": "Q&A 상담",
+      "quotes": [
+       {
+        "offset": 5446576,
+        "text": "탈색모에도 사용할 수 있나요?"
+       },
+       {
+        "offset": 5446599,
+        "text": "탈색모는 색이 강하게 나오거나 얼룩질 수 있습니다. 전체 도포 전 잘 보이지 않는 모발 한 가닥으로 테스트해 주세요."
+       }
+      ]
+     },
+     "originalText": "탈색모에도 사용할 수 있나요? / 탈색모는 색이 강하게 나오거나 얼룩질 수 있습니다. 전체 도포 전 잘 보이지 않는 모발 한 가닥으로 테스트해 주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": "'염색약'은 진단 추천 로직의 염색 제품(수자타 레드·수자타 브라운)으로 한정. 수자타 내추럴은 염색 추천 로직에 등장하지 않음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:faq:rinse-shampoo",
+     "factType": "RINSE",
+     "kind": "procedure_step",
+     "sourceLocation": {
+      "section": "Q&A 상담",
+      "quotes": [
+       {
+        "offset": 5446458,
+        "text": "사용 후 바로 샴푸해도 되나요?"
+       },
+       {
+        "offset": 5446482,
+        "text": "사용 직후에는 물로 충분히 헹구고, 이후 샴푸 시점은 제품 안내와 개인 사용감에 맞춰 조절해 주세요."
+       }
+      ]
+     },
+     "originalText": "사용 후 바로 샴푸해도 되나요? / 사용 직후에는 물로 충분히 헹구고, 이후 샴푸 시점은 제품 안내와 개인 사용감에 맞춰 조절해 주세요.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": "사용 방법 화면(STEP 01~07)은 제품을 구분하지 않으며, STEP 05 배지가 염색약·헤어팩을 함께 표기함. 내추럴·샴푸·오일 적용 여부는 원문에 없음.",
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "STEP 06 제목 '샴푸 후 충분히 헹구기'와 표현이 다름. 두 항목을 각각 원문대로 보존하고 병합하지 않음."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:companion:yeast-shampoo",
+     "factType": "COMPANION_USAGE",
+     "kind": "companion",
+     "sourceLocation": {
+      "section": "진단 결과: 함께 쓰면 좋은 제품",
+      "quotes": [
+       {
+        "offset": 5445647,
+        "text": "맥주효모 샴푸"
+       },
+       {
+        "offset": 5445674,
+        "text": "사용 전 유분기를 정리할 때 함께 쓰기 좋습니다."
+       }
+      ]
+     },
+     "originalText": "맥주효모 샴푸 / 사용 전 유분기를 정리할 때 함께 쓰기 좋습니다.",
+     "productScope": [
+      "맥주효모 샴푸"
+     ],
+     "products": [
+      "맥주효모 샴푸"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:companion:jojoba-oil",
+     "factType": "COMPANION_USAGE",
+     "kind": "companion",
+     "sourceLocation": {
+      "section": "진단 결과: 함께 쓰면 좋은 제품",
+      "quotes": [
+       {
+        "offset": 5445715,
+        "text": "호호바 오일"
+       },
+       {
+        "offset": 5445741,
+        "text": "헤어라인에 미리 바르거나 마무리 보습용으로 함께 사용하시면 좋습니다."
+       }
+      ]
+     },
+     "originalText": "호호바 오일 / 헤어라인에 미리 바르거나 마무리 보습용으로 함께 사용하시면 좋습니다.",
+     "productScope": [
+      "호호바 오일"
+     ],
+     "products": [
+      "호호바 오일"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:limitation:diagnosis-notice",
+     "factType": "LIMITATION",
+     "kind": "limitation",
+     "sourceLocation": {
+      "section": "진단 결과: 안내 문구",
+      "quotes": [
+       {
+        "offset": 5464382,
+        "text": "본 진단은 일반적인 제품 선택 가이드입니다. 색상과 사용감은 개인의 모발 상태, 사용량, 방치 시간에 따라 달라질 수 있습니다."
+       }
+      ]
+     },
+     "originalText": "본 진단은 일반적인 제품 선택 가이드입니다. 색상과 사용감은 개인의 모발 상태, 사용량, 방치 시간에 따라 달라질 수 있습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "html:limitation:footer",
+     "factType": "LIMITATION",
+     "kind": "limitation",
+     "sourceLocation": {
+      "section": "페이지 하단",
+      "quotes": [
+       {
+        "offset": 5687703,
+        "text": "맞춤 진단 결과는 일반 가이드입니다. 개인 모발 상태에 따라 색상과 사용감은 달라질 수 있습니다."
+       }
+      ]
+     },
+     "originalText": "맞춤 진단 결과는 일반 가이드입니다. 개인 모발 상태에 따라 색상과 사용감은 달라질 수 있습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운",
+      "두피 케어 헤어팩",
+      "딥클린 헤어팩",
+      "볼륨업 헤어팩",
+      "손상케어 헤어팩"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나",
+      "헤어팩"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "HTML_OFFSET_VERBATIM_MATCH"
+    }
+   ]
+  },
+  {
+   "sourceId": "operator_confirmed_usage_guidance",
+   "sourceType": "OPERATOR_CONFIRMED_CURRENT_GUIDANCE",
+   "authorityClass": "OPERATOR_CONFIRMED_CURRENT_GUIDANCE",
+   "sourceVersion": "OPC-20261009-2122",
+   "confirmation": {
+    "recordId": "OPC-20261009-2122",
+    "confirmedBy": "ERP2-analytics 운영자 (Cursor 대화 사용자)",
+    "confirmedAt": "2026-10-09T21:22:00+09:00",
+    "channel": "Cursor agent conversation, REVIEW_KNOWLEDGE_OFFICIAL_USAGE_GUIDE_SOURCE_V2 보완 지시",
+    "approvalStatus": "APPROVED",
+    "approvedScope": {
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "excludedProducts": [
+      "수자타 내추럴",
+      "헤어팩",
+      "맥주효모 샴푸",
+      "호호바 오일"
+     ]
+    },
+    "statementVerbatim": [
+     "레드 단독 사용: 2시간",
+     "브라운 단독 사용: 2시간",
+     "레드 후 브라운 순차 사용: 레드 2시간, 브라운 2시간",
+     "레드와 브라운 혼합 사용: 2시간",
+     "염색이 잘되지 않는 경우에는 2시간에서 3시간까지 사용 시간을 조절하는 것을 권장합니다.",
+     "단, 기본 사용 시간과 예외적인 조정 시간은 반드시 구분합니다.",
+     "특히 순차 사용의 경우 각 단계에 조정 시간을 적용할 수 있는 세부 조건이 현재 명확하게 기록되어 있지 않다면, 해당 세부 범위는 미확인으로 유지합니다.",
+     "각 단계에 대한 조정 적용 범위는 별도 확인",
+     "기본 사용 시간 2시간.",
+     "염색이 충분하지 않은 경우 2~3시간 범위에서 조정.",
+     "레드 사용 → 헹굼 → 브라운 사용.",
+     "각 단계의 기본 시간은 2시간.",
+     "레드와 브라운을 혼합해 사용하는 경우 기본 2시간.",
+     "비율은 별도 진단 조건에 따라 판단하며 임의의 배합 비율을 적용하지 않습니다.",
+     "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+    ],
+    "recordSha256": "47948a5340008470e404e4773b9269624a6219a59c4fe31723e15b864d4cef57",
+    "note": "HTML 원문에 없는 현재 운영 기준. HTML 인용으로 기록하지 않음."
+   },
+   "units": [
+    {
+     "unitKey": "opc:standard:red-single",
+     "factType": "STANDARD_DURATION",
+     "kind": "duration",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 1,
+        "text": "레드 단독 사용: 2시간"
+       },
+       {
+        "recordLine": 9,
+        "text": "기본 사용 시간 2시간."
+       }
+      ]
+     },
+     "originalText": "레드 단독 사용: 2시간 / 기본 사용 시간 2시간.",
+     "productScope": [
+      "수자타 레드"
+     ],
+     "products": [
+      "레드 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "single"
+     ],
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 2,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [
+      "2|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "opc:applicability-condition",
+       "text": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+      },
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      }
+     ],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:standard:brown-single",
+     "factType": "STANDARD_DURATION",
+     "kind": "duration",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 2,
+        "text": "브라운 단독 사용: 2시간"
+       },
+       {
+        "recordLine": 9,
+        "text": "기본 사용 시간 2시간."
+       }
+      ]
+     },
+     "originalText": "브라운 단독 사용: 2시간 / 기본 사용 시간 2시간.",
+     "productScope": [
+      "수자타 브라운"
+     ],
+     "products": [
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "single"
+     ],
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 2,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [
+      "2|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "opc:applicability-condition",
+       "text": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+      },
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      }
+     ],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:standard:sequential",
+     "factType": "SEQUENTIAL_APPLICATION",
+     "kind": "sequence_duration",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 3,
+        "text": "레드 후 브라운 순차 사용: 레드 2시간, 브라운 2시간"
+       },
+       {
+        "recordLine": 11,
+        "text": "레드 사용 → 헹굼 → 브라운 사용."
+       },
+       {
+        "recordLine": 12,
+        "text": "각 단계의 기본 시간은 2시간."
+       }
+      ]
+     },
+     "originalText": "레드 후 브라운 순차 사용: 레드 2시간, 브라운 2시간 / 레드 사용 → 헹굼 → 브라운 사용. / 각 단계의 기본 시간은 2시간.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "sequential"
+     ],
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": [
+      {
+       "order": 1,
+       "product": "레드 헤나",
+       "action": "레드 사용",
+       "duration": "2시간"
+      },
+      {
+       "order": 2,
+       "action": "헹굼"
+      },
+      {
+       "order": 3,
+       "product": "브라운 헤나",
+       "action": "브라운 사용",
+       "duration": "2시간"
+      }
+     ],
+     "numericValue": null,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [
+      "2|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "opc:applicability-condition",
+       "text": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+      },
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      },
+      {
+       "unitKey": "opc:adjust:sequential-step",
+       "text": "각 단계에 대한 조정 적용 범위는 별도 확인"
+      }
+     ],
+     "notes": [
+      "순차 사용을 선택하는 조건(진한 흑갈색 등)은 이 항목이 확인하지 않음. HTML 순차 항목의 조건 범위는 별도."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:standard:mixed",
+     "factType": "MIXED_APPLICATION",
+     "kind": "duration",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 4,
+        "text": "레드와 브라운 혼합 사용: 2시간"
+       },
+       {
+        "recordLine": 13,
+        "text": "레드와 브라운을 혼합해 사용하는 경우 기본 2시간."
+       }
+      ]
+     },
+     "originalText": "레드와 브라운 혼합 사용: 2시간 / 레드와 브라운을 혼합해 사용하는 경우 기본 2시간.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "mixed"
+     ],
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": 2,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [
+      "2|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "opc:applicability-condition",
+       "text": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+      },
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      },
+      {
+       "unitKey": "opc:restriction:ratio",
+       "text": "비율은 별도 진단 조건에 따라 판단하며 임의의 배합 비율을 적용하지 않습니다."
+      }
+     ],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:adjust:insufficient",
+     "factType": "CONDITIONAL_DURATION_ADJUSTMENT",
+     "kind": "conditional_duration",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 5,
+        "text": "염색이 잘되지 않는 경우에는 2시간에서 3시간까지 사용 시간을 조절하는 것을 권장합니다."
+       },
+       {
+        "recordLine": 10,
+        "text": "염색이 충분하지 않은 경우 2~3시간 범위에서 조정."
+       },
+       {
+        "recordLine": 6,
+        "text": "단, 기본 사용 시간과 예외적인 조정 시간은 반드시 구분합니다."
+       }
+      ]
+     },
+     "originalText": "염색이 잘되지 않는 경우에는 2시간에서 3시간까지 사용 시간을 조절하는 것을 권장합니다. / 염색이 충분하지 않은 경우 2~3시간 범위에서 조정. / 단, 기본 사용 시간과 예외적인 조정 시간은 반드시 구분합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "single",
+      "mixed"
+     ],
+     "condition": "염색이 잘되지 않는 경우",
+     "conditionBasis": null,
+     "conditionRequired": true,
+     "conditionPatterns": [
+      "잘\\s*안\\s*(?:되|들|나|먹|물)",
+      "잘\\s*되지\\s*않",
+      "잘되지\\s*않",
+      "(?:색|염색|발색)[이가]?\\s*(?:잘\\s*)?안\\s*(?:들|나|되|먹)",
+      "덜\\s*(?:들|나|되|물)",
+      "(?:염색|발색)[이가]?\\s*(?:충분하지|부족)",
+      "충분히\\s*(?:염색|물들)[이가]?\\s*(?:되지|안)"
+     ],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": {
+      "min": 2,
+      "max": 3
+     },
+     "unit": "시간",
+     "numericTokens": [
+      "2|시간",
+      "3|시간"
+     ],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [
+      {
+       "unitKey": "opc:applicability-condition",
+       "text": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+      },
+      {
+       "unitKey": "html:step:05",
+       "text": "처음 사용 시에는 모발 테스트 결과를 확인한 뒤 시간을 조절해 주세요."
+      }
+     ],
+     "notes": [
+      "기본 사용 시간(2시간)과 구분되는 조건부 조정 범위. 조건 없는 2~3시간·3시간 안내의 근거로 쓰지 않음."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:adjust:sequential-step",
+     "factType": "CONDITIONAL_DURATION_ADJUSTMENT",
+     "kind": "conditional_duration",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 7,
+        "text": "특히 순차 사용의 경우 각 단계에 조정 시간을 적용할 수 있는 세부 조건이 현재 명확하게 기록되어 있지 않다면, 해당 세부 범위는 미확인으로 유지합니다."
+       },
+       {
+        "recordLine": 8,
+        "text": "각 단계에 대한 조정 적용 범위는 별도 확인"
+       }
+      ]
+     },
+     "originalText": "특히 순차 사용의 경우 각 단계에 조정 시간을 적용할 수 있는 세부 조건이 현재 명확하게 기록되어 있지 않다면, 해당 세부 범위는 미확인으로 유지합니다. / 각 단계에 대한 조정 적용 범위는 별도 확인",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": [
+      "sequential"
+     ],
+     "condition": "순차 사용 단계별 조정 조건 (미확인)",
+     "conditionBasis": null,
+     "conditionRequired": true,
+     "conditionPatterns": [
+      "잘\\s*안\\s*(?:되|들|나|먹|물)",
+      "잘\\s*되지\\s*않",
+      "잘되지\\s*않",
+      "(?:색|염색|발색)[이가]?\\s*(?:잘\\s*)?안\\s*(?:들|나|되|먹)",
+      "덜\\s*(?:들|나|되|물)",
+      "(?:염색|발색)[이가]?\\s*(?:충분하지|부족)",
+      "충분히\\s*(?:염색|물들)[이가]?\\s*(?:되지|안)"
+     ],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": "시간",
+     "numericTokens": [],
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [
+      "단계별 조정 범위는 미확인. 적용성 승인 없음."
+     ],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:applicability-condition",
+     "factType": "APPLICABILITY_CONDITION",
+     "kind": "restriction",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 15,
+        "text": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다."
+       }
+      ]
+     },
+     "originalText": "모발 상태, 최초 사용 시 모발 테스트 결과, 염색 정도 등 원문 또는 현재 승인된 안내에서 확인 가능한 조건만 사용합니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    },
+    {
+     "unitKey": "opc:restriction:ratio",
+     "factType": "RESTRICTION",
+     "kind": "restriction",
+     "sourceLocation": {
+      "section": null,
+      "quotes": [
+       {
+        "recordLine": 14,
+        "text": "비율은 별도 진단 조건에 따라 판단하며 임의의 배합 비율을 적용하지 않습니다."
+       }
+      ]
+     },
+     "originalText": "비율은 별도 진단 조건에 따라 판단하며 임의의 배합 비율을 적용하지 않습니다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "scopeBasis": null,
+     "applicationModes": null,
+     "condition": null,
+     "conditionBasis": null,
+     "conditionRequired": false,
+     "conditionPatterns": [],
+     "procedure": null,
+     "numericValue": null,
+     "numericRange": null,
+     "unit": null,
+     "numericTokens": null,
+     "caution": [],
+     "limitation": [],
+     "qualifiers": [],
+     "notes": [],
+     "extractionVersion": "official_usage_guide_extraction_v2",
+     "sourceFidelityStatus": "PASS",
+     "fidelityBasis": "OPERATOR_RECORD_VERBATIM_MATCH"
+    }
+   ]
+  },
+  {
+   "sourceId": "review_knowledge_project_policy",
+   "sourceType": "PROJECT_POLICY",
+   "authorityClass": "PROJECT_POLICY",
+   "sourceVersion": "policy_v1",
+   "units": [
+    {
+     "unitKey": "policy:ratio-no-generalization",
+     "factType": "RESTRICTION",
+     "kind": "restriction",
+     "sourceLocation": {
+      "section": "project policy (usage_guide_source_v1 mix entry)",
+      "quotes": []
+     },
+     "originalText": "추천 배합 비율은 사용가이드 진단 답변에 따라 달라지며, 특정 제품에 일반화하지 않는다.",
+     "productScope": [
+      "수자타 레드",
+      "수자타 브라운"
+     ],
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ],
+     "sourceFidelityStatus": "NOT_OFFICIAL_FACT",
+     "fidelityBasis": "PROJECT_POLICY",
+     "extractionVersion": "official_usage_guide_extraction_v2"
+    }
+   ]
+  }
+ ],
+ "applicabilityReviews": [
+  {
+   "reviewId": "GBR-20261009-2122",
+   "approvalStatus": "APPROVED",
+   "confirmedBy": "ERP2-analytics 운영자 (Cursor 대화 사용자)",
+   "confirmedAt": "2026-10-09T21:22:00+09:00",
+   "basisRecord": "OPC-20261009-2122",
+   "basis": "운영자 확인: 레드·브라운 단독/혼합 기본 2시간, 순차 각 단계 기본 2시간, 염색이 잘되지 않는 경우 2~3시간 조정(단독·혼합).",
+   "scope": [
+    {
+     "sourceId": "operator_confirmed_usage_guidance",
+     "unitKey": "opc:standard:red-single",
+     "products": [
+      "레드 헤나"
+     ]
+    },
+    {
+     "sourceId": "operator_confirmed_usage_guidance",
+     "unitKey": "opc:standard:brown-single",
+     "products": [
+      "브라운 헤나"
+     ]
+    },
+    {
+     "sourceId": "operator_confirmed_usage_guidance",
+     "unitKey": "opc:standard:sequential",
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ]
+    },
+    {
+     "sourceId": "operator_confirmed_usage_guidance",
+     "unitKey": "opc:standard:mixed",
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ]
+    },
+    {
+     "sourceId": "operator_confirmed_usage_guidance",
+     "unitKey": "opc:adjust:insufficient",
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ]
+    },
+    {
+     "sourceId": "sujata_usage_guide_html",
+     "unitKey": "html:duration:dye",
+     "products": [
+      "레드 헤나",
+      "브라운 헤나"
+     ]
+    }
+   ],
+   "notApproved": [
+    "opc:adjust:sequential-step",
+    "html:duration:pack",
+    "그 외 HTML 항목 전체 (다음 적용성 검토 대상)"
+   ]
+  }
+ ]
+}

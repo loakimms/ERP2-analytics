@@ -102,8 +102,11 @@ type QnaGenerateBatchResponse = {
 type QnaStatusFilter = 'all' | 'unanswered' | 'generated' | 'approved' | 'submitted' | 'failed' | 'rejected' | 'answered';
 
 const QNA_MODEL_OPTIONS = [
-	{ value: 'gpt-5.2', label: 'gpt-5.2', note: '구조화된 운영 답변과 재작성 지시 반영에 적합합니다.' },
-	{ value: 'gpt-4o-mini', label: 'gpt-4o-mini', note: '응답 속도를 우선할 때 사용할 수 있습니다.' },
+	{ value: 'gpt-4o-mini', label: 'gpt-4o-mini', note: '권장 기본값, 응답 속도와 비용을 우선할 때 사용합니다.' },
+	{ value: 'gpt-4o', label: 'gpt-4o', note: '품질과 속도의 균형이 필요한 운영 답변용입니다.' },
+	{ value: 'gpt-5.4-mini', label: 'gpt-5.4-mini', note: 'GPT-5 계열의 경량 모델입니다.' },
+	{ value: 'gpt-5.4', label: 'gpt-5.4', note: '더 정교한 문맥 반영이 필요할 때 사용합니다.' },
+	{ value: 'gpt-5.5', label: 'gpt-5.5', note: '현재 계정에서 조회된 고성능 GPT 모델입니다.' },
 ];
 
 function formatIssueTags(values?: string[] | null): string {
@@ -181,7 +184,7 @@ export function QnaManagementView({
 	const [viewFromYmd, setViewFromYmd] = useState<string>(initialQuery.fromYmd);
 	const [viewToYmd, setViewToYmd] = useState<string>(initialQuery.toYmd);
 	const [issueTag, setIssueTag] = useState<string>(initialQuery.issueTag);
-	const [selectedModel, setSelectedModel] = useState<string>('gpt-5.2');
+	const [selectedModel, setSelectedModel] = useState<string>('gpt-4o-mini');
 	const [batchSize, setBatchSize] = useState<number>(10);
 	const [statusFilter, setStatusFilter] = useState<QnaStatusFilter>(initialQuery.responseState);
 	const [settingsCollapsed, setSettingsCollapsed] = useState<boolean>(false);

@@ -19,7 +19,7 @@ export function normalizeReviewReplyActionError(error: any, fallback: string): s
 	const detail = String(error?.response?.data?.detail ?? error?.message ?? fallback).trim();
 	const detailLow = detail.toLowerCase();
 	if (detailLow.includes('max_tokens') || detailLow.includes('unsupported_parameter')) {
-		return '선택한 OpenAI 모델과 토큰 파라미터 규격이 맞지 않습니다. 권장 모델(gpt-5.2 또는 gpt-4o-mini)로 다시 시도해 주세요.';
+		return '선택한 OpenAI 모델과 토큰 파라미터 규격이 맞지 않습니다. 권장 모델(gpt-4o-mini, gpt-4o, gpt-5.4, gpt-5.5)로 다시 시도해 주세요.';
 	}
 	if (detailLow.includes('reply_submit_validation_failed')) {
 		const tail = detail.split(':').slice(1).join(':').trim();
