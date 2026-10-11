@@ -51,7 +51,7 @@ describe('adsAgg.computeAdsCampaignAgg', () => {
 		// cost 300(CAMP_A) > cost 100(CAMP_B)
 		expect(res.rows[0]!.primary).toBe('CAMP_A');
 		expect(res.rows[0]!.metrics.cost).toBe(300);
-		expect(res.rows[0]!.status?.label).toBe('ACTIVE');
+		expect(res.rows[0]!.status?.label).toBe('운영중');
 		expect(res.rows[0]!.status?.isActive).toBe(true);
 		expect(res.rows[1]!.purchaseMetrics?.conversions).toBe(1);
 		expect(res.rows[1]!.purchaseMetrics?.revenue).toBe(5000);
@@ -93,7 +93,7 @@ describe('adsAgg.computeAdsCampaignAgg', () => {
 		expect(res.rows[0]!.primary).toBe('GROUP_1');
 		expect(res.rows[0]!.secondary).toBe('CAMP_A');
 		expect(res.rows[0]!.metrics.cost).toBe(120);
-		expect(res.rows[0]!.status?.label).toBe('RUNNING');
+		expect(res.rows[0]!.status?.label).toBe('운영중');
 	});
 });
 

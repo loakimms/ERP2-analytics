@@ -142,6 +142,11 @@ function normalizeCategoryPath(p: string): string {
 		.join(' > ');
 }
 
+function mainCategoryOfPath(p: string | null | undefined): string {
+	const normalized = normalizeCategoryPath(String(p || ''));
+	return normalized.split(' > ')[0]?.trim() || '';
+}
+
 function categoryLabelForId(id: string): string | null {
 	const s = String(id || '').trim();
 	if (!s) return null;
@@ -886,7 +891,10 @@ export function KeywordInsightsView(props: {
 			const cid = String(it.data?.shopping?.category || '').trim() || String(it.forcedCategoryId || '').trim() || null;
 			const cpath = (it.data?.shopping?.categoryPath ?? null) as any;
 			const manualExcluded = isManualExcluded(it.keyword);
-			const mismatch = Boolean(baseCategoryId && cid && cid !== baseCategoryId);
+			const baseMainCategory = mainCategoryOfPath(baseCategoryPath);
+			const currentMainCategory = mainCategoryOfPath(cpath);
+			const sameMainCategory = Boolean(baseMainCategory && currentMainCategory && baseMainCategory === currentMainCategory);
+			const mismatch = Boolean(baseCategoryId && cid && cid !== baseCategoryId && !sameMainCategory);
 			const excluded = manualExcluded || mismatch;
 			if (!excluded) included.push(it.data);
 			results.push({
@@ -1471,7 +1479,7 @@ export function KeywordInsightsView(props: {
 								) : null}
 							</div>
 						</div>
-						<p className="kw-hint">조회 완료 후 입력란은 잠기며, 아래 키워드 뱃지로 포함/제외를 바꿀 수 있습니다.</p>
+						<p className="kw-hint">조회 완료 후 키워드 입력란은 잠기며, 아래 키워드 뱃지로 포함/제외를 바꿀 수 있습니다.</p>
 					</div>
 					<div className="kw-field kw-field-period">
 						<label className="field-label kw-field-label">기간</label>
@@ -1521,7 +1529,7 @@ export function KeywordInsightsView(props: {
 								className="input"
 								aria-label="카테고리 편집 대상 키워드"
 								value={editKeyword}
-								disabled={inputsLocked || !normalizedKeywords.length}
+								disabled={!normalizedKeywords.length}
 								onChange={(e) => setCategoryEditKeyword(String(e.target.value || ''))}
 							>
 								{normalizedKeywords.length ? null : <option value="">(키워드 없음)</option>}
@@ -1538,10 +1546,10 @@ export function KeywordInsightsView(props: {
 									value={categorySelection ? `${categorySelection.path} (${categorySelection.id})` : ''}
 									placeholder="미선택(자동 추정)"
 								/>
-								<button type="button" className="btn-ghost btn-sm" onClick={openCategorySearch} disabled={inputsLocked || !normalizeKeyword(editKeyword)}>
+								<button type="button" className="btn-ghost btn-sm" onClick={openCategorySearch} disabled={!normalizeKeyword(editKeyword)}>
 									카테고리 검색
 								</button>
-								<button type="button" className="btn-ghost btn-sm" onClick={clearCategorySelection} disabled={inputsLocked || !categorySelection}>
+								<button type="button" className="btn-ghost btn-sm" onClick={clearCategorySelection} disabled={!categorySelection}>
 									해제
 								</button>
 							</div>

@@ -43,7 +43,7 @@ class A1BatchRunRequest(BaseModel):
     severities: list[Severity] = Field(default_factory=lambda: ["HIGH", "CRITICAL"])
     max_items: int = Field(default=50, ge=1, le=500)
     action_version: str = Field(default="A1_V1")
-    model: str = Field(default="gpt-5.2")
+    model: str = Field(default="gpt-4o-mini")
     dry_run: bool = Field(default=False, description="true면 DB 저장 없이 payload/대상만 반환")
 
 
@@ -985,7 +985,7 @@ def call_openai_for_a1(
     )
 
     req = {
-        "model": (str(model or "").strip() or "gpt-5.2"),
+        "model": (str(model or "").strip() or "gpt-4o-mini"),
         "temperature": 0.2,
         "messages": [
             {"role": "system", "content": sys},
@@ -1654,7 +1654,7 @@ def run_a1_batch(
     """
     surface = str(req.surface or "").strip() or "mobile_integrated"
     action_version = str(req.action_version or "").strip() or "A1_V1"
-    model = str(req.model or "").strip() or "gpt-5.2"
+    model = str(req.model or "").strip() or "gpt-4o-mini"
 
     skus = pick_target_skus(
         db,

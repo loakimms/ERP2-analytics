@@ -119,12 +119,22 @@ export type TrackedProductListItem = {
 	pageMetricsError?: string | null;
 };
 
+export type KeywordRankLookupState = {
+	keyword: string;
+	dates: string[];
+	byProduct: Record<string, Array<number | null>>;
+	loading?: boolean;
+	error?: string | null;
+};
+
 export type RankTrackingListViewProps = {
 	channel: 'naver' | 'coupang';
 	products: TrackedProductListItem[];
 	onAddProduct: (url: string) => void;
 	onSelectProduct: (id: string) => void;
 	onDeleteProduct: (id: string) => void;
+	onLookupKeywordRanks?: (keyword: string) => void;
+	keywordRankLookup?: KeywordRankLookupState | null;
 	/** 리스트 화면에서 "오늘 수집/재수집" 모달을 수동으로 열기 */
 	onOpenCollectModal?: () => void;
 };
@@ -167,9 +177,12 @@ export const RankTrackingListView: React.FC<RankTrackingListViewProps> = ({
 	onAddProduct,
 	onSelectProduct,
 	onDeleteProduct,
+	onLookupKeywordRanks,
+	keywordRankLookup,
 	onOpenCollectModal,
 }) => {
 	const [inputUrl, setInputUrl] = useState('');
+	const [lookupKeyword, setLookupKeyword] = useState('');
 
 	const MAX_PRODUCTS = 10;
 
@@ -182,6 +195,13 @@ export const RankTrackingListView: React.FC<RankTrackingListViewProps> = ({
 		if (!url) return;
 		onAddProduct(url);
 		setInputUrl('');
+	};
+
+	const handleLookupSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		const keyword = lookupKeyword.trim();
+		if (!keyword || !onLookupKeywordRanks) return;
+		onLookupKeywordRanks(keyword);
 	};
 
 	const isNaver = channel === 'naver';
@@ -274,6 +294,27 @@ export const RankTrackingListView: React.FC<RankTrackingListViewProps> = ({
 						상품 추가
 					</button>
 				</form>
+				<form
+					onSubmit={handleLookupSubmit}
+					className="rank-url-form"
+					aria-label="추적 키워드 순위 조회 폼"
+					style={{ marginTop: 8 }}
+				>
+					<input
+						className="input rank-url-input"
+						placeholder="추적 키워드를 입력하세요"
+						value={lookupKeyword}
+						onChange={(e) => setLookupKeyword(e.target.value)}
+					/>
+					<button type="submit" className="btn-primary rank-url-submit" disabled={!lookupKeyword.trim() || keywordRankLookup?.loading}>
+						{keywordRankLookup?.loading ? '조회 중...' : '조회'}
+					</button>
+				</form>
+				{keywordRankLookup?.error ? (
+					<div style={{ marginTop: 6, color: '#fca5a5', fontSize: 11 }}>
+						{keywordRankLookup.error}
+					</div>
+				) : null}
 			</div>
 
 			{/* 하단: 상품 리스트 */}
@@ -324,6 +365,9 @@ export const RankTrackingListView: React.FC<RankTrackingListViewProps> = ({
 						const expectedSales7d = recentPurchaseCount != null ? Math.max(0, Math.round(recentPurchaseCount)) : null;
 						const expectedRevenue7dManwon =
 							expectedSales7d != null && displayPrice != null ? Math.max(0, Math.round((expectedSales7d * displayPrice) / 10000)) : null;
+						const lookupRanks = keywordRankLookup?.keyword
+							? (keywordRankLookup.byProduct[product.id] ?? [])
+							: [];
 
 						return (
 							<div
@@ -435,6 +479,31 @@ export const RankTrackingListView: React.FC<RankTrackingListViewProps> = ({
 								</div>
 
 								{/* 우측: 오늘 수집 상태(YYYY/MM/DD 정상수집 / 부분수집 / 미수집) */}
+								{keywordRankLookup?.keyword && (
+									<div
+										className="rank-product-lookup"
+										onClick={(e) => e.stopPropagation()}
+										role="note"
+										aria-label={`${keywordRankLookup.keyword} 최근 7일 순위`}
+									>
+										<div style={{ color: '#93c5fd', fontWeight: 900, textAlign: 'center', fontSize: 13 }}>
+											{keywordRankLookup.keyword} · 최근 7일
+										</div>
+										<div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.max(1, keywordRankLookup.dates.length)}, minmax(44px, 1fr))`, gap: 6 }}>
+											{keywordRankLookup.dates.map((date, idx) => {
+												const rank = lookupRanks[idx] ?? null;
+												return (
+													<div key={`${product.id}-${date}`} style={{ textAlign: 'center', display: 'grid', gap: 3 }}>
+														<div style={{ color: '#94a3b8', fontSize: 12 }}>{date.slice(5).replace('-', '.')}</div>
+														<div style={{ color: rank != null ? '#86efac' : '#cbd5e1', fontWeight: 900, fontSize: 13 }}>
+															{rank != null ? `${rank}위` : '순위밖'}
+														</div>
+													</div>
+												);
+											})}
+										</div>
+									</div>
+								)}
 								{statusText && (
 									<div
 										className={statusClass}

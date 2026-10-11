@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import { createPortal } from 'react-dom';
-import { fetchKeywordDaily, fetchSearchwordDaily, type KeywordDailyRow, type SearchwordDailyRow } from '../ads/adsApi';
+import { fetchKeywordDaily, fetchSearchwordDailyAll, type KeywordDailyRow, type SearchwordDailyRow } from '../ads/adsApi';
 import { fetchPurchaseKeywordsDaily, type PurchaseKeywordRow } from '../purchase/purchaseApi';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { buildRankChartData, buildRankMatrixData, formatKstDateKey, type RankHistory } from './rankUtils';
@@ -11,6 +11,13 @@ import { parseKeywordVolumeExcelFile } from './keywordVolumeExcel';
 type KeywordVolumeItem = { keyword: string; monthly_search_volume: number | null; monthly_search_volume_label?: string | null };
 
 type ManualKeywordMetaItem = { keyword: string; monthly_search_volume: number | null; monthly_search_volume_label?: string | null };
+
+type AutoTrackedKeywordRow = {
+	product_url: string;
+	keyword: string;
+	group_type: 'core' | 'watch' | string;
+	is_active: boolean;
+};
 
 type ProductSalesManualResponse = {
 	product_url: string;
@@ -725,10 +732,12 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		} catch {}
 		return 'focus';
 	});
+	const [trackingModeSaveReady, setTrackingModeSaveReady] = useState(false);
 
 	// 상품별 tracking mode 로드: 서버(DB) -> localStorage fallback
 	useEffect(() => {
 		let cancelled = false;
+		setTrackingModeSaveReady(false);
 		const load = async () => {
 			const u = String(product?.id || '').trim();
 			if (!u) return;
@@ -740,8 +749,9 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 					setTrackingMode(mode as TrackingMode);
 					try { window.localStorage.setItem(trackingModeStorageKey, mode); } catch {}
 				}
+				setTrackingModeSaveReady(true);
 			} catch {
-				// ignore (localStorage 기본값/기존값 사용)
+				// 서버 값을 확인하지 못한 경우에는 화면 진입만으로 기본값을 저장하지 않는다.
 			}
 		};
 		load();
@@ -752,6 +762,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 
 	// 상품별 저장: localStorage + 서버(DB) best-effort
 	useEffect(() => {
+		if (!trackingModeSaveReady) return;
 		try { window.localStorage.setItem(trackingModeStorageKey, trackingMode); } catch {}
 		const u = String(product?.id || '').trim();
 		if (!u) return;
@@ -761,7 +772,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		} catch {
 			// ignore
 		}
-	}, [apiBaseUrl, product?.id, trackingMode, trackingModeStorageKey]);
+	}, [apiBaseUrl, product?.id, trackingMode, trackingModeStorageKey, trackingModeSaveReady]);
 
 	// ---- 광고/구매 전환 기반 키워드 분류(최근 30일) ----
 	const [adsTermDailyRows, setAdsTermDailyRows] = useState<AdsTermDailyRow[]>([]);
@@ -780,25 +791,19 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 			setKeywordClassifyError(null);
 			try {
 				const fetchAds = async (): Promise<AdsTermDailyRow[]> => {
-					let rows: SearchwordDailyRow[] = [];
+					let searchwordRows: SearchwordDailyRow[] = [];
+					let keywordRows: KeywordDailyRow[] = [];
 					try {
-						rows = await fetchSearchwordDaily({ baseUrl: apiBaseUrl, dateFrom: from, dateTo: to });
+						searchwordRows = await fetchSearchwordDailyAll({ baseUrl: apiBaseUrl, dateFrom: from, dateTo: to });
 					} catch {
-						rows = [];
+						searchwordRows = [];
 					}
-					if (!rows || rows.length === 0) {
-						const kwRows = await fetchKeywordDaily({ baseUrl: apiBaseUrl, dateFrom: from, dateTo: to });
-						return (kwRows || []).map((r) => ({
-							date: String(r.date || '').trim(),
-							term: String(r.keyword || '').trim(),
-							campaignName: String((r as any)?.campaign_name ?? '').trim() || null,
-							adgroupName: String((r as any)?.adgroup_name ?? '').trim() || null,
-							conversions: Number(r.conversions) || 0,
-							clicks: Number(r.clicks) || 0,
-							cvr: Number(r.cvr) || 0,
-						}));
+					try {
+						keywordRows = await fetchKeywordDaily({ baseUrl: apiBaseUrl, dateFrom: from, dateTo: to, limit: 10000 });
+					} catch {
+						keywordRows = [];
 					}
-					return (rows || []).map((r) => ({
+					const fromSearchwords = (searchwordRows || []).map((r) => ({
 						date: String(r.date || '').trim(),
 						term: String(r.searchword || '').trim(),
 						campaignName: String((r as any)?.campaign_name ?? '').trim() || null,
@@ -807,6 +812,16 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 						clicks: Number(r.clicks) || 0,
 						cvr: Number(r.cvr) || 0,
 					}));
+					const fromKeywords = (keywordRows || []).map((r) => ({
+						date: String(r.date || '').trim(),
+						term: String(r.keyword || '').trim(),
+						campaignName: String((r as any)?.campaign_name ?? '').trim() || null,
+						adgroupName: String((r as any)?.adgroup_name ?? '').trim() || null,
+						conversions: Number(r.conversions) || 0,
+						clicks: Number(r.clicks) || 0,
+						cvr: Number(r.cvr) || 0,
+					}));
+					return [...fromSearchwords, ...fromKeywords];
 				};
 
 				const [adsRows, purchaseRows] = await Promise.all([
@@ -856,7 +871,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		return Array.from(out.entries()).map(([keyword, monthly_search_volume]) => ({ keyword, monthly_search_volume }));
 	}, [manualVolumeText]);
 
-	const fetchVolumes = async (keywords: string[]): Promise<Map<string, number>> => {
+	const fetchVolumes = async (keywords: string[], options?: { persist?: boolean }): Promise<Map<string, number>> => {
 		const ks = (keywords || []).map((k) => String(k || '').trim()).filter(Boolean);
 		if (ks.length === 0) return new Map();
 		setVolumeLoading(true);
@@ -865,6 +880,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 			const arr = Array.isArray(res.data) ? res.data : [];
 			const m = new Map<string, number>();
 			const lm = new Map<string, string>();
+			const persistItems: Array<{ keyword: string; monthly_search_volume: number | null; monthly_search_volume_label: string | null }> = [];
 			for (const it of arr) {
 				const kw = String((it as any)?.keyword || '').trim();
 				const rawLabel = (it as any)?.monthly_search_volume_label;
@@ -873,7 +889,16 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 				const vol = vAny == null ? null : Number(vAny);
 				if (!kw) continue;
 				if (label) lm.set(kw, label);
-				if (vol != null && Number.isFinite(vol) && vol >= 0) m.set(kw, vol);
+				const hasNumericVolume = vol != null && Number.isFinite(vol) && vol >= 0;
+				const persistLabel = !hasNumericVolume && /^<\d+$/.test(label) ? label : null;
+				if (hasNumericVolume) m.set(kw, vol);
+				if (hasNumericVolume || persistLabel) {
+					persistItems.push({
+						keyword: kw,
+						monthly_search_volume: hasNumericVolume ? vol : null,
+						monthly_search_volume_label: persistLabel,
+					});
+				}
 			}
 			// 기존 조회 결과를 유지하면서 누적(추적/수기 모두 커버)
 			setVolumeMap((prev) => {
@@ -886,6 +911,36 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 				for (const [k, v] of lm.entries()) next.set(k, v);
 				return next;
 			});
+			if (options?.persist && productUrl && persistItems.length > 0) {
+				const saveRes = await axios.post<{ saved: number; total_active: number }>(`${apiBaseUrl}/search-rank/manual-keywords/import`, {
+					product_url: productUrl,
+					mode: 'append',
+					items: persistItems,
+				});
+				const saved = Number(saveRes?.data?.saved ?? 0);
+				const totalActive = Number(saveRes?.data?.total_active ?? 0);
+				setManualVolumeSavedInfo({ saved, total_active: totalActive });
+				setManualKeywordMetaRows((prev) => {
+					const next = new Map<string, ManualKeywordMetaItem>();
+					for (const row of prev || []) {
+						const kw = String((row as any)?.keyword || '').trim();
+						if (!kw) continue;
+						next.set(kw, {
+							keyword: kw,
+							monthly_search_volume: (row as any)?.monthly_search_volume ?? null,
+							monthly_search_volume_label: (row as any)?.monthly_search_volume_label ?? null,
+						});
+					}
+					for (const item of persistItems) {
+						next.set(item.keyword, {
+							keyword: item.keyword,
+							monthly_search_volume: item.monthly_search_volume,
+							monthly_search_volume_label: item.monthly_search_volume_label,
+						});
+					}
+					return Array.from(next.values()).sort((a, b) => String(a.keyword).localeCompare(String(b.keyword)));
+				});
+			}
 			return m;
 		} catch (e: any) {
 			// 실패해도 입력/저장은 가능해야 한다.
@@ -902,7 +957,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		const ks = (manualHistory?.series || []).map((s) => String(s.keyword || '').trim()).filter(Boolean);
 		if (ks.length === 0) return;
 		// 이미 volumeMap에 값이 들어있는 키워드는 재조회하지 않는다.
-		const missing = ks.filter((k) => !volumeMap.has(k) && !keywordVolumeMap.has(k));
+		const missing = ks.filter((k) => !volumeMap.has(k));
 		if (missing.length === 0) return;
 		// 너무 자주/많이 호출하지 않도록 상한
 		void fetchVolumes(missing.slice(0, 200));
@@ -1314,22 +1369,19 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 			return a.localeCompare(b, 'ko');
 		};
 		const group1 = base.filter((kw) => {
-			const grade = adGradeMap.get(kw) ?? '판단 보류';
-			if (!(grade === '매우우수' || grade === '우수')) return false;
 			const hasPurchase = (purchaseKeywordSignals.convMap.get(kw) ?? 0) > 0;
-			return hasPurchase;
+			return hasPurchase && purchaseClassifyMap.get(kw)?.grade === 'MAIN';
 		});
 		const group2 = base.filter((kw) => {
 			const hasPurchase = (purchaseKeywordSignals.convMap.get(kw) ?? 0) > 0;
 			if (!hasPurchase) return false;
-			const isMain = purchaseClassifyMap.get(kw)?.grade === 'MAIN';
-			return !isMain;
+			return purchaseClassifyMap.get(kw)?.grade === 'SUB';
 		});
 		return {
 			group1: group1.sort(sortByScore),
 			group2: group2.sort(sortByScore),
 		};
-	}, [manualKeywordsForDailyTable, adGradeMap, purchaseClassifyMap, purchaseKeywordSignals]);
+	}, [manualKeywordsForDailyTable, purchaseClassifyMap, purchaseKeywordSignals]);
 
 	const groupKeywords = useMemo(() => {
 		if (trackingMode === 'initial') {
@@ -1344,24 +1396,8 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		return Array.from(new Set([...(groupKeywords.group1 || []), ...(groupKeywords.group2 || [])]));
 	}, [trackingMode, initialKeywords, groupKeywords]);
 
-	const autoTrackedSyncRef = React.useRef<string>('');
-	useEffect(() => {
-		if (trackingMode !== 'focus') return;
-		if (!productUrl) return;
-		const items = [
-			...groupKeywords.group1.map((keyword) => ({ keyword, group_type: 'core' })),
-			...groupKeywords.group2.map((keyword) => ({ keyword, group_type: 'watch' })),
-		];
-		const key = JSON.stringify({ productUrl, items });
-		if (autoTrackedSyncRef.current === key) return;
-		autoTrackedSyncRef.current = key;
-		void axios
-			.post(`${apiBaseUrl}/search-rank/auto-tracked/replace`, {
-				product_url: productUrl,
-				items,
-			})
-			.catch(() => {});
-	}, [trackingMode, productUrl, groupKeywords, apiBaseUrl]);
+	// 중요: 화면 진입/데이터 로딩만으로 auto-tracked 그룹을 저장하지 않는다.
+	// 저장된 core/watch는 조회해서 표시하고, 재분류/동기화는 명시적인 액션에서만 수행해야 한다.
 
 	const [selectedKeywords, setSelectedKeywords] = useState<string[]>(() => []);
 
@@ -1518,12 +1554,29 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		);
 	};
 
+	const renderRankCellValue = (rank: number | null, status?: string | null) => {
+		if (typeof rank !== 'number' || !Number.isFinite(rank)) return <span>-</span>;
+		if (rank > 0) return <span>{rank}</span>;
+		if (status === 'collection_failed') {
+			return (
+				<span title="수집 실패 또는 제한 감지로 순위를 신뢰할 수 없습니다." style={{ color: '#fb923c', fontSize: 10, whiteSpace: 'nowrap', fontWeight: 800 }}>
+					수집 실패
+				</span>
+			);
+		}
+		return (
+			<span title="수집 완료, 표시 순위 밖/미노출" style={{ color: '#94a3b8', fontSize: 10, whiteSpace: 'nowrap' }}>
+				미노출
+			</span>
+		);
+	};
+
 	const getMonthlyVolume = (keyword: string): number | null => {
 		const kw = String(keyword || '').trim();
 		if (!kw) return null;
-		const v0 = keywordVolumeMap.get(kw);
+		const v0 = volumeMap.get(kw);
 		if (v0 != null) return v0;
-		const v1 = volumeMap.get(kw);
+		const v1 = keywordVolumeMap.get(kw);
 		if (v1 != null) return v1;
 		return null;
 	};
@@ -1552,7 +1605,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 	};
 
 	const sortRowsWithState = (
-		rows: Array<{ keyword: string; cells: Array<{ date: string; rank: number | null; delta: number | null }> }>,
+		rows: Array<{ keyword: string; cells: Array<{ date: string; rank: number | null; delta: number | null; status?: string | null }> }>,
 		sortState: { key: 'keyword' | 'volume' | 'purchaseScore' | 'adGrade' | 'today'; dir: 'asc' | 'desc' },
 	) => {
 		const todayKey = String(manualDisplayDates?.[0] ?? '').trim();
@@ -1569,7 +1622,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 		};
 
 		const parseTodayRank = (
-			row: { cells: Array<{ date: string; rank: number | null; delta: number | null }> },
+			row: { cells: Array<{ date: string; rank: number | null; delta: number | null; status?: string | null }> },
 		): { has: boolean; v: number } => {
 			const cells = row?.cells || [];
 			const c = todayKey ? cells.find((x) => String(x.date) === todayKey) : null;
@@ -1946,7 +1999,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 							className="btn-ghost"
 							style={{ fontSize: 11, marginRight: 8 }}
 							disabled={volumeLoading || allKeywords.length === 0}
-							onClick={() => void fetchVolumes(allKeywords)}
+							onClick={() => void fetchVolumes(allKeywords, { persist: true })}
 						>
 							월검색량 조회
 						</button>
@@ -2193,8 +2246,8 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 												{row.cells.map((cell) => (
 													<td key={cell.date} className="num">
 														<div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-															<span>{typeof cell.rank === 'number' && cell.rank > 0 ? cell.rank : '-'}</span>
-															{renderDelta(cell.delta)}
+															{renderRankCellValue(cell.rank, cell.status)}
+															{typeof cell.rank === 'number' && cell.rank > 0 ? renderDelta(cell.delta) : null}
 														</div>
 													</td>
 												))}
@@ -2374,8 +2427,8 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 														{row.cells.map((cell) => (
 															<td key={cell.date} className="num">
 																<div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-																	<span>{typeof cell.rank === 'number' && cell.rank > 0 ? cell.rank : '-'}</span>
-																	{renderDelta(cell.delta)}
+																	{renderRankCellValue(cell.rank, cell.status)}
+																	{typeof cell.rank === 'number' && cell.rank > 0 ? renderDelta(cell.delta) : null}
 																</div>
 															</td>
 														))}
@@ -2464,7 +2517,7 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 						className="btn-ghost"
 						style={{ marginLeft: 'auto', fontSize: 11 }}
 						disabled={volumeLoading || manualKeywordsForDailyTable.length === 0}
-						onClick={() => void fetchVolumes(manualKeywordsForDailyTable)}
+						onClick={() => void fetchVolumes(manualKeywordsForDailyTable, { persist: true })}
 					>
 						월검색량 조회
 					</button>
@@ -2655,8 +2708,8 @@ export const RankTrackingDetailView: React.FC<RankTrackingDetailViewProps> = ({
 										{row.cells.map((cell) => (
 											<td key={cell.date} className="num">
 												<div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-													<span>{typeof cell.rank === 'number' && cell.rank > 0 ? cell.rank : '-'}</span>
-													{renderDelta(cell.delta)}
+													{renderRankCellValue(cell.rank, cell.status)}
+													{typeof cell.rank === 'number' && cell.rank > 0 ? renderDelta(cell.delta) : null}
 												</div>
 											</td>
 										))}
