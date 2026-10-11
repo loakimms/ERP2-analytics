@@ -18,6 +18,8 @@ from db import (
     CommerceQnaFeedbackKnowledge,
     CommerceQnaRaw,
     CommerceQnaSubmitLog,
+    CollectionJobEvent,
+    CollectionJobRun,
     NaverReviewRaw,
     NaverReviewReplyRaw,
     NaverProductRankDaily,
@@ -35,6 +37,7 @@ from db import (
     TrackedProductSalesManual,
     init_db,
 )
+from menu_sync_collection import collection_sync_required_files
 
 
 class TestMenuSyncApi(unittest.TestCase):
@@ -50,6 +53,7 @@ class TestMenuSyncApi(unittest.TestCase):
         self._seed_review_tables()
         self._clear_tracking_tables()
         self._seed_tracking_tables()
+        self._clear_collection_jobs()
 
     def tearDown(self) -> None:
         for key in ("REQUIRE_FIREBASE_AUTH", "AUTH_TEST_MODE", "FIREBASE_PROJECT_ID"):
@@ -60,6 +64,12 @@ class TestMenuSyncApi(unittest.TestCase):
 
     def _auth_headers(self) -> dict[str, str]:
         return {"Authorization": "Bearer test-ops_admin"}
+
+    def _clear_collection_jobs(self) -> None:
+        with SessionLocal() as db:
+            db.query(CollectionJobEvent).delete(synchronize_session=False)
+            db.query(CollectionJobRun).delete(synchronize_session=False)
+            db.commit()
 
     def _clear_qna_tables(self) -> None:
         with SessionLocal() as db:
@@ -515,6 +525,16 @@ class TestMenuSyncApi(unittest.TestCase):
         self.assertEqual(tracking_target.get("label"), "내 상품 추적")
         self.assertEqual(tracking_target.get("status"), "active")
 
+    def test_collection_sync_required_files_cover_current_cdp_tables(self) -> None:
+        self.assertIn(
+            "menus/search_rank/ad_rank_diagnosis_daily.json",
+            collection_sync_required_files("search_rank"),
+        )
+        self.assertIn(
+            "menus/gfa_inventory/naver_gfa_creative_detail.json",
+            collection_sync_required_files("gfa_inventory"),
+        )
+
     def test_menu_sync_inventory_reports_tracking_dates(self) -> None:
         res = self.client.post(
             "/menu-sync/inventory",
@@ -644,6 +664,37 @@ class TestMenuSyncApi(unittest.TestCase):
 
             meta = db.query(TrackedProductMeta).one()
             self.assertEqual(meta.title, "NAS 기존 메타")
+
+    def test_menu_sync_import_reflects_product_tracking_in_collection_status(self) -> None:
+        res = self.client.post(
+            "/menu-sync/export",
+            headers=self._auth_headers(),
+            json={"menu_ids": ["product_tracking"], "target_dates": ["2026-01-02", "2026-01-03"]},
+        )
+        self.assertEqual(res.status_code, 200, msg=res.text)
+
+        self._clear_tracking_tables()
+        res_import = self._import_bundle(bytes(res.content))
+        self.assertEqual(res_import.status_code, 200, msg=res_import.text)
+        detail = json.loads(res_import.json()["detail"])
+        reconciled_task_ids = {item["task_id"] for item in detail["collection_reconciled"]}
+        self.assertIn("rank_openapi", reconciled_task_ids)
+        self.assertIn("page_metrics_cdp", reconciled_task_ids)
+
+        res_tasks = self.client.get("/collection/tasks", headers=self._auth_headers())
+        self.assertEqual(res_tasks.status_code, 200, msg=res_tasks.text)
+        tasks = {item["task_id"]: item for item in res_tasks.json()["tasks"]}
+        rank_job = tasks["rank_openapi"]["latest_job"]
+        page_job = tasks["page_metrics_cdp"]["latest_job"]
+        self.assertEqual(rank_job["status"], "SUCCESS")
+        self.assertEqual(rank_job["run_mode"], "menu_sync")
+        self.assertEqual(rank_job["date_from"], "2026-01-02")
+        self.assertEqual(rank_job["date_to"], "2026-01-03")
+        self.assertTrue(rank_job["detail"]["db_persistence"]["completion_verified"])
+        self.assertEqual(rank_job["detail"]["db_persistence"]["verification_reason"], "menu_sync_import")
+        self.assertEqual(page_job["status"], "SUCCESS")
+        self.assertEqual(page_job["run_mode"], "menu_sync")
+        self.assertTrue(page_job["detail"]["db_persistence"]["completion_verified"])
 
     def test_menu_sync_export_includes_manifest_and_qna_files(self) -> None:
         bundle_bytes = self._export_bundle_bytes()

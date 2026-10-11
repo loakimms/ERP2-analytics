@@ -9,8 +9,10 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from db import (
+    AdRankDiagnosisDaily,
     NaverGfaAdgroupInventory,
     NaverGfaCampaignInventory,
+    NaverGfaCreativeDetail,
     NaverGfaCreativeMeta,
     NaverGfaDaily,
     NaverAdCreativeDaily,
@@ -78,6 +80,12 @@ COLLECTION_SYNC_MENUS: tuple[CollectionSyncMenu, ...] = (
         tables=(
             CollectionSyncTable("tracked_product_rank_daily", TrackedProductRankDaily, "date", ("date", "product_url", "keyword")),
             CollectionSyncTable("naver_product_rank_daily", NaverProductRankDaily, "date", ("date", "keyword", "rank")),
+            CollectionSyncTable(
+                "ad_rank_diagnosis_daily",
+                AdRankDiagnosisDaily,
+                "date",
+                ("date", "product_url", "keyword", "gender", "age_band", "placement", "time_slot"),
+            ),
         ),
     ),
     CollectionSyncMenu(
@@ -110,6 +118,7 @@ COLLECTION_SYNC_MENUS: tuple[CollectionSyncMenu, ...] = (
             CollectionSyncTable("naver_gfa_campaign_inventory", NaverGfaCampaignInventory, None, ("ad_account_no", "campaign_type", "campaign_key")),
             CollectionSyncTable("naver_gfa_adgroup_inventory", NaverGfaAdgroupInventory, None, ("ad_account_no", "campaign_type", "adgroup_key")),
             CollectionSyncTable("naver_gfa_creative_meta", NaverGfaCreativeMeta, None, ("creative_id",)),
+            CollectionSyncTable("naver_gfa_creative_detail", NaverGfaCreativeDetail, None, ("ad_account_no", "campaign_id", "adgroup_id", "creative_id")),
         ),
     ),
 )
