@@ -162,10 +162,19 @@ try {
   $remoteTar = "$NasPath/docker_images/$tarName"
   $remoteLock = "$NasPath/docker/analytics.nas.master.lock"
   $remoteCompose = "$NasPath/docker/analytics.nas.master.yml"
+  $localAdminEnv = Join-Path $repoRoot 'docker\env.firebase.admin.local'
+  $remoteAdminEnv = "$NasPath/docker/env.firebase.admin.local"
 
   Send-FileViaSshBinary -LocalPath $tarLocal -RemotePath $remoteTar -Label 'tar'
   Send-FileViaSshBinary -LocalPath $nasLock -RemotePath $remoteLock -Label 'lock'
   Send-FileViaSshBinary -LocalPath $nasComposeLocal -RemotePath $remoteCompose -Label 'compose'
+  $composeEnvFiles = "--env-file docker/analytics.nas.master.lock"
+  if (Test-Path -LiteralPath $localAdminEnv) {
+    Send-FileViaSshBinary -LocalPath $localAdminEnv -RemotePath $remoteAdminEnv -Label 'firebase admin env'
+    $composeEnvFiles = "$composeEnvFiles --env-file docker/env.firebase.admin.local"
+  } else {
+    Write-Info "Firebase Admin env file not found locally; user management Admin SDK will be disabled after NAS recreate."
+  }
 
   $lsCmd = "set -euo pipefail; ls -l '$remoteTar' '$remoteLock' '$remoteCompose'"
   & ssh.exe @sshOpts $sshTarget ("bash -lc " + [char]34 + $lsCmd + [char]34)
@@ -182,15 +191,15 @@ try {
   Assert-Ok 'SSH ensure external DB volume'
 
   Write-Step 'NAS: compose up db (if needed)'
-  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d analytics-db --pull never --remove-orphans'"
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles up -d analytics-db --pull never --remove-orphans'"
   Assert-Ok 'SSH compose up db'
 
   Write-Step 'NAS: stop web before api recreate (avoid proxy 502 during api warmup)'
-  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock stop analytics-web >/dev/null 2>&1 || true'"
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles stop analytics-web >/dev/null 2>&1 || true'"
   Assert-Ok 'SSH stop web before api recreate'
 
   Write-Step 'NAS: compose up api (force-recreate)'
-  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-api --pull never --remove-orphans'"
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles up -d --no-deps --force-recreate analytics-api --pull never --remove-orphans'"
   Assert-Ok 'SSH compose up api'
 
   Write-Step 'NAS: wait api version before starting web'
@@ -205,7 +214,7 @@ try {
   } else { throw "Could not parse api/version before web start" }
 
   Write-Step 'NAS: compose up web (force-recreate)'
-  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-web --pull never --remove-orphans'"
+  & ssh.exe @sshOpts $sshTarget "bash -lc 'cd $NasPath && docker compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles up -d --no-deps --force-recreate analytics-web --pull never --remove-orphans'"
   Assert-Ok 'SSH compose up web'
 
   # 5) 검증

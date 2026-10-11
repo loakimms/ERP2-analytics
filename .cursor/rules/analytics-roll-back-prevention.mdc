@@ -36,3 +36,26 @@ alwaysApply: true
 - `web`의 `/version.json`에서 `imageTag` 확인
 - `api`의 `/api/version`에서 `imageTag` 확인
 
+## Forward-Only Production Baseline Guard (추가 / 삭제 금지)
+
+이 섹션은 기존 불변 태그 SoT를 **덮어쓰지 않고** 추가한다.
+
+- **Source/Production baseline authority**: `governance/CURRENT_PRODUCTION_BASELINE.json` (현재 `analytics_20260921_005100`).
+- Git HEAD, dirty worktree, 최근 NAS tar, 이전 Docker tag는 자동 Production build base가 아니다.
+- 표준 재빌드 `scripts/analytics_rebuild_and_verify.ps1` 순서:
+  1. Baseline Authority Check
+  2. Candidate Source Gate (`releases/_candidates/<tag>/` + approved-change-manifest UNEXPECTED=0)
+  3. Existing Build (candidate snapshot context only)
+  4. Existing Verify
+  5. Existing Promotion
+  6. Baseline Freeze / pointer update (실패 시 `HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE`, PROMOTION_COMPLETE=NO)
+- Production docker build context가 개발 worktree(`D:\dev\ERP2-analytics`)이면 `BLOCKED_DIRECT_WORKTREE_BUILD`.
+- 다른 source identity를 base로 쓰면 `FAIL_PRODUCTION_BASELINE_REGRESSION`.
+- CURRENT/PREVIOUS release snapshot은 자동 삭제 대상에서 제외한다.
+- BuildKit / running container / Docker layer = `RECOVERY_EVIDENCE_ONLY`.
+- `--force-old-base` / `--ignore-baseline` / `--build-from-worktree` 같은 Production bypass는 두지 않는다.
+- `scripts/start-analytics-local.ps1`의 compose `--build`는 닫혔다(worktree build 금지). 기동은 `--no-build`.
+- Runtime compose (`docker/analytics.local.yml`, `analytics.master.yml`, `analytics.nas.master.yml`)는 **image 실행 전용**이다. `build:` / `context: ../api|../web` 금지.
+- 유일한 compose build 정의는 `docker/analytics.candidate-build.yml`이며 context는 `releases/_candidates/<tag>/source/{api,web}`로 고정한다. 표준 재빌드 script만 사용한다.
+- Raw `docker compose -f docker/analytics.local.yml up --build`는 worktree image를 만들 수 없다 (NO_WORKTREE_BUILD_POSSIBLE).
+

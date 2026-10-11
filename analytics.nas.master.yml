@@ -55,6 +55,7 @@ services:
       REQUIRE_HOST_CDP: "1"
       PW_CDP_URL: "http://host.docker.internal:9223"
       SHOPPING_SEED_PRODUCT_URL: "https://smartstore.naver.com/thesujata/products/4743750201"
+      GFA_GENERATED_IMAGE_DIR: /data/gfa_generated_creatives
     ports:
       - "6189:8000"
       - "29222:9222"
@@ -62,6 +63,7 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - analytics-browser-data:/data/playwright
+      - analytics-generated-data:/data/gfa_generated_creatives
 
   analytics-web:
     # IMPORTANT: 불변 태그 + lock(SoT) 강제 (see analytics-api above)
@@ -80,3 +82,5 @@ volumes:
     name: analytics_analytics-db-data
   analytics-browser-data:
     name: analytics-nas_analytics-browser-data
+  analytics-generated-data:
+    name: analytics-nas_analytics-generated-data

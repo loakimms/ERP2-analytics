@@ -1,0 +1,22 @@
+---
+description: Forward-Only Production baseline is CURRENT_PRODUCTION_BASELINE, not Git HEAD or dirty worktree.
+alwaysApply: true
+---
+
+# Analytics Forward-Only Production Baseline Guard (추가 / 삭제 금지)
+
+기존 analytics-roll-back-prevention.mdc 불변 태그 SoT를 덮어쓰지 않는다. 이 규칙은 source/production baseline authority를 추가한다.
+
+- Unique Production baseline authority: governance/CURRENT_PRODUCTION_BASELINE.json
+- Current: analytics_20260921_005100
+- Git HEAD is not Production base unless the entire build-input tree is proven equal to sourceManifestSha256
+- Dirty worktree is allowed to exist. Dirty worktree is forbidden as Production docker build input (BLOCKED_DIRECT_WORKTREE_BUILD)
+- Do not git reset / git clean / stash to make a Production build
+- Candidate workspace: releases/_candidates/<candidate-tag>/ = CURRENT_PRODUCTION_BASELINE + APPROVED_CHANGESET
+- approved-change-manifest.json UNEXPECTED must be 0
+- Standard rebuild remains scripts/analytics_rebuild_and_verify.ps1 with Baseline Authority Check then Candidate Source Gate then existing build/verify/promote then pointer freeze
+- No --force-old-base, --ignore-baseline, --build-from-worktree
+- CURRENT and PREVIOUS release snapshots are excluded from automatic deletion
+- BuildKit / running container / Docker layer = RECOVERY_EVIDENCE_ONLY
+- Runtime compose files are image-only. The only compose build file is docker/analytics.candidate-build.yml pinned to releases/_candidates/<tag>/source/{api,web}.
+- Raw `docker compose -f docker/analytics.local.yml up --build` cannot build from the developer worktree.

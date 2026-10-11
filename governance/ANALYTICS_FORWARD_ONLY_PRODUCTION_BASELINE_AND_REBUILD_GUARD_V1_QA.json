@@ -1,0 +1,144 @@
+{
+    "sprint":  "ANALYTICS_FORWARD_ONLY_PRODUCTION_BASELINE_AND_REBUILD_GUARD_V1",
+    "decision":  "PASS_ANALYTICS_FORWARD_ONLY_PRODUCTION_BASELINE_AND_REBUILD_GUARD_V1",
+    "reviewLevel":  [
+                        "LEVEL_1_MACHINE_VERIFY",
+                        "LEVEL_2_LIGHT_REVIEW"
+                    ],
+    "executedAt":  "2026-09-21T23:03:10",
+    "actualDockerRebuild":  0,
+    "actualProductionPromotion":  0,
+    "actualRuntimeTagChange":  0,
+    "dryRunCommand":  "pwsh -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\analytics_rebuild_and_verify.ps1 -DryRun",
+    "dryRunExit":  0,
+    "gates":  {
+                  "gate1_gitHeadAsBase":  {
+                                              "expected":  "FAIL_PRODUCTION_BASELINE_REGRESSION",
+                                              "actual":  "FAIL_PRODUCTION_BASELINE_REGRESSION",
+                                              "pass":  true
+                                          },
+                  "gate2_directDirtyWorktree":  {
+                                                    "expected":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                    "actual":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                    "pass":  true,
+                                                    "buildContext":  "D:\\dev\\ERP2-analytics"
+                                                },
+                  "gate3_canonicalBaseline":  {
+                                                  "expected":  "BASELINE_ACCEPTED",
+                                                  "actual":  "BASELINE_ACCEPTED",
+                                                  "pass":  true,
+                                                  "base":  "releases/analytics_20260921_005100",
+                                                  "dockerBuild":  "NOT_RUN"
+                                              },
+                  "gate4_approvedOverlay":  {
+                                                "expected":  "CANDIDATE_ALLOWED",
+                                                "actual":  "CANDIDATE_ALLOWED",
+                                                "pass":  true,
+                                                "fixture":  "calibration/review/analytics-forward-only-production-baseline-and-rebuild-guard-v1/fixtures/approved-overlay.json",
+                                                "replacementOverlay":  "NOT_APPLIED"
+                                            },
+                  "gate5_unexpectedFile":  {
+                                               "expected":  "BUILD_BLOCKED",
+                                               "actual":  "BUILD_BLOCKED",
+                                               "pass":  true,
+                                               "fixture":  "calibration/review/analytics-forward-only-production-baseline-and-rebuild-guard-v1/fixtures/unexpected-file.json"
+                                           },
+                  "gate_promotionWithoutSource":  {
+                                                      "expected":  "HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE",
+                                                      "actual":  "HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE",
+                                                      "pass":  true
+                                                  },
+                  "gate_protectedBaselineNotBuildContext":  {
+                                                                "expected":  "PROTECTED_BASELINE_NOT_BUILD_CONTEXT",
+                                                                "actual":  "PROTECTED_BASELINE_NOT_BUILD_CONTEXT",
+                                                                "pass":  true
+                                                            },
+                  "gate_buildInputMustBeCandidate":  {
+                                                         "expected":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                         "actual":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                         "pass":  true
+                                                     }
+              },
+    "extraEntrypointTests":  [
+                                 {
+                                     "script":  "scripts/analytics_rebuild_and_verify.ps1",
+                                     "args":  "(no CandidateSnapshot, no DryRun)",
+                                     "expected":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                     "actual":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                     "dockerBuild":  "NOT_STARTED",
+                                     "pass":  true
+                                 },
+                                 {
+                                     "script":  "scripts/analytics_build_candidate.ps1",
+                                     "args":  "(no CandidateSnapshot)",
+                                     "expected":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                     "actual":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                     "dockerBuild":  "NOT_STARTED",
+                                     "pass":  true
+                                 },
+                                 {
+                                     "script":  "scripts/analytics_promote_or_rollback.ps1 -Result PASS",
+                                     "args":  "(no candidate snapshot/manifests)",
+                                     "expected":  "HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE",
+                                     "actual":  "HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE",
+                                     "lockUnchanged":  true,
+                                     "pass":  true
+                                 }
+                             ],
+    "pointerIntegrity":  {
+                             "runtimeTag":  "analytics_20260921_005100",
+                             "sourceSnapshotPath":  "releases/analytics_20260921_005100",
+                             "sourceManifestPath":  "releases/analytics_20260921_005100/manifests/source-manifest.json",
+                             "sourceManifestSha256":  "27dece8d1427a83c32cd55d204a017880331858b3ab5e8a0047d2beb77be4e97",
+                             "canonicalSourceManifestIdentity":  "27dece8d1427a83c32cd55d204a017880331858b3ab5e8a0047d2beb77be4e97",
+                             "webImageDigest":  "sha256:bb9aec691bf0e7f7d656ca6bdcd77d87100d6619488dc2791d4dd77bbffe51de",
+                             "apiImageDigest":  "sha256:74aa7545e7cacf3968735694eb55bf869f7b4d436b72bb0a8753d2e7d8dfbbf1",
+                             "status":  "CANONICAL_PRODUCTION_BASELINE",
+                             "match":  true
+                         },
+    "gitHeadEvidence":  {
+                            "gitHeadShort":  "4df73dd",
+                            "snapshotApiMainSha256":  "fa6c019f21b0598f586fb8bd7f7e9eb39a8bb140a47ea814959c9ac6d438335e",
+                            "gitHeadApiMainSha256":  "bd852998dcf977efd9e75f178637eb29a2a3f543eb91f6676fd9cd654da58b92",
+                            "equal":  false,
+                            "usedAsProductionBase":  false
+                        },
+    "runtimeUnchanged":  {
+                             "masterLockTag":  "analytics_20260921_005100",
+                             "webVersionJsonImageTag":  "analytics_20260921_005100",
+                             "apiVersionImageTag":  "analytics_20260921_005100",
+                             "webImageId":  "sha256:bb9aec691bf0e7f7d656ca6bdcd77d87100d6619488dc2791d4dd77bbffe51de",
+                             "apiImageId":  "sha256:74aa7545e7cacf3968735694eb55bf869f7b4d436b72bb0a8753d2e7d8dfbbf1"
+                         },
+    "passConditions":  {
+                           "1_pointerForced":  true,
+                           "2_pointerManifestIntegrity":  true,
+                           "3_otherSourceBaseBlocked":  true,
+                           "4_directDirtyWorktreeBuildBlocked":  true,
+                           "5_canonicalBaselineDryRunAccepted":  true,
+                           "6_approvedOverlayCandidateDryRunAllowed":  true,
+                           "7_unexpectedDiffCandidateBlocked":  true,
+                           "8_buildInputMustBeCandidateSnapshot":  true,
+                           "9_promotionRequiresSourceSnapshotManifest":  true,
+                           "10_promotionThenPointerUpdateContractExists":  true,
+                           "11_bypassEntrypointInventoryComplete":  true,
+                           "12_productionRebuildZero":  true,
+                           "13_productionRuntimeChangeZero":  true
+                       },
+    "level2LightReview":  {
+                              "existingRebuildScriptKept":  true,
+                              "noGitResetCleanStash":  true,
+                              "dirtyWorktreeLeftIntact":  true,
+                              "replacementNotOverlaid":  true,
+                              "noProductionBypassFlagsAdded":  true,
+                              "remainingOperatorBypass":  "docker compose -f docker/analytics.local.yml up --build is leftover compose schema; forbidden by rule; not deleted",
+                              "remainingOperatorBypassClosedInScripts":  true
+                          },
+    "failDecisionsNotTriggered":  [
+                                      "FAIL_PRODUCTION_BASELINE_REGRESSION_GUARD",
+                                      "FAIL_DIRECT_DIRTY_WORKTREE_BUILD_NOT_BLOCKED",
+                                      "FAIL_UNEXPECTED_CANDIDATE_DIFF_NOT_BLOCKED",
+                                      "FAIL_PROMOTION_WITHOUT_SOURCE_BASELINE",
+                                      "HOLD_PRODUCTION_BUILD_BYPASS_PATH_UNCLOSED"
+                                  ]
+}

@@ -1,0 +1,54 @@
+{
+    "sprint":  "ANALYTICS_FORWARD_ONLY_RAW_COMPOSE_BYPASS_CLOSURE_V1",
+    "decision":  "PASS_ANALYTICS_FORWARD_ONLY_RAW_COMPOSE_BYPASS_CLOSURE_V1",
+    "executedAt":  "2026-09-21T23:12:56",
+    "dryRunScript":  "scripts/analytics_forward_only_raw_compose_bypass_closure_dryrun.ps1",
+    "cases":  {
+                  "case1_rawComposeUpBuild":  {
+                                                  "expected":  "NO_WORKTREE_BUILD_POSSIBLE",
+                                                  "actual":  "NO_WORKTREE_BUILD_POSSIBLE",
+                                                  "upDashD":  "NOT_RUN",
+                                                  "pass":  true
+                                              },
+                  "case2_startAnalyticsLocal":  {
+                                                    "expected":  "existing image only --no-build",
+                                                    "actual":  "existing image only --no-build",
+                                                    "scriptUpNotExecuted":  true,
+                                                    "pass":  true
+                                                },
+                  "case3_rebuildWithoutCandidateSnapshot":  {
+                                                                "expected":  "BLOCKED",
+                                                                "actual":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                                "pass":  true
+                                                            },
+                  "case4_rebuildWithValidCandidateSnapshot":  {
+                                                                  "expected":  "CANDIDATE_ALLOWED",
+                                                                  "actual":  "CANDIDATE_ALLOWED",
+                                                                  "actualBuild":  "NOT_RUN",
+                                                                  "fixture":  "releases/_candidates/_dryrun_compose_bypass_closure_v1",
+                                                                  "pass":  true
+                                                              },
+                  "case5_candidateContextWorktree":  {
+                                                         "expected":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                         "actual":  "BLOCKED_DIRECT_WORKTREE_BUILD",
+                                                         "buildContext":  "D:\\dev\\ERP2-analytics",
+                                                         "pass":  true
+                                                     }
+              },
+    "extra":  {
+                  "candidateBuildYmlWithoutEnv":  "BUILD_BLOCKED",
+                  "runtimeComposeImageOnly":  true,
+                  "onlyComposeFileWithBuild":  "docker/analytics.candidate-build.yml"
+              },
+    "runtimeUnchanged":  {
+                             "masterLockTag":  "analytics_20260921_005100",
+                             "webVersionJsonImageTag":  "analytics_20260921_005100",
+                             "apiVersionImageTag":  "analytics_20260921_005100",
+                             "webImageId":  "sha256:bb9aec691bf0e7f7d656ca6bdcd77d87100d6619488dc2791d4dd77bbffe51de",
+                             "apiImageId":  "sha256:74aa7545e7cacf3968735694eb55bf869f7b4d436b72bb0a8753d2e7d8dfbbf1",
+                             "pointerSha":  "27dece8d1427a83c32cd55d204a017880331858b3ab5e8a0047d2beb77be4e97",
+                             "canonicalSnapshotUntouched":  true
+                         },
+    "holdNotTriggered":  "HOLD_PRODUCTION_BUILD_BYPASS_PATH_UNCLOSED",
+    "nextSprint":  "GFA_CREATIVE_EDITOR_IMAGE_UPLOAD_REPLACEMENT_ISOLATED_PROMOTION_RETRY_V1"
+}
