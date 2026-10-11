@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERP2 Analytics 프로그램 기술서</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --paper: #ffffff;
+      --ink: #102033;
+      --muted: #5a6a7d;
+      --line: #d8e1eb;
+      --soft: #edf3f9;
+      --soft2: #f7fafc;
+      --accent: #1f6feb;
+      --accent-soft: #e8f1ff;
+      --good: #137333;
+      --warn: #a15c00;
+      --bad: #b42318;
+      --code: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Arial, sans-serif;
+      line-height: 1.62;
+    }
+
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 22px 80px;
+    }
+
+    .hero {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 30px;
+      border-radius: 18px;
+    }
+
+    h1, h2, h3, h4 { line-height: 1.25; margin: 0; }
+    h1 { font-size: 30px; letter-spacing: -0.04em; }
+    h2 { font-size: 22px; margin-top: 44px; margin-bottom: 14px; letter-spacing: -0.03em; }
+    h3 { font-size: 17px; margin-bottom: 10px; }
+    h4 { font-size: 14px; margin-bottom: 8px; color: var(--muted); }
+    p { margin: 8px 0; }
+    a { color: var(--accent); text-decoration: none; }
+    code {
+      background: #eef2f7;
+      color: var(--code);
+      border: 1px solid #d9e2ec;
+      border-radius: 6px;
+      padding: 1px 5px;
+      font-size: 0.92em;
+    }
+
+    .lead {
+      max-width: 920px;
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: 12px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: var(--soft2);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .toc a {
+      display: block;
+      border: 1px solid var(--line);
+      background: var(--soft2);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: var(--ink);
+      font-weight: 650;
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .card.compact { padding: 13px; }
+    .card.accent { background: var(--accent-soft); border-color: #bcd4ff; }
+    .card.soft { background: var(--soft2); }
+
+    .caption {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .kpi .item {
+      background: var(--soft2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .kpi .num {
+      display: block;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--accent);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 12px 0 4px;
+    }
+
+    .step {
+      position: relative;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 13px 14px;
+      min-height: 88px;
+    }
+
+    .step .no {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .step strong { display: block; margin-bottom: 4px; }
+    .step span { color: var(--muted); font-size: 13px; }
+
+    .menu-group {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .menu-title {
+      border-right: 1px solid var(--line);
+      padding-right: 12px;
+    }
+
+    .menu-title strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .menu-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .mini {
+      background: var(--soft2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .mini strong { display: block; margin-bottom: 4px; }
+    .mini span, .mini li { color: var(--muted); font-size: 12px; }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--soft);
+      color: #24364a;
+      font-size: 12px;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--soft2);
+      color: var(--muted);
+      font-size: 11px;
+      margin: 2px 3px 2px 0;
+    }
+
+    .tag.good { color: var(--good); border-color: #b7dfc1; background: #eef9f0; }
+    .tag.warn { color: var(--warn); border-color: #f0d49a; background: #fff7e8; }
+    .tag.bad { color: var(--bad); border-color: #f0b8b1; background: #fff1ef; }
+
+    .columns {
+      columns: 2 320px;
+      column-gap: 24px;
+    }
+
+    .columns li { break-inside: avoid; margin-bottom: 6px; }
+
+    ul { margin: 8px 0 0; padding-left: 20px; }
+    li { margin-bottom: 5px; }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin: 12px 0;
+    }
+
+    .section-note {
+      color: var(--muted);
+      margin-top: -6px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 16px 12px 60px; }
+      .hero { padding: 20px; }
+      .menu-group { grid-template-columns: 1fr; }
+      .menu-title { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 10px; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>ERP2 Analytics 프로그램 기술서</h1>
+      <p class="lead">
+        이 문서는 ERP2-analytics의 전체 메뉴, 데이터 저장 구조, 수집/분석 프로세스, Host Agent/CDP 자동화,
+        로컬/NAS 운영 흐름을 한눈에 이해할 수 있도록 정리한 기술 설명서입니다. 개발자가 아닌 운영자도 흐름을 따라갈 수 있도록
+        카드, 워크플로우, 표 중심으로 구성했습니다.
+      </p>
+      <div class="meta">
+        <span class="pill">작성 기준일: 2026-07-31</span>
+        <span class="pill">Workspace: <code>D:\dev\ERP2-analytics</code></span>
+        <span class="pill">Web: React/Vite, port 5188</span>
+        <span class="pill">API: FastAPI, port 5189</span>
+        <span class="pill">DB: PostgreSQL, local host port 5442</span>
+        <span class="pill">Host Agent: PowerShell + Chrome CDP, port 9230/9223</span>
+      </div>
+      <nav class="toc" aria-label="문서 목차">
+        <a href="#overview">1. 시스템 개요</a>
+        <a href="#architecture">2. 전체 아키텍처</a>
+        <a href="#menus">3. 메뉴별 기술 명세</a>
+        <a href="#data">4. 데이터와 DB 구조</a>
+        <a href="#collection">5. 데이터 수집 프로세스</a>
+        <a href="#ai">6. AI 분석/생성 프로세스</a>
+        <a href="#ops">7. 로컬/NAS 운영</a>
+        <a href="#files">8. 주요 파일 구조</a>
+        <a href="#risks">9. 운영 리스크와 개선 포인트</a>
+      </nav>
+    </section>
+
+    <section id="overview">
+      <h2>1. 시스템 개요</h2>
+      <div class="grid three">
+        <div class="card accent">
+          <h3>프로그램 목적</h3>
+          <p>
+            네이버 검색광고, GFA, 스마트스토어, 쇼핑 검색/순위, 리뷰/Q&A, 판매 데이터를 모아
+            광고와 상품 운영 의사결정을 지원하는 Analytics 전용 시스템입니다.
+          </p>
+          <p class="caption">핵심 방향: 수집 → 저장 → 분석 → 판단 → 생성 → 검증 → 개선</p>
+        </div>
+        <div class="card">
+          <h3>운영 범위</h3>
+          <p>
+            광고/검색/쇼핑 분석 전용입니다. ERP2-dev 회계/판매 코드와 분리되어 있으며,
+            포트와 Docker stack도 Analytics 전용으로 사용합니다.
+          </p>
+          <span class="tag good">Analytics Web 5188</span>
+          <span class="tag good">Analytics API 5189</span>
+          <span class="tag warn">NAS mode 6188/6189</span>
+        </div>
+        <div class="card">
+          <h3>주요 사용자</h3>
+          <ul>
+            <li>광고 운영자: 캠페인/광고그룹/소재/검색어 성과 확인</li>
+            <li>상품 운영자: 내 상품 순위, 상품지수, 판매 흐름 확인</li>
+            <li>CS/콘텐츠 담당자: 리뷰/Q&A 분석과 답글 초안 관리</li>
+            <li>관리자: API/AI/수집/버전/사용자 관리</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="kpi">
+        <div class="item"><span class="num">9</span>상위 메뉴 그룹</div>
+        <div class="item"><span class="num">38+</span>주요 화면/서브 메뉴</div>
+        <div class="item"><span class="num">18+</span>중앙 수집 작업 유형</div>
+        <div class="item"><span class="num">60+</span>SQLAlchemy 모델/운영 테이블</div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <h2>2. 전체 아키텍처</h2>
+      <p class="section-note">브라우저 UI, FastAPI, DB, Host Agent, 외부 네이버/AI 서비스가 역할을 나누어 동작합니다.</p>
+
+      <div class="flow">
+        <div class="step">
+          <span class="no">1</span>
+          <strong>사용자 UI</strong>
+          <span>React 화면에서 메뉴 선택, 기간/상품/키워드 조건 설정, 수집 실행, 분석 실행</span>
+        </div>
+        <div class="step">
+          <span class="no">2</span>
+          <strong>FastAPI</strong>
+          <span>권한 확인, 수집 job 생성, API 호출, DB 저장, 분석 응답 생성</span>
+        </div>
+        <div class="step">
+          <span class="no">3</span>
+          <strong>PostgreSQL</strong>
+          <span>일자별 fact, 원천 raw, 파생 분석, 사용자 설정, 실행 이력 보존</span>
+        </div>
+        <div class="step">
+          <span class="no">4</span>
+          <strong>Host Agent/CDP</strong>
+          <span>네이버 화면 기반 수집, 파일 다운로드, 로그인 세션 재사용, 부분 저장</span>
+        </div>
+        <div class="step">
+          <span class="no">5</span>
+          <strong>AI Engine</strong>
+          <span>OpenAI/Gemini 기반 분석, 답글 초안, GFA 소재 생성/평가, 운영 판단 생성</span>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>로컬 실행 구조</h3>
+          <ul>
+            <li><code>analytics-master-web</code>: React 빌드 결과를 nginx로 제공</li>
+            <li><code>analytics-master-api</code>: FastAPI/uvicorn 서버</li>
+            <li><code>analytics-master-db</code>: PostgreSQL 16-alpine</li>
+            <li><code>Host Agent</code>: Windows PowerShell 프로세스, UI/CDP 자동화 담당</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>데이터 흐름 요약</h3>
+          <ul>
+            <li>공식 API 가능 영역: SearchAd, Commerce, 일부 OpenAPI 기반 쇼핑 검색</li>
+            <li>공식 API 한계 영역: GFA UI 보고서, 광고 노출 진단, 리뷰 엑셀, 구매 키워드 다운로드</li>
+            <li>CDP 수집 결과는 API의 collector endpoint로 제출되어 DB에 upsert됩니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Frontend 라우팅/인증</h3>
+          <ul>
+            <li>React entry는 <code>web/src/main.tsx</code>, root는 <code>web/src/modules/App.tsx</code>입니다.</li>
+            <li><code>BrowserRouter → AuthProvider → AuthGate → AppShell</code> 순서로 UI가 구성됩니다.</li>
+            <li>기본 route는 <code>/analytics/rank/tracking</code>이며, <code>/</code>, <code>/analytics</code>, unknown path도 내 상품 추적으로 redirect됩니다.</li>
+            <li>API base는 <code>VITE_ANALYTICS_API_BASE_URL</code> 또는 기본 <code>http://localhost:5189</code>입니다.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Backend 인증/권한</h3>
+          <ul>
+            <li>운영/NAS에서는 Firebase ID Token 기반 Bearer 인증을 사용합니다.</li>
+            <li>수집 Collector는 <code>x-analytics-collector-token</code> 또는 <code>x-erp2-collector-token</code>으로 Firebase 인증을 우회합니다.</li>
+            <li>공개 allowlist는 health/version/docs/openapi 및 Host CDP discovery 일부 endpoint입니다.</li>
+            <li>DB migration framework는 별도 도구 없이 <code>create_all</code>과 <code>init_db()</code>의 방어적 <code>ALTER TABLE IF NOT EXISTS</code>를 사용합니다.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="menus">
+      <h2>3. 메뉴별 기술 명세</h2>
+      <p class="section-note">프론트 진입점은 <code>web/src/modules/layout/AppShell.tsx</code>이며, 메뉴/라우팅/화면 lazy import를 관리합니다.</p>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>AI 운영 센터</strong>
+          <span class="caption">판단 허브</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>오늘의 실행</strong><span>오늘 우선순위, 주요 경고, 다음 액션 안내. API: <code>/ai/ops/home</code></span></div>
+          <div class="mini"><strong>상품별 운영 판단</strong><span>상품 건강도, 순위/판매/리뷰 근거 기반 실행 후보. API: <code>/ai/ops/products</code></span></div>
+          <div class="mini"><strong>광고 운영 판단</strong><span>광고 성과, 잠식, 예산 이동 후보. API: <code>/ai/ops/ads</code></span></div>
+          <div class="mini"><strong>판매·전환 판단</strong><span>판매 흐름, 과투입/저효율 후보, 실행 액션 생성. API: <code>/ai/ops/sales</code></span></div>
+          <div class="mini"><strong>리뷰·VOC 판단</strong><span>리뷰 이슈, 품질 문제, FAQ/상품 개선 후보.</span></div>
+          <div class="mini"><strong>Q&A 전환장벽 판단</strong><span>구매 전 문의, 전환 장애, FAQ 보강 후보.</span></div>
+          <div class="mini"><strong>수요·트렌드 판단</strong><span>검색/구매 키워드와 상품 흐름 기반 수요 변화 시나리오.</span></div>
+          <div class="mini"><strong>SKU 정책 센터</strong><span>SKU 정책팩, 정책 비교, 정책 기반 액션. API: <code>/ai/ops/policies</code></span></div>
+          <div class="mini"><strong>실행 큐</strong><span>승인형 실행 대기열, 상태 변경, 결과 추적. API: <code>/ai/ops/actions</code></span></div>
+          <div class="mini"><strong>검증/설명 로그</strong><span>판단 근거, 실행 결과, 검증 로그. API: <code>/ai/ops/logs</code></span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>키워드(광고/오가닉) 분석</strong>
+          <span class="caption">광고 검색어와 구매 키워드</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>광고 검색어 분석</strong><span>SearchAd 검색어/키워드 성과, 캠페인 유형, 전환/구매 지표. 주요 테이블: <code>naver_ad_searchword_daily</code>, <code>naver_ad_keyword_daily</code></span></div>
+          <div class="mini"><strong>구매 키워드 분석</strong><span>스마트스토어 구매 키워드, 결제수/금액 기여도. 주요 테이블: <code>naver_smartstore_purchase_keyword_daily</code></span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>SA 광고분석</strong>
+          <span class="caption">검색광고 캠페인/그룹/소재</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>캠페인 분석</strong><span>캠페인별 노출, 클릭, 비용, 전환, ROAS 집계. SearchAd API/보고서 기반.</span></div>
+          <div class="mini"><strong>광고 그룹 분석</strong><span>광고그룹 단위 효율, 키워드/소재 연결, 성과 비교.</span></div>
+          <div class="mini"><strong>소재 분석</strong><span>소재 ID, 키워드별 행, 품질지수, 평균순위, 상품 매칭. 테이블: <code>naver_ad_creative_daily</code>, <code>creative_organic_rank_daily_derived</code></span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>GFA 광고분석</strong>
+          <span class="caption">성과형 디스플레이 광고</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>운영 체크</strong><span>GFA 캠페인/광고그룹/소재 운영 상태와 0성과 항목 점검.</span></div>
+          <div class="mini"><strong>원본 분석</strong><span>성과보고서 기반 기간/지면/오디언스별 성과 원천 분석.</span></div>
+          <div class="mini"><strong>소재 분석</strong><span>이미지/카피 분석, 소재 메타 입력, AI 분석 결과 저장.</span></div>
+          <div class="mini"><strong>전략 도출</strong><span>성과와 소재 특성의 조합으로 개선 전략을 도출.</span></div>
+          <div class="mini"><strong>소재 생성</strong><span>분석 근거를 바탕으로 광고 카피/이미지 후보 생성, 검수/사용 상태 관리.</span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>검색·쇼핑 순위 분석</strong>
+          <span class="caption">오가닉/광고 순위 추적</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>키워드 인사이트</strong><span>쇼핑 검색 키워드, 카테고리, 경쟁도, 키워드 후보 분석. 카테고리 사전과 연동.</span></div>
+          <div class="mini"><strong>내 상품 추적</strong><span>상품 URL별 키워드 순위, 경쟁 상품, 그룹1 핵심 키워드, 상세 매트릭스. 주요 테이블: <code>tracked_product_keyword</code>, <code>tracked_product_auto_keyword</code>, <code>tracked_product_rank_daily</code></span></div>
+          <div class="mini"><strong>내 광고 상품 추적</strong><span>네이버 광고 노출 진단 CDP 기반. 키워드×성별×연령×지면별 광고 순위 92위까지 추적. 검색광고/ADVoost 구분 저장.</span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>판매 분석</strong>
+          <span class="caption">상품별 판매 현황</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>상품별 판매 현황</strong><span>Commerce 주문/상품주문 raw를 상품별 일자 집계로 변환해 판매량, 매출, 환불 흐름을 표시.</span></div>
+          <div class="mini"><strong>상품 판매 상세</strong><span>상품별 상세 기간 분석. route는 query param으로 product_id를 전달.</span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>리뷰 Q&A</strong>
+          <span class="caption">VOC와 답변 자동화</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>리뷰 관리</strong><span>리뷰 원문, 판매자 답글, GPT 답글 초안, 승인/반려/제출 흐름.</span></div>
+          <div class="mini"><strong>리뷰 분석</strong><span>리뷰 요약, 평점/감성/품질 이슈, 기간별 대시보드.</span></div>
+          <div class="mini"><strong>Q&A 관리</strong><span>고객/상품 문의 원문, 답변 초안, 검증, 제출 로그.</span></div>
+          <div class="mini"><strong>Q&A 분석</strong><span>문의 유형, 구매 단계, 전환 장벽, FAQ 후보, 품질 이슈 분석.</span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>SEO 분석</strong>
+          <span class="caption">상품명/태그/상품지수</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>상품명 SEO</strong><span>상품명 조합, 키워드/카테고리 조건, SEO 규칙 기반 최적화 후보.</span></div>
+          <div class="mini"><strong>해시태그 SEO</strong><span>해시태그 후보, 금지/권장 규칙, 상품/키워드 맥락별 태그 구성.</span></div>
+          <div class="mini"><strong>상품지수분석</strong><span>클릭, 판매, 리뷰, 최신성, 패널티 점수화. 수기/자동 입력을 조합해 일자별 지수 저장.</span></div>
+        </div>
+      </div>
+
+      <div class="menu-group">
+        <div class="menu-title">
+          <strong>설정</strong>
+          <span class="caption">운영 기준과 시스템 관리</span>
+        </div>
+        <div class="menu-items">
+          <div class="mini"><strong>카테고리 사전</strong><span>SEO/키워드 분석용 카테고리 매핑 사전 업로드/적용/삭제.</span></div>
+          <div class="mini"><strong>SEO규칙등록</strong><span>상품명/해시태그 최적화 규칙 관리.</span></div>
+          <div class="mini"><strong>API 세팅</strong><span>Naver/OpenAI/Gemini/API credential 저장, 검증, 환경변수 migration.</span></div>
+          <div class="mini"><strong>AI 세팅</strong><span>AI 모델/프롬프트/백업/복원, provider 상태 확인.</span></div>
+          <div class="mini"><strong>데이터 수집</strong><span>중앙 수집 허브. 작업 실행, 스케줄, Host Agent 설치/상태, job/event 확인.</span></div>
+          <div class="mini"><strong>메뉴동기화</strong><span>로컬/NAS 데이터 export/import/reconcile/push, 추적 데이터 gap 분석.</span></div>
+          <div class="mini"><strong>버전관리</strong><span>현재 배포 tag 확인, 백업/복구 관련 관리 화면.</span></div>
+          <div class="mini"><strong>사용자관리</strong><span>Firebase 기반 사용자/역할 관리.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="data">
+      <h2>4. 데이터와 DB 구조</h2>
+      <p class="section-note">대부분의 데이터는 날짜 단위 fact 테이블과 설정/메타/분석 결과 테이블로 나뉩니다.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>도메인</th>
+              <th>핵심 테이블/모델</th>
+              <th>저장 내용</th>
+              <th>주요 화면</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>SearchAd 성과</td>
+              <td><code>NaverAdKeywordDaily</code>, <code>NaverAdSearchwordDaily</code>, <code>NaverAdCreativeDaily</code></td>
+              <td>키워드/검색어/소재 단위 일자별 노출, 클릭, 비용, 전환, 매출, 구매 전환, ROAS, 평균순위</td>
+              <td>광고 검색어 분석, SA 캠페인/광고그룹/소재 분석</td>
+            </tr>
+            <tr>
+              <td>GFA 성과/소재</td>
+              <td><code>NaverGfaDaily</code>, <code>NaverGfaCampaignInventory</code>, <code>NaverGfaAdgroupInventory</code>, <code>NaverGfaCreativeDetail</code></td>
+              <td>GFA 성과보고서, 캠페인/광고그룹 inventory, 소재 상세 조건과 이미지/카피 정보</td>
+              <td>GFA 운영 체크, 원본 분석, 소재 분석</td>
+            </tr>
+            <tr>
+              <td>GFA AI 분석/생성</td>
+              <td><code>NaverGfaCreativeImageAnalysis</code>, <code>NaverGfaCreativeCopyAnalysis</code>, <code>NaverGfaAnalysisResult</code>, <code>NaverGfaCreativeGenerationRun</code>, <code>NaverGfaCreativeGenerationEvent</code></td>
+              <td>이미지/카피 분석 결과, 기간별 전략 분석 결과, 생성 소재 후보와 생애주기 이벤트</td>
+              <td>GFA 소재 분석, 전략 도출, 소재 생성</td>
+            </tr>
+            <tr>
+              <td>오가닉 쇼핑 순위</td>
+              <td><code>NaverProductRankDaily</code>, <code>TrackedProductKeyword</code>, <code>TrackedProductAutoKeyword</code>, <code>TrackedProductRankDaily</code>, <code>TrackedCompetitorProduct</code>, <code>TrackedProductMeta</code></td>
+              <td>쇼핑 검색 결과, 내 상품 추적 키워드, 그룹1/관찰 키워드, 수기/엑셀 순위, 경쟁 상품, 상품 메타</td>
+              <td>키워드 인사이트, 내 상품 추적</td>
+            </tr>
+            <tr>
+              <td>광고 상품 순위</td>
+              <td><code>AdTrackedProduct</code>, <code>AdTrackedKeyword</code>, <code>AdRankDiagnosisPreset</code>, <code>AdRankKeywordTargetRank</code>, <code>AdRankDiagnosisDaily</code></td>
+              <td>광고 추적 상품, 진단 키워드, 성별/연령/지면 조건, 키워드별 기준 순위, 노출 진단 결과와 광고 유형</td>
+              <td>내 광고 상품 추적, 데이터 수집</td>
+            </tr>
+            <tr>
+              <td>상품 상세/상품지수</td>
+              <td><code>TrackedProductPageDaily</code>, <code>TrackedProductSalesManual</code>, <code>TrackedProductIndexManual</code>, <code>TrackedProductIndexScoreDaily</code></td>
+              <td>상품 페이지 가격/리뷰/평점/구매 배지, 수기 판매 입력, 상품지수 입력과 일자별 점수</td>
+              <td>내 상품 추적, 상품지수분석, AI 상품 판단</td>
+            </tr>
+            <tr>
+              <td>판매/구매 키워드</td>
+              <td><code>NaverSmartstorePurchaseKeywordDaily</code>, <code>NaverCommerceProductOrderRaw</code>, <code>NaverCommerceProductSalesDaily</code></td>
+              <td>구매 키워드 기여도, Commerce 상품주문 raw, 상품별 일자 판매 집계</td>
+              <td>구매 키워드 분석, 판매 분석, AI 판매 판단</td>
+            </tr>
+            <tr>
+              <td>리뷰/VOC</td>
+              <td><code>NaverReviewRaw</code>, <code>NaverReviewReplyRaw</code>, <code>ReviewReplyDraft</code>, <code>ReviewReplyFeedbackKnowledge</code>, <code>NaverProductReviewDaily</code></td>
+              <td>리뷰 원문, 판매자 답글, GPT 답글 초안/검수 상태, 반려 학습 지식, 일간 리뷰 스냅샷</td>
+              <td>리뷰 관리, 리뷰 분석, AI 리뷰 판단</td>
+            </tr>
+            <tr>
+              <td>Q&A</td>
+              <td><code>CommerceQnaRaw</code>, <code>CommerceQnaDraft</code>, <code>CommerceQnaDraftValidation</code>, <code>CommerceQnaSubmitLog</code>, <code>CommerceQnaAnalysis</code></td>
+              <td>고객/상품 문의 원문, 답변 초안, 자동 검증, 제출 로그, 전환장벽 분석 결과</td>
+              <td>Q&A 관리, Q&A 분석, AI Q&A 판단</td>
+            </tr>
+            <tr>
+              <td>수집/운영 로그</td>
+              <td><code>CollectionTaskConfig</code>, <code>CollectionJobRun</code>, <code>CollectionJobEvent</code>, <code>AnalyticsJobRun</code></td>
+              <td>수집 작업 설정, 실행 이력, 단계별 이벤트, 일 단위 중복 실행 lock</td>
+              <td>데이터 수집, 메뉴동기화, 운영 점검</td>
+            </tr>
+            <tr>
+              <td>AI 운영 센터</td>
+              <td><code>AiDecisionLog</code>, <code>DecisionProductHealthDaily</code>, <code>ActionQueueItem</code>, <code>A1SkuMap</code>, <code>A1SkuStateDaily</code>, <code>AnalysisRun</code>, <code>AnalysisTraceNode</code>, <code>AnalysisTraceEdge</code></td>
+              <td>AI 판단 로그, 상품 건강도, 실행 큐, SKU 매핑/상태, 분석 trace와 액션 검토</td>
+              <td>AI 운영 센터 전체</td>
+            </tr>
+            <tr>
+              <td>설정/사전</td>
+              <td><code>AppSetting</code>, <code>SeoCategoryDictionaryEntry</code>, <code>SeoCategoryDictionaryUploadBatch</code>, <code>SeoCategoryDictionaryUploadEntry</code></td>
+              <td>API/AI 설정, SEO 카테고리 사전, 업로드 이력</td>
+              <td>API 세팅, AI 세팅, 카테고리 사전</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>저장 정책 핵심</strong>
+        <p>
+          프로그램은 화면 진입 때마다 외부 서비스를 다시 긁는 방식을 줄이고, 수집 시점의 스냅샷을 DB에 보존한 뒤 메뉴는 저장 데이터를 재사용하는 방향으로 설계되어 있습니다.
+          실패 데이터가 성공 데이터를 덮어쓰지 않도록 일부 upsert에는 성공값 보호 로직이 들어 있습니다.
+        </p>
+      </div>
+    </section>
+
+    <section id="collection">
+      <h2>5. 데이터 수집 프로세스</h2>
+      <p class="section-note">중앙 수집 허브는 <code>COLLECTION_TASK_REGISTRY</code>와 <code>/collection/*</code> API로 작업을 관리합니다.</p>
+
+      <div class="flow">
+        <div class="step"><span class="no">1</span><strong>작업 선택</strong><span>데이터 수집 메뉴에서 수집 task를 선택하거나 schedule/run-all 실행</span></div>
+        <div class="step"><span class="no">2</span><strong>Job 생성</strong><span>API가 <code>collection_job_run</code>에 실행 이력 생성</span></div>
+        <div class="step"><span class="no">3</span><strong>실행 위치 결정</strong><span>server_api/server_batch는 API가 직접, host_cdp는 Host Agent가 claim</span></div>
+        <div class="step"><span class="no">4</span><strong>수집/다운로드</strong><span>API 호출 또는 Chrome CDP 조작, 필요 시 파일 다운로드</span></div>
+        <div class="step"><span class="no">5</span><strong>저장 검증</strong><span>target table row 수와 coverage를 확인해 SUCCESS/PARTIAL/FAILED 결정</span></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>수집 작업</th>
+              <th>실행 방식</th>
+              <th>대상 테이블</th>
+              <th>설명</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>판매 주문/상품별 매출</td><td><span class="tag good">server_api</span></td><td><code>naver_commerce_product_order_raw</code>, <code>naver_commerce_product_sales_daily</code></td><td>Commerce API로 주문 raw를 가져오고 상품별 일자 집계 생성</td></tr>
+            <tr><td>구매 키워드</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_smartstore_purchase_keyword_daily</code></td><td>스마트스토어 화면에서 엑셀 다운로드 후 API 업로드</td></tr>
+            <tr><td>광고 성과(API)</td><td><span class="tag good">server_api</span></td><td><code>naver_ad_keyword_daily</code>, <code>naver_ad_searchword_daily</code>, <code>naver_ad_creative_daily</code></td><td>SearchAd API 기반 자동 수집</td></tr>
+            <tr><td>광고 검색어 분석</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_ad_searchword_daily</code></td><td>광고센터 검색어 보고서 다운로드 보정</td></tr>
+            <tr><td>광고 소재 보고서</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_ad_creative_daily</code></td><td>광고센터 소재 보고서 다운로드 보정</td></tr>
+            <tr><td>GFA 성과보고서</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_gfa_performance_daily</code></td><td>GFA UI 성과보고서 요청/다운로드/업로드</td></tr>
+            <tr><td>GFA 캠페인 목록</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_gfa_campaign_inventory</code></td><td>광고센터 UI 캠페인 inventory 수집</td></tr>
+            <tr><td>GFA 광고그룹 목록</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_gfa_adgroup_inventory</code></td><td>광고센터 UI 광고그룹 inventory 수집</td></tr>
+            <tr><td>GFA 소재 컨디션</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_gfa_creative_detail</code></td><td>소재 상세 페이지에서 이미지/카피/랜딩/CTA 수집</td></tr>
+            <tr><td>검색/쇼핑 순위(OpenAPI)</td><td><span class="tag good">server_api</span></td><td><code>tracked_product_rank_daily</code></td><td>그룹1/추적 키워드 기준 쇼핑 순위 저장</td></tr>
+            <tr><td>광고 상품 순위(CDP)</td><td><span class="tag warn">host_cdp</span></td><td><code>ad_rank_diagnosis_daily</code></td><td>네이버 광고 노출 진단 화면에서 키워드×조건별 광고 순위 수집</td></tr>
+            <tr><td>상품 상세 메트릭(CDP)</td><td><span class="tag warn">host_cdp</span></td><td><code>tracked_product_page_daily</code>, <code>naver_product_review_daily</code></td><td>상품 상세 페이지 가격/리뷰/구매 배지 수집</td></tr>
+            <tr><td>리뷰 수집</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_review_raw</code></td><td>리뷰 엑셀 또는 페이지 기반 원문 수집</td></tr>
+            <tr><td>리뷰 답글 본문 보강</td><td><span class="tag warn">host_cdp</span></td><td><code>naver_review_raw</code>, <code>naver_review_reply_raw</code></td><td>판매자 답글 본문 누락분 보강</td></tr>
+            <tr><td>리뷰 일간 스냅샷 보강</td><td><span class="tag good">server_batch</span></td><td><code>naver_product_review_daily</code></td><td>raw 리뷰 기반 일간 요약 재집계</td></tr>
+            <tr><td>상품지수 일간 분석</td><td><span class="tag good">server_batch</span></td><td><code>tracked_product_index_score_daily</code></td><td>수집/수기 입력을 점수화해 상품지수 저장</td></tr>
+            <tr><td>Q&A 수집</td><td><span class="tag good">server_api</span></td><td><code>commerce_qna_raw</code></td><td>Commerce 문의 API 기반 고객/상품 문의 수집</td></tr>
+            <tr><td>복구용 파일 업로드</td><td><span class="tag">manual_import</span></td><td><code>tracked_product_rank_daily</code>, <code>naver_review_raw</code>, <code>seo_category_dictionary_entry</code></td><td>자동 수집 실패/누락 시 사용자가 파일로 복구</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>기본 자동 수집 시간표</h3>
+      <p class="section-note">API startup 시 스케줄러 thread가 시작되며, Asia/Seoul 기준 HH:MM 단위로 task를 실행합니다.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>시간(KST)</th>
+              <th>작업 ID</th>
+              <th>작업명</th>
+              <th>실행 방식</th>
+              <th>주요 저장소</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>04:30</td><td><code>rank_openapi</code></td><td>검색/쇼핑 순위(OpenAPI)</td><td>server_api</td><td><code>tracked_product_rank_daily</code></td></tr>
+            <tr><td>05:00</td><td><code>page_metrics_cdp</code></td><td>상품 상세 메트릭(CDP)</td><td>host_cdp</td><td><code>tracked_product_page_daily</code>, <code>naver_product_review_daily</code></td></tr>
+            <tr><td>05:05</td><td><code>ad_rank_diagnosis_cdp</code></td><td>광고 상품 순위(CDP)</td><td>host_cdp</td><td><code>ad_rank_diagnosis_daily</code></td></tr>
+            <tr><td>05:10</td><td><code>sales_orders</code></td><td>판매 주문/상품별 매출</td><td>server_api</td><td><code>naver_commerce_product_order_raw</code>, <code>naver_commerce_product_sales_daily</code></td></tr>
+            <tr><td>05:20</td><td><code>purchase_keywords</code></td><td>구매 키워드</td><td>host_cdp</td><td><code>naver_smartstore_purchase_keyword_daily</code></td></tr>
+            <tr><td>05:30</td><td><code>reviews_collect</code></td><td>리뷰 수집</td><td>host_cdp</td><td><code>naver_review_raw</code></td></tr>
+            <tr><td>05:40</td><td><code>ads_daily</code></td><td>광고 성과(API)</td><td>server_api</td><td><code>naver_ad_keyword_daily</code>, <code>naver_ad_searchword_daily</code>, <code>naver_ad_creative_daily</code></td></tr>
+            <tr><td>05:50</td><td><code>ads_searchword_daily</code></td><td>광고 검색어 분석</td><td>host_cdp</td><td><code>naver_ad_searchword_daily</code></td></tr>
+            <tr><td>06:00</td><td><code>ads_creative_report_daily</code>, <code>review_reply_backfill</code></td><td>광고 소재 보고서 / 리뷰 답글 보강</td><td>host_cdp</td><td><code>naver_ad_creative_daily</code>, 리뷰 답글 테이블</td></tr>
+            <tr><td>06:05~06:12</td><td><code>gfa_*_inventory</code>, <code>gfa_creative_detail</code></td><td>GFA 목록/소재 컨디션</td><td>host_cdp</td><td>GFA inventory/detail 테이블</td></tr>
+            <tr><td>06:10</td><td><code>gfa_performance_daily</code></td><td>GFA 성과보고서</td><td>host_cdp</td><td><code>naver_gfa_performance_daily</code></td></tr>
+            <tr><td>06:20</td><td><code>review_daily_backfill</code></td><td>리뷰 일간 스냅샷 보강</td><td>server_batch</td><td><code>naver_product_review_daily</code></td></tr>
+            <tr><td>06:40</td><td><code>product_index_daily</code></td><td>상품지수 일간 분석</td><td>server_batch</td><td><code>tracked_product_index_score_daily</code></td></tr>
+            <tr><td>07:00</td><td><code>qna_collect</code></td><td>Q&A 수집</td><td>server_api</td><td><code>commerce_qna_raw</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Host Agent/CDP 동작</h3>
+      <div class="grid two">
+        <div class="card">
+          <h3>Host Agent 역할</h3>
+          <ul>
+            <li>Windows 로컬/NAS Collector PC에서 <code>tools/host-agent.ps1</code> 실행</li>
+            <li>로컬 HTTP 서버 <code>http://127.0.0.1:9230</code> 제공</li>
+            <li>Chrome CDP 포트 <code>9223</code>으로 브라우저 조작</li>
+            <li>로그인 세션을 재사용해 네이버 화면에서 보고서 요청/다운로드</li>
+            <li>작업별 stage/event를 API에 제출해 진행 상황 표시</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>대표 CDP 모드</h3>
+          <ul class="columns">
+            <li><code>page_metrics</code>: 상품 상세 메트릭</li>
+            <li><code>purchase_keywords_cdp</code>: 구매 키워드 엑셀</li>
+            <li><code>gfa_performance_report_cdp</code>: GFA 성과보고서</li>
+            <li><code>gfa_campaign_inventory_cdp</code>: GFA 캠페인 목록</li>
+            <li><code>gfa_adgroup_inventory_cdp</code>: GFA 광고그룹 목록</li>
+            <li><code>gfa_creative_detail_cdp</code>: GFA 소재 상세</li>
+            <li><code>reviews_excel_cdp</code>: 리뷰 엑셀</li>
+            <li><code>ad_rank_diagnosis_cdp</code>: 광고 노출 진단</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>광고 상품 순위(CDP) 특화 프로세스</strong>
+        <p>
+          광고 노출 진단은 공식 API로 키워드×성별×연령×지면별 실시간 순위를 제공하지 않기 때문에,
+          광고센터의 <code>exposure-status</code> 화면을 CDP로 조작합니다. 현재 순위 범위는 92위까지이며,
+          키워드는 내 상품 추적의 그룹1 핵심 키워드를 사용합니다. 결과는 상품별로 저장되고, 성공/미노출/실패와 함께
+          검색광고/ADVoost 구분도 저장할 수 있습니다.
+        </p>
+      </div>
+
+      <div class="flow">
+        <div class="step"><span class="no">1</span><strong>상품/키워드 plan 생성</strong><span>API가 active 광고 상품, 그룹1 키워드, core preset 조건을 묶음</span></div>
+        <div class="step"><span class="no">2</span><strong>광고센터 진입</strong><span>Host Agent가 노출현황보기 화면으로 이동</span></div>
+        <div class="step"><span class="no">3</span><strong>조건 선택</strong><span>키워드 고정 → 성별/연령 → 지면 순서로 조회</span></div>
+        <div class="step"><span class="no">4</span><strong>결과 확인</strong><span>결과 테이블 안정화 후 92위까지 row text를 분석</span></div>
+        <div class="step"><span class="no">5</span><strong>부분 저장</strong><span>조건 하나가 끝날 때마다 <code>partial-results</code>로 DB 저장</span></div>
+      </div>
+    </section>
+
+    <section id="ai">
+      <h2>6. AI 분석/생성 프로세스</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>GFA 분석 저장</h3>
+          <p>분석 결과는 캐시가 아니라 <code>naver_gfa_analysis_result</code>에 조건/기간/분석 버전/source fingerprint와 함께 저장됩니다.</p>
+          <span class="tag good">재사용 가능</span>
+          <span class="tag good">최신 결과 표시</span>
+        </div>
+        <div class="card">
+          <h3>GFA 소재 생성</h3>
+          <p>분석된 고성과 패턴과 목적/템플릿을 바탕으로 카피와 이미지 후보를 생성하고, 사용/검수/피드백 상태를 이벤트로 남깁니다.</p>
+          <span class="tag">OpenAI</span>
+          <span class="tag">Gemini</span>
+        </div>
+        <div class="card">
+          <h3>리뷰/Q&A 답변 초안</h3>
+          <p>리뷰와 Q&A 원문을 기반으로 답변 초안을 생성하고, 반려 사유를 지식화해 다음 생성 품질을 높입니다.</p>
+          <span class="tag good">검수형</span>
+          <span class="tag warn">자동 제출 전 검증</span>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div class="step"><span class="no">1</span><strong>원천 데이터</strong><span>광고/판매/리뷰/Q&A/순위 데이터를 날짜 기준으로 저장</span></div>
+        <div class="step"><span class="no">2</span><strong>규칙/정책</strong><span>SEO 규칙, SKU 정책, API/AI 설정, 기준 순위 적용</span></div>
+        <div class="step"><span class="no">3</span><strong>판단 생성</strong><span>AI 또는 결정론 로직으로 문제/기회/액션 후보 생성</span></div>
+        <div class="step"><span class="no">4</span><strong>실행 큐</strong><span>사람이 승인/보류/반려하고 상태를 기록</span></div>
+        <div class="step"><span class="no">5</span><strong>검증 로그</strong><span>실행 후 성과 변화를 evidence로 남김</span></div>
+      </div>
+    </section>
+
+    <section id="ops">
+      <h2>7. 로컬/NAS 운영</h2>
+      <p class="section-note">운영 안정성의 핵심은 불변 태그, lock 파일, candidate 검증 후 승격입니다.</p>
+
+      <div class="grid two">
+        <div class="card accent">
+          <h3>표준 재빌드 흐름</h3>
+          <div class="flow">
+            <div class="step"><span class="no">1</span><strong>Build Candidate</strong><span>새 tag <code>analytics_YYYYMMDD_HHMMSS</code> 생성</span></div>
+            <div class="step"><span class="no">2</span><strong>Switch & Verify</strong><span>candidate lock으로 web/api 기동, version 증거 확인</span></div>
+            <div class="step"><span class="no">3</span><strong>Promote</strong><span>검증 PASS면 master lock으로 승격</span></div>
+          </div>
+          <p><code>scripts/analytics_rebuild_and_verify.ps1</code> 한 번으로 수행됩니다.</p>
+        </div>
+        <div class="card">
+          <h3>증거 3종 세트</h3>
+          <ul>
+            <li>컨테이너 image tag가 lock의 <code>ANALYTICS_IMAGE_TAG</code>와 일치</li>
+            <li>Web <code>http://localhost:5188/version.json</code>의 <code>imageTag</code> 확인</li>
+            <li>API <code>http://localhost:5189/api/version</code>의 <code>imageTag</code> 확인</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>운영 명령/스크립트</th>
+              <th>용도</th>
+              <th>주의사항</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>scripts/cmd-analytics-local.ps1</code></td><td>로컬 stack 기동</td><td>Web 5188, API 5189</td></tr>
+            <tr><td><code>scripts/analytics_rebuild_and_verify.ps1</code></td><td>표준 재빌드/검증/승격</td><td>일상 재빌드는 이 스크립트 사용</td></tr>
+            <tr><td><code>scripts/analytics_up.ps1</code></td><td>master lock 기준 재기동</td><td>빌드 없이 재기동할 때 사용</td></tr>
+            <tr><td><code>scripts/cmd-analytics-nas.ps1</code></td><td>NAS mode 로컬 시뮬레이션</td><td>Web 6188, API 6189, debug 29222</td></tr>
+            <tr><td><code>scripts/build-analytics-nas-images-tar.ps1</code></td><td>NAS 배포용 이미지 tar 생성</td><td>NAS에서는 빌드하지 않고 로컬 tar를 load</td></tr>
+            <tr><td><code>scripts/cmd-analytics-nas-sync.ps1</code></td><td>NAS 코드/lock 동기화</td><td>SMB 또는 SSH 기반</td></tr>
+            <tr><td><code>scripts/verify-analytics-nas-after-copy.ps1</code></td><td>NAS 복사 후 docker load, compose up, version 검증</td><td>NAS web/api tag와 Host Agent installer 버전 검증</td></tr>
+            <tr><td><code>scripts/analytics_nas_preflight.ps1</code></td><td>NAS→PC CDP 네트워크 사전 점검</td><td>PC 방화벽/9223/프록시 접근 확인</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>금지/주의 흐름</strong>
+        <p>
+          lock 없이 직접 <code>docker compose up</code>을 실행하거나, <code>latest</code> 같은 가변 tag를 쓰거나,
+          실행 중 컨테이너에 <code>dist/</code>를 덮어쓰는 배포는 롤백/착시 문제를 만들 수 있으므로 사용하지 않습니다.
+        </p>
+      </div>
+
+      <h3>운영 Safeguard</h3>
+      <div class="grid three">
+        <div class="card compact"><strong>잘못된 폴더 실행 방지</strong><p class="caption"><code>CANONICAL_ROOT.txt</code>와 스크립트 root check로 다른 프로젝트 오염을 막습니다.</p></div>
+        <div class="card compact"><strong>legacy compose 차단</strong><p class="caption">root <code>docker-compose.yml</code>는 legacy profile로 묶여 기본 실행을 피하도록 설계되어 있습니다.</p></div>
+        <div class="card compact"><strong>NAS CDP fail-fast</strong><p class="caption">NAS compose는 <code>REQUIRE_HOST_CDP=1</code>로 내부 Chromium fallback 없이 실패를 드러냅니다.</p></div>
+        <div class="card compact"><strong>Host Agent 버전 Drift 방지</strong><p class="caption">UI 요구 버전, Agent 스크립트, installer bundle 버전을 검증합니다.</p></div>
+        <div class="card compact"><strong>Stale Job 정리</strong><p class="caption">API startup과 매일 scheduler reset에서 중단된 수집 job을 DB persistence 기준으로 reconcile합니다.</p></div>
+        <div class="card compact"><strong>NAS 배포 중 502 완화</strong><p class="caption">NAS 배포는 web stop → api warmup → web start 순서로 진행합니다.</p></div>
+      </div>
+    </section>
+
+    <section id="files">
+      <h2>8. 주요 파일 구조</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>Frontend</h3>
+          <ul>
+            <li><code>web/src/modules/layout/AppShell.tsx</code>: 전체 메뉴/라우팅/공통 shell</li>
+            <li><code>web/src/modules/ads/AdsViews.tsx</code>: SA/GFA 분석 화면 다수</li>
+            <li><code>web/src/modules/layout/RankTrackingListView.tsx</code>, <code>RankTrackingDetailView.tsx</code>: 내 상품 추적</li>
+            <li><code>web/src/modules/layout/AdRankTrackingView.tsx</code>: 내 광고 상품 추적</li>
+            <li><code>web/src/modules/settings/DataCollectionView.tsx</code>: 데이터 수집 허브</li>
+            <li><code>web/src/modules/settings/MenuSyncView.tsx</code>: 로컬/NAS 메뉴 동기화</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Backend</h3>
+          <ul>
+            <li><code>api/main.py</code>: FastAPI endpoint, 수집 registry, 분석/업로드/collector 처리</li>
+            <li><code>api/db.py</code>: SQLAlchemy 모델, upsert helper, DB 초기화/migration</li>
+            <li><code>api/schemas.py</code>: Pydantic request/response schema</li>
+            <li><code>api/menu_sync_api.py</code>, <code>menu_sync_collection.py</code>: 메뉴 동기화 API/수집</li>
+            <li><code>api/ai_settings_store.py</code>, <code>settings_store.py</code>: 설정 저장소</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Ops/Collector</h3>
+          <ul>
+            <li><code>tools/host-agent.ps1</code>: Host Agent와 CDP 자동화 핵심</li>
+            <li><code>tools/start-host-chrome.ps1</code>: Host Chrome CDP 기동</li>
+            <li><code>docker/analytics.master.lock</code>: 로컬 실행 tag SoT</li>
+            <li><code>docker/analytics.nas.master.lock</code>: NAS 실행 tag SoT</li>
+            <li><code>web/public/nas/Install-Analytics-HostAgent.ps1</code>: NAS/Collector 설치 bundle</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="risks">
+      <h2>9. 운영 리스크와 개선 포인트</h2>
+      <div class="grid three">
+        <div class="card">
+          <h3>CDP 수집 안정성</h3>
+          <p>네이버 화면 구조, 로그인, 캡차, 요청 과밀 팝업에 민감합니다. 각 조건 단위 부분 저장과 stage log가 중요합니다.</p>
+          <span class="tag warn">지속 모니터링 필요</span>
+        </div>
+        <div class="card">
+          <h3>광고 상품 매칭</h3>
+          <p>광고 노출 진단 결과에 상품 URL이 없을 때 텍스트/별표/패키지 수량으로 매칭합니다. 상품명 변화에 따른 보강 규칙이 필요할 수 있습니다.</p>
+          <span class="tag warn">별칭 관리 필요</span>
+        </div>
+        <div class="card">
+          <h3>NAS/Local 차이</h3>
+          <p>로컬과 NAS의 이미지 tag, DB 상태, Host Agent 버전이 다르면 화면 결과가 달라질 수 있습니다. lock과 version 증거 확인이 필수입니다.</p>
+          <span class="tag bad">tag 불일치 주의</span>
+        </div>
+        <div class="card">
+          <h3>AI 설정/키 관리</h3>
+          <p>OpenAI/Gemini/API credential은 화면 설정과 환경변수 migration 흐름이 공존합니다. 모델 상태 검증 endpoint를 통해 실행 전 확인해야 합니다.</p>
+          <span class="tag">설정 백업</span>
+        </div>
+        <div class="card">
+          <h3>DB 스냅샷 품질</h3>
+          <p>날짜별 fact가 화면의 기준이므로, 수집 실패가 성공값을 덮지 않는 정책과 coverage 검증을 유지해야 합니다.</p>
+          <span class="tag good">upsert 보호</span>
+        </div>
+        <div class="card">
+          <h3>향후 권장 개선</h3>
+          <ul>
+            <li>수집 task별 성공률/평균 소요시간 대시보드</li>
+            <li>CDP stage log를 조건별 타임라인으로 시각화</li>
+            <li>상품 매칭 alias 관리 화면</li>
+            <li>NAS/Local DB 차이 자동 리포트</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

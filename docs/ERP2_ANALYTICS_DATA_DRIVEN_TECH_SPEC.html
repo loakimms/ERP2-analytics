@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERP2 Analytics 데이터 기반 구조도 및 기술서</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d9e1ec;
+      --blue: #2563eb;
+      --green: #059669;
+      --orange: #ea580c;
+      --red: #dc2626;
+      --purple: #7c3aed;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Arial, sans-serif;
+      line-height: 1.62;
+    }
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 40px 24px 72px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #102a56, #1d4ed8 62%, #0f766e);
+      color: #fff;
+      border-radius: 24px;
+      padding: 34px 38px;
+      box-shadow: 0 18px 50px rgba(16, 42, 86, 0.22);
+    }
+    h1 { margin: 0 0 10px; font-size: 34px; letter-spacing: -0.04em; }
+    h2 { margin: 44px 0 16px; font-size: 24px; letter-spacing: -0.03em; }
+    h3 { margin: 28px 0 12px; font-size: 18px; }
+    p { margin: 10px 0; }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 20px;
+      margin-top: 20px;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+    }
+    .meta code, code {
+      background: rgba(15, 23, 42, 0.08);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    }
+    .hero code { background: rgba(255,255,255,0.16); color: #fff; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      margin: 18px 0;
+      box-shadow: 0 8px 24px rgba(17, 24, 39, 0.05);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: #fbfdff;
+    }
+    .metric .label { color: var(--muted); font-size: 13px; }
+    .metric .value { margin-top: 6px; font-size: 24px; font-weight: 800; letter-spacing: -0.03em; }
+    .metric .note { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fff;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef4ff; color: #1e3a8a; font-weight: 700; }
+    tr:last-child td { border-bottom: 0; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .node {
+      min-width: 190px;
+      flex: 1 1 190px;
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+      position: relative;
+    }
+    .node strong { display: block; font-size: 15px; }
+    .node span { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .node.blue { border-color: #93c5fd; background: #eff6ff; }
+    .node.green { border-color: #86efac; background: #f0fdf4; }
+    .node.orange { border-color: #fdba74; background: #fff7ed; }
+    .node.purple { border-color: #c4b5fd; background: #f5f3ff; }
+    .node.red { border-color: #fca5a5; background: #fef2f2; }
+    .arrow {
+      display: flex;
+      align-items: center;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 0 2px;
+    }
+    .swimlane {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 10px 0;
+      background: #fff;
+    }
+    .lane-title {
+      background: #f1f5f9;
+      padding: 14px;
+      font-weight: 700;
+      border-right: 1px solid var(--line);
+    }
+    .lane-body { padding: 14px; }
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      margin: 3px 4px 3px 0;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .risk {
+      border-left: 5px solid var(--orange);
+      background: #fff7ed;
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin: 12px 0;
+    }
+    .ok {
+      border-left-color: var(--green);
+      background: #f0fdf4;
+    }
+    .warn {
+      border-left-color: var(--red);
+      background: #fef2f2;
+    }
+    ul { margin: 8px 0 8px 22px; padding: 0; }
+    @media (max-width: 820px) {
+      .meta, .grid, .swimlane { grid-template-columns: 1fr; }
+      .lane-title { border-right: 0; border-bottom: 1px solid var(--line); }
+      .arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <h1>ERP2 Analytics 데이터 기반 구조도 및 기술서</h1>
+      <p>NAS 운영 DB에 저장된 실제 row 수, 날짜 범위, 최근 수집 상태를 기준으로 ERP2-analytics의 구조와 운영 흐름을 정리한 문서입니다.</p>
+      <div class="meta">
+        <div>작성일: 2026-08-07</div>
+        <div>기준 배포 태그: <code>analytics_20260807_091850</code></div>
+        <div>기준 DB: NAS PostgreSQL <code>analytics</code></div>
+        <div>포트: Web <code>6188</code>, API <code>6189</code>, DB <code>6442</code>, CDP <code>9223</code></div>
+      </div>
+    </section>
+
+    <h2>1. 핵심 요약</h2>
+    <section class="grid">
+      <div class="metric">
+        <div class="label">최대 fact 테이블</div>
+        <div class="value">492,692</div>
+        <div class="note"><code>naver_ad_searchword_daily</code></div>
+      </div>
+      <div class="metric">
+        <div class="label">주요 구매 키워드 row</div>
+        <div class="value">17,627</div>
+        <div class="note">2025-10-01 ~ 2026-08-06</div>
+      </div>
+      <div class="metric">
+        <div class="label">최근 14일 구매 키워드 상태</div>
+        <div class="value">11 / 11</div>
+        <div class="note">SUCCESS / FAILED</div>
+      </div>
+    </section>
+    <section class="card">
+      <p>ERP2 Analytics는 광고 성과, 쇼핑 순위, 구매 키워드, 리뷰, Q&amp;A, AI 분석을 한 DB와 한 운영 스택으로 묶은 분석 전용 시스템입니다. 데이터 규모상 광고 검색어, 쇼핑 순위, GFA, 광고 소재가 핵심 대용량 fact 축이며, 구매 키워드와 리뷰/Q&amp;A가 상품 운영 판단과 AI 분석의 품질 데이터를 보강합니다.</p>
+    </section>
+
+    <h2>2. 전체 시스템 구조도</h2>
+    <section class="card">
+      <div class="flow">
+        <div class="node blue"><strong>운영자 / 분석 사용자</strong><span>브라우저에서 Analytics UI 사용</span></div>
+        <div class="arrow">→</div>
+        <div class="node blue"><strong>Analytics Web</strong><span>React + Vite<br>NAS 6188 / Local 5188</span></div>
+        <div class="arrow">→</div>
+        <div class="node green"><strong>Analytics API</strong><span>FastAPI<br>NAS 6189 / Local 5189</span></div>
+        <div class="arrow">→</div>
+        <div class="node green"><strong>PostgreSQL</strong><span>analytics DB<br>NAS 6442 / Local 5442</span></div>
+      </div>
+      <div style="height:14px"></div>
+      <div class="flow">
+        <div class="node orange"><strong>Naver OpenAPI</strong><span>SearchAd, Shopping, Commerce</span></div>
+        <div class="node purple"><strong>Windows Host Agent</strong><span>PowerShell + Host Chrome CDP 9223</span></div>
+        <div class="node purple"><strong>SmartStore / SearchAd / GFA Web UI</strong><span>로그인, 화면 탐색, 다운로드</span></div>
+        <div class="node red"><strong>Immutable Docker Tag</strong><span>lock 기반 배포 증거</span></div>
+      </div>
+    </section>
+
+    <h2>3. 주요 데이터 현황</h2>
+    <section class="card">
+      <table>
+        <thead>
+          <tr><th>영역</th><th>테이블</th><th class="num">row 수</th><th>날짜 범위</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>광고 검색어</td><td><code>naver_ad_searchword_daily</code></td><td class="num">492,692</td><td>2026-01-01 ~ 2026-08-06</td></tr>
+          <tr><td>GFA 성과</td><td><code>naver_gfa_performance_daily</code></td><td class="num">206,087</td><td>2024-06-19 ~ 2026-08-06</td></tr>
+          <tr><td>쇼핑 검색 순위</td><td><code>naver_product_rank_daily</code></td><td class="num">152,150</td><td>2025-12-10 ~ 2026-08-07</td></tr>
+          <tr><td>내 상품 추적 순위</td><td><code>tracked_product_rank_daily</code></td><td class="num">132,393</td><td>2025-07-11 ~ 2026-08-07</td></tr>
+          <tr><td>광고 소재</td><td><code>naver_ad_creative_daily</code></td><td class="num">122,674</td><td>2025-07-25 ~ 2026-08-06</td></tr>
+          <tr><td>광고 키워드</td><td><code>naver_ad_keyword_daily</code></td><td class="num">80,924</td><td>2025-06-21 ~ 2026-08-06</td></tr>
+          <tr><td>광고 노출 진단</td><td><code>ad_rank_diagnosis_daily</code></td><td class="num">18,144</td><td>2026-07-29 ~ 2026-08-06</td></tr>
+          <tr><td>구매 키워드</td><td><code>naver_smartstore_purchase_keyword_daily</code></td><td class="num">17,627</td><td>2025-10-01 ~ 2026-08-06</td></tr>
+          <tr><td>상품 리뷰 요약</td><td><code>naver_product_review_daily</code></td><td class="num">12,842</td><td>2025-12-28 ~ 2026-06-01</td></tr>
+          <tr><td>리뷰 원문</td><td><code>naver_review_raw</code></td><td class="num">8,467</td><td>2023-08-10 ~ 2026-08-07</td></tr>
+          <tr><td>Q&amp;A 원문</td><td><code>commerce_qna_raw</code></td><td class="num">1,578</td><td>2025-01-01 ~ 2026-08-05</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2>4. 구매 키워드 출처 분석</h2>
+    <section class="card">
+      <table>
+        <thead>
+          <tr><th>source</th><th class="num">row 수</th><th>날짜 범위</th><th class="num">결제수 합계</th><th class="num">결제금액 합계</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>purchase_upload</code></td><td class="num">8,649</td><td>2025-10-01 ~ 2026-04-15</td><td class="num">6,774.52</td><td class="num">318,990,375</td></tr>
+          <tr><td><code>smartstore_cdp</code></td><td class="num">5,089</td><td>2026-03-11 ~ 2026-08-06</td><td class="num">4,256.86</td><td class="num">165,701,439</td></tr>
+          <tr><td><code>purchase_commerce_api</code></td><td class="num">3,889</td><td>2026-02-12 ~ 2026-05-31</td><td class="num">9,380.00</td><td class="num">314,861,100</td></tr>
+        </tbody>
+      </table>
+      <div class="risk warn">
+        최근 자동 수집의 핵심 리스크는 <code>smartstore_cdp</code> 경로입니다. SmartStore home에서 로그인 화면 전환이 지연되면 Host Agent가 1시간 대기 후 <code>login_wait_timeout</code> 및 <code>no_db_rows_saved</code>로 실패할 수 있습니다.
+      </div>
+    </section>
+
+    <h2>5. 최근 14일 수집 안정성</h2>
+    <section class="card">
+      <table>
+        <thead>
+          <tr><th>수집 작업</th><th class="num">SUCCESS</th><th class="num">PARTIAL</th><th class="num">FAILED</th><th class="num">CANCELLED</th><th>관찰</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>purchase_keywords</code></td><td class="num">11</td><td class="num">2</td><td class="num">11</td><td class="num">0</td><td>로그인/CDP 의존성이 가장 큰 리스크</td></tr>
+          <tr><td><code>rank_openapi</code></td><td class="num">11</td><td class="num">0</td><td class="num">4</td><td class="num">0</td><td>일부 실패 후 회복</td></tr>
+          <tr><td><code>gfa_performance_daily</code></td><td class="num">14</td><td class="num">4</td><td class="num">5</td><td class="num">1</td><td>다운로드/업로드 복원력 필요</td></tr>
+          <tr><td><code>ad_rank_diagnosis_cdp</code></td><td class="num">6</td><td class="num">11</td><td class="num">0</td><td class="num">1</td><td>부분 저장은 많지만 축적 진행</td></tr>
+          <tr><td><code>reviews_collect</code></td><td class="num">16</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td>대체로 안정</td></tr>
+          <tr><td><code>qna_collect</code></td><td class="num">14</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>Commerce API 기반 안정</td></tr>
+          <tr><td><code>sales_orders</code></td><td class="num">14</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>Commerce API 기반 안정</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <h2>6. 런타임과 모듈 구조</h2>
+    <section class="card">
+      <div class="swimlane">
+        <div class="lane-title">Web</div>
+        <div class="lane-body">
+          <span class="pill">React 18</span><span class="pill">Vite</span><span class="pill">TypeScript</span>
+          <p>주요 위치는 <code>web/</code>이며, 광고/구매/리뷰/검색/AI/설정 화면을 제공한다.</p>
+        </div>
+      </div>
+      <div class="swimlane">
+        <div class="lane-title">API</div>
+        <div class="lane-body">
+          <span class="pill">FastAPI</span><span class="pill">SQLAlchemy</span><span class="pill">Pandas</span><span class="pill">CDP orchestration</span>
+          <p>주요 위치는 <code>api/</code>이며, <code>api/main.py</code>가 수집, 업로드, 분석, AI 엔드포인트의 중심이다.</p>
+        </div>
+      </div>
+      <div class="swimlane">
+        <div class="lane-title">DB</div>
+        <div class="lane-body">
+          <span class="pill">PostgreSQL 16</span><span class="pill">daily fact</span><span class="pill">raw data</span><span class="pill">job events</span>
+          <p><code>api/db.py</code>가 SQLAlchemy 모델을 정의하며 광고, 구매, 리뷰, Q&amp;A, AI 파생 데이터가 같은 DB에 저장된다.</p>
+        </div>
+      </div>
+      <div class="swimlane">
+        <div class="lane-title">Host Agent</div>
+        <div class="lane-body">
+          <span class="pill">PowerShell</span><span class="pill">Host Chrome</span><span class="pill">CDP 9223</span>
+          <p><code>tools/host-agent.ps1</code>가 SmartStore/SearchAd/GFA 웹 화면 기반 수집과 파일 업로드를 담당한다.</p>
+        </div>
+      </div>
+    </section>
+
+    <h2>7. 수집 및 저장 흐름</h2>
+    <section class="card">
+      <div class="flow">
+        <div class="node blue"><strong>Schedule / Manual Run</strong><span>UI 또는 자동 예약</span></div>
+        <div class="arrow">→</div>
+        <div class="node green"><strong>collection_job_run</strong><span>QUEUED / RUNNING / SUCCESS / FAILED</span></div>
+        <div class="arrow">→</div>
+        <div class="node orange"><strong>API / CDP / Upload</strong><span>OpenAPI, Commerce API, Host Agent</span></div>
+        <div class="arrow">→</div>
+        <div class="node green"><strong>Fact / Raw Tables</strong><span>일간 지표와 원천 데이터 저장</span></div>
+        <div class="arrow">→</div>
+        <div class="node purple"><strong>UI / AI 분석</strong><span>조회, 진단, 초안 생성</span></div>
+      </div>
+    </section>
+
+    <h2>8. 운영 배포 구조</h2>
+    <section class="card">
+      <div class="flow">
+        <div class="node blue"><strong>Code Change</strong><span>Web/API/Host Agent 수정</span></div>
+        <div class="arrow">→</div>
+        <div class="node orange"><strong>Candidate Build</strong><span>새 불변 태그 생성</span></div>
+        <div class="arrow">→</div>
+        <div class="node orange"><strong>Candidate Verify</strong><span>Web/API version 검증</span></div>
+        <div class="arrow">→</div>
+        <div class="node green"><strong>Promote</strong><span>master/nas lock 갱신</span></div>
+        <div class="arrow">→</div>
+        <div class="node purple"><strong>NAS Deploy</strong><span>docker load + compose up + version 확인</span></div>
+      </div>
+      <ul>
+        <li>표준 재빌드: <code>scripts/analytics_rebuild_and_verify.ps1</code></li>
+        <li>NAS 이미지 tar 생성: <code>scripts/generate-analytics-nas-images-tar.ps1</code></li>
+        <li>NAS 복사 후 검증: <code>scripts/verify-analytics-nas-after-copy.ps1</code></li>
+        <li>Host Agent 설치본 내장: <code>scripts/embed-host-agent-into-nas-installer.mjs</code></li>
+      </ul>
+    </section>
+
+    <h2>9. 리스크와 개선 우선순위</h2>
+    <section class="card">
+      <div class="risk ok">
+        <strong>1순위: 구매 키워드 CDP 로그인 안정성 - 해결 완료</strong>
+        <p>구매 키워드는 처음부터 Commerce 로그인 URL로 시작하도록 개선했고, Host Agent 버전/관리번호도 올려 설치본 업데이트가 감지되도록 했다.</p>
+      </div>
+      <div class="risk ok">
+        <strong>2순위: CDP 이벤트 장기 추적 - 개선 완료</strong>
+        <p>Collector 완료 시 <code>collector_diagnostics</code>를 <code>detail_json</code>과 <code>collection_job_event.detail_json</code>에 남겨 stage/category/sample error를 구조화한다.</p>
+      </div>
+      <div class="risk ok">
+        <strong>3순위: 대용량 fact 조회 최적화 - 개선 완료</strong>
+        <p><code>naver_ad_searchword_daily</code>, <code>naver_ad_creative_daily</code>, <code>naver_product_rank_daily</code>, <code>tracked_product_rank_daily</code>에 날짜·상품·캠페인·키워드·source 기준 복합 인덱스를 추가했다.</p>
+      </div>
+      <div class="risk ok">
+        <strong>운영 안정성: lock 기반 배포 유지</strong>
+        <p>Web/API는 불변 태그와 <code>/version.json</code>, <code>/api/version</code>으로 검증된다. NAS 배포 시 Host Agent installer release 확인까지 함께 유지해야 한다.</p>
+      </div>
+    </section>
+
+    <h2>10. 저장소 및 런타임 세부 부록</h2>
+    <section class="card">
+      <h3>저장소 레이아웃</h3>
+      <table>
+        <thead>
+          <tr><th>경로</th><th>역할</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>web/</code></td><td>React 18 + Vite + TypeScript SPA, 운영 시 nginx 정적 서빙</td></tr>
+          <tr><td><code>api/</code></td><td>FastAPI API, SQLAlchemy 모델, 수집/업로드/AI 분석 로직</td></tr>
+          <tr><td><code>docker/</code></td><td>compose YAML과 불변 태그 lock 파일</td></tr>
+          <tr><td><code>scripts/</code></td><td>build, verify, promote, local/NAS lifecycle, menu sync 자동화</td></tr>
+          <tr><td><code>tools/</code></td><td>Windows Host Chrome CDP, Host Agent, 수동 수집 도구</td></tr>
+          <tr><td><code>web/public/local</code>, <code>web/public/nas</code></td><td>Host Agent 설치/실행 스크립트 배포 위치</td></tr>
+          <tr><td><code>docs/</code></td><td>운영/기술 문서</td></tr>
+        </tbody>
+      </table>
+
+      <h3>주요 API prefix</h3>
+      <table>
+        <thead>
+          <tr><th>Prefix</th><th>역할</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/health</code>, <code>/version</code>, <code>/api/version</code></td><td>상태와 배포 태그 증거</td></tr>
+          <tr><td><code>/collection/*</code></td><td>수집 task, job run, event, collector token</td></tr>
+          <tr><td><code>/ads/*</code>, <code>/gfa/*</code></td><td>SearchAd, GFA 수집/분석/생성</td></tr>
+          <tr><td><code>/purchase/*</code>, <code>/sales/*</code></td><td>구매 키워드, Commerce 판매/주문 동기화와 분석</td></tr>
+          <tr><td><code>/search-rank/*</code>, <code>/ad-rank/*</code></td><td>오가닉 순위, 페이지 지표, 상품 지수, 광고 노출 순위 진단</td></tr>
+          <tr><td><code>/reviews/*</code>, <code>/qna/*</code></td><td>리뷰/Q&amp;A 수집, 분석, 답글/답변 초안</td></tr>
+          <tr><td><code>/ai/*</code></td><td>AI chat, A-1 분석, AI Ops Center</td></tr>
+          <tr><td><code>/settings/*</code>, <code>/admin/*</code>, <code>/menu-sync/*</code></td><td>설정, 관리자, 버전/백업, 메뉴 동기화</td></tr>
+        </tbody>
+      </table>
+
+      <h3>인증과 런타임 산출물</h3>
+      <ul>
+        <li>NAS 운영은 Firebase ID token 기반 인증을 사용하며, 민감 route는 role/level 검사를 거친다.</li>
+        <li>API/AI 설정은 DB 저장을 기준으로 하며, lock 파일에는 secret을 넣지 않는다.</li>
+        <li>Docker image는 <code>analytics-analytics-api:&lt;tag&gt;</code>, <code>analytics-analytics-web:&lt;tag&gt;</code> 형식이다.</li>
+        <li>Host Agent 상태는 <code>%LOCALAPPDATA%\ERP2-Analytics-HostChrome\collector-background.*.json</code>에 기록된다.</li>
+        <li>AI 분석 결과는 <code>analysis_run</code>, <code>analysis_blob</code>, trace 계열 테이블에 저장된다.</li>
+      </ul>
+    </section>
+
+    <h2>11. 결론</h2>
+    <section class="card">
+      <p>ERP2 Analytics는 단순 리포팅 화면이 아니라, 공식 API·CDP·수동 업로드·AI 분석을 통합한 운영형 데이터 플랫폼이다. 현재 저장 데이터 기준으로 광고 검색어, GFA, 쇼핑 순위, 광고 소재가 대용량 분석 축을 형성하고 있으며, 구매 키워드·리뷰·Q&amp;A가 상품 운영 판단을 보강한다.</p>
+      <p>현 시점의 가장 큰 운영 개선 지점은 구매 키워드 CDP 수집의 로그인 안정성이다. 이 부분을 새 Host Agent 기준으로 검증하면 광고/검색/구매/리뷰/Q&amp;A 데이터가 하나의 안정된 상품 운영 분석 흐름으로 연결된다.</p>
+    </section>
+  </main>
+</body>
+</html>
