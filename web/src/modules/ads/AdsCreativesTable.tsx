@@ -12,6 +12,16 @@ export type CreativeAggRow = {
 	displayKeyword?: string | null;
 	productTitle?: string | null;
 	imageUrl?: string | null;
+	detailCollectedAt?: string | null;
+	detailLastError?: string | null;
+	creativeType?: string | null;
+	profileName?: string | null;
+	profileImageUrl?: string | null;
+	primaryText?: string | null;
+	headline?: string | null;
+	description?: string | null;
+	cta?: string | null;
+	landingUrl?: string | null;
 	currentBid?: number | null;
 	prevCurrentBid?: number | null;
 	qualityIndex?: number | null;
@@ -42,6 +52,8 @@ export type CreativeAggRow = {
 
 export type CreativeColumnKey =
 	| 'creative'
+	| 'creativeCondition'
+	| 'detailStatus'
 	| 'bid'
 	| 'quality'
 	| 'avgRank'
@@ -60,6 +72,47 @@ export type CreativeColumnKey =
 	| 'purchase_roas'
 	| 'roas'
 	| 'cpa';
+
+const DETAIL_COMPLETED_STATUS_LABELS: Record<string, string> = {
+	gfa_creative_detail_completed_empty_editor: '완료(데이터 없음)',
+	gfa_creative_detail_completed_remote_error_page: '완료(광고센터 오류)',
+};
+
+function getDetailStatusMeta(detailLastError?: string | null, detailCollectedAt?: string | null): { label: string; color: string; title: string; sortText: string } {
+	const error = String(detailLastError || '').trim();
+	const collectedAt = String(detailCollectedAt || '').trim();
+	const completedLabel = DETAIL_COMPLETED_STATUS_LABELS[error];
+	if (completedLabel) {
+		return {
+			label: completedLabel,
+			color: '#fcd34d',
+			title: error,
+			sortText: `완료: ${completedLabel}`,
+		};
+	}
+	if (error) {
+		return {
+			label: '오류',
+			color: '#fca5a5',
+			title: error,
+			sortText: `오류: ${error}`,
+		};
+	}
+	if (collectedAt) {
+		return {
+			label: '완료',
+			color: '#86efac',
+			title: `수집시각: ${collectedAt}`,
+			sortText: `완료: ${collectedAt}`,
+		};
+	}
+	return {
+		label: '미수집',
+		color: '#94a3b8',
+		title: 'GFA 소재 컨디션 수집 전',
+		sortText: '미수집',
+	};
+}
 
 function DeltaBadge(props: { diff: number; pct: number | null; kind: 'int' | 'won' | 'pct' | 'float'; computed: boolean }): JSX.Element {
 	const diff = props.diff;
@@ -162,10 +215,21 @@ export function AdsCreativesTable(props: {
 		() => props.rows.some((row) => row.purchaseMetrics || row.prevPurchaseMetrics),
 		[props.rows],
 	);
+	const hasCreativeDetail = useMemo(
+		() => props.rows.some((row) =>
+			Boolean(row.detailCollectedAt || row.detailLastError || row.creativeType || row.profileName || row.primaryText || row.headline || row.description || row.cta || row.landingUrl),
+		),
+		[props.rows],
+	);
+	const hasGfaRows = useMemo(
+		() => props.rows.some((row) => String(row.adType || '').toUpperCase() === 'GFA'),
+		[props.rows],
+	);
 
 	const defaultColumnKeys = useMemo<CreativeColumnKey[]>(
 		() => [
 			'creative',
+			...(hasCreativeDetail || hasGfaRows ? (['creativeCondition', 'detailStatus'] as CreativeColumnKey[]) : []),
 			'bid',
 			'quality',
 			'avgRank',
@@ -185,7 +249,7 @@ export function AdsCreativesTable(props: {
 			'roas',
 			'cpa',
 		],
-		[hasPurchaseMetrics, showOrganicRank],
+		[hasCreativeDetail, hasGfaRows, hasPurchaseMetrics, showOrganicRank],
 	);
 
 	const visibleColumnKeys = useMemo<CreativeColumnKey[]>(() => {
@@ -214,6 +278,8 @@ export function AdsCreativesTable(props: {
 		const valueOf = (r: CreativeAggRow): string | number => {
 			switch (sortKey) {
 				case 'creative': return ((props.mode ?? 'shopping') === 'powerlink' ? (r.displayKeyword || r.creativeName) : r.creativeName) || '';
+				case 'creativeCondition': return [r.creativeType, r.profileName, r.primaryText, r.headline, r.cta].filter(Boolean).join(' ');
+				case 'detailStatus': return getDetailStatusMeta(r.detailLastError, r.detailCollectedAt).sortText;
 				case 'bid': return Number(r.currentBid ?? -1);
 				case 'quality': return Number(r.qualityIndex ?? -1);
 				case 'avgRank': return Number(r.avgRank ?? -1);
@@ -378,6 +444,8 @@ export function AdsCreativesTable(props: {
 
 	const columnWidthPx: Record<CreativeColumnKey, number> = {
 		creative: creativeColWidthPx,
+		creativeCondition: 360,
+		detailStatus: 120,
 		bid: 108,
 		quality: 92,
 		avgRank: 108,
@@ -416,6 +484,8 @@ export function AdsCreativesTable(props: {
 	const columnLabel = (key: CreativeColumnKey): string => {
 		switch (key) {
 			case 'creative': return (props.mode ?? 'shopping') === 'powerlink' ? '키워드' : '소재명';
+			case 'creativeCondition': return '소재 컨디션';
+			case 'detailStatus': return '상세수집';
 			case 'bid': return '현재입찰가(CPC)';
 			case 'quality': return (props.mode ?? 'shopping') === 'powerlink' ? '광고 연관지수' : '품질지수';
 			case 'avgRank':
@@ -568,10 +638,59 @@ export function AdsCreativesTable(props: {
 		</td>
 	);
 
+	const renderCreativeConditionCell = (r: CreativeAggRow): JSX.Element => {
+		const primary = String(r.primaryText || r.headline || r.description || '').trim();
+		const headline = String(r.headline || '').trim();
+		const description = String(r.description || '').trim();
+		const type = String(r.creativeType || '').trim();
+		const profile = String(r.profileName || '').trim();
+		const cta = String(r.cta || '').trim();
+		const landingUrl = String(r.landingUrl || '').trim();
+		const lines = [primary, headline && headline !== primary ? headline : '', description && description !== primary && description !== headline ? description : ''].filter(Boolean);
+		return (
+			<td className="td-left">
+				<div style={{ display: 'grid', gap: 3, minWidth: 0 }}>
+					<div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+						{type ? <span className="badge-muted">{type}</span> : null}
+						{profile ? <span className="badge-muted">{profile}</span> : null}
+						{cta ? <span className="badge-muted">{cta}</span> : null}
+					</div>
+					{lines.length > 0 ? (
+						<div style={{ fontSize: 12, color: '#e5e7eb', lineHeight: 1.35, whiteSpace: 'normal', wordBreak: 'break-word' }}>
+							{lines.slice(0, 2).join(' / ')}
+						</div>
+					) : (
+						<div style={{ fontSize: 12, color: '#64748b' }}>상세 조건 미수집</div>
+					)}
+					{landingUrl ? (
+						<div style={{ fontSize: 11, color: '#93c5fd', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+							{landingUrl}
+						</div>
+					) : null}
+				</div>
+			</td>
+		);
+	};
+
+	const renderDetailStatusCell = (r: CreativeAggRow): JSX.Element => {
+		const collectedAt = String(r.detailCollectedAt || '').trim();
+		const status = getDetailStatusMeta(r.detailLastError, r.detailCollectedAt);
+		return (
+			<td className="td-left" title={status.title}>
+				<div style={{ fontSize: 12, fontWeight: 900, color: status.color }}>{status.label}</div>
+				{collectedAt ? <div style={{ fontSize: 11, color: '#64748b' }}>{collectedAt.slice(0, 10)}</div> : null}
+			</td>
+		);
+	};
+
 	const renderMetricCell = (r: CreativeAggRow, key: CreativeColumnKey): JSX.Element => {
 		switch (key) {
 			case 'creative':
 				return renderCreativeInfoCell(r);
+			case 'creativeCondition':
+				return renderCreativeConditionCell(r);
+			case 'detailStatus':
+				return renderDetailStatusCell(r);
 			case 'bid':
 				return <td className="td-right"><MetaCell value={r.currentBid} prev={r.prevCurrentBid} kind="won" /></td>;
 			case 'quality':
@@ -676,6 +795,8 @@ export function AdsCreativesTable(props: {
 			case 'quality':
 			case 'avgRank':
 			case 'organicRank':
+			case 'creativeCondition':
+			case 'detailStatus':
 				return <td className="td-right" style={{ fontWeight: 900 }}>-</td>;
 			case 'impressions':
 				return <td className="td-right"><MetricCell value={total.currM.impressions} diff={total.deltas.impressions.diff} pct={total.deltas.impressions.pct} kind="int" /></td>;

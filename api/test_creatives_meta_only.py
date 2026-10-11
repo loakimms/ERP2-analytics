@@ -114,3 +114,114 @@ class CreativesMetaOnlyTest(unittest.TestCase):
         self.assertEqual(int(added.get("current_bid") or 0), 1200)
         self.assertEqual(float(added.get("quality_index") or 0.0), 7.0)
 
+    @patch("main._searchad_get")
+    @patch("main._searchad_build_meta")
+    def test_include_meta_only_dedupes_when_ad_meta_lacks_campaign_id_and_uses_reference_data(
+        self,
+        mock_build_meta: MagicMock,
+        mock_get: MagicMock,
+    ) -> None:
+        import main
+        from main import list_creative_daily
+
+        try:
+            main._SEARCHAD_ADS_BY_ADGROUP_CACHE.clear()
+        except Exception:
+            pass
+
+        db_row = SimpleNamespace(
+            date=date(2026, 1, 11),
+            campaign_name="CAMP1",
+            adgroup_name="GRP1",
+            creative_id="nad-a001-02-existing",
+            device="ALL",
+            creative_name="DB_AD_1",
+            product_title="기존상품",
+            image_url="http://img/db1.png",
+            current_bid=1000,
+            quality_index=5.0,
+            avg_rank=None,
+            impressions=10,
+            clicks=1,
+            cost=1000,
+            conversions=0,
+            revenue=0,
+            ctr=10.0,
+            cpc=1000.0,
+            cvr=0.0,
+            roas=0.0,
+            source="db",
+        )
+
+        q = MagicMock()
+        q.filter.return_value = q
+        q.order_by.return_value = q
+        q.offset.return_value = q
+        q.limit.return_value = q
+        q.all.return_value = [db_row]
+
+        db = MagicMock()
+        db.query.return_value = q
+
+        mock_build_meta.return_value = (
+            {"cmp-1": "CAMP1"},
+            {"grp-1": "GRP1"},
+            {},
+            {},
+            {},
+        )
+
+        def get_side_effect(path: str, *args, **kwargs):
+            if path == "/ncc/ads":
+                r = MagicMock()
+                r.status_code = 200
+                # 실제 SearchAd 쇼핑 소재 메타는 nccCampaignId가 없고
+                # 상품명/이미지가 referenceData 안에 들어오는 케이스가 있다.
+                r.json.return_value = [
+                    {
+                        "nccAdId": "nad-a001-02-existing",
+                        "nccAdgroupId": "grp-1",
+                        "referenceData": {
+                            "productTitle": "기존상품 메타",
+                            "imageUrl": "http://img/existing-meta.png",
+                        },
+                    },
+                    {
+                        "nccAdId": "nad-a001-02-missing",
+                        "nccAdgroupId": "grp-1",
+                        "adAttr": {"bidAmt": 500},
+                        "referenceData": {
+                            "productTitle": "누락상품",
+                            "imageUrl": "http://img/missing.png",
+                        },
+                    },
+                ]
+                return r
+            r = MagicMock()
+            r.status_code = 404
+            r.json.return_value = []
+            return r
+
+        mock_get.side_effect = get_side_effect
+
+        out = list_creative_daily(
+            date_from=date(2026, 1, 11),
+            date_to=date(2026, 1, 11),
+            campaign="CAMP1",
+            adgroup="GRP1",
+            include_meta_only=True,
+            limit=1000,
+            offset=0,
+            db=db,
+        )
+
+        ids = sorted([str(x.get("creative_id")) for x in out])
+        self.assertEqual(ids, ["nad-a001-02-existing", "nad-a001-02-missing"])
+        self.assertEqual(len([x for x in out if x.get("creative_id") == "nad-a001-02-existing"]), 1)
+
+        added = [x for x in out if x.get("creative_id") == "nad-a001-02-missing"][0]
+        self.assertEqual(added.get("source"), "meta_only_api")
+        self.assertEqual(added.get("campaign_name"), "CAMP1")
+        self.assertEqual(added.get("product_title"), "누락상품")
+        self.assertEqual(added.get("image_url"), "http://img/missing.png")
+
