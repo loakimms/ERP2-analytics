@@ -26,6 +26,9 @@ ERP2-dev(회계/판매) 관련 실행은 이 워크스페이스에서 수행하�
 - **"재빌드 해줘" / "재기동 해줘" / "재빌드, 재기동 해줘"**
   - **항상** 불변 태그 → candidate 검증 → PASS 승격(또는 FAIL 롤백) 표준 흐름으로 수행한다.
   - 실행: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\analytics_rebuild_and_verify.ps1`
+  - Production rebuild base는 Git HEAD/dirty worktree가 아니라 `governance/CURRENT_PRODUCTION_BASELINE.json` + `releases/_candidates/<tag>/` 이다.
+  - CandidateSnapshot이 없으면 재빌드를 시작하지 않는다 (`BLOCKED_DIRECT_WORKTREE_BUILD`).
+  - Guard dry-run만: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\analytics_rebuild_and_verify.ps1 -DryRun`
 
 ### 차단(교차 오염 방지)
 

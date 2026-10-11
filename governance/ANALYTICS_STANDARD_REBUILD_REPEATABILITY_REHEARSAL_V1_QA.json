@@ -1,0 +1,54 @@
+{
+  "sprint": "ANALYTICS_STANDARD_REBUILD_REPEATABILITY_REHEARSAL_V1",
+  "decision": "PASS_ANALYTICS_STANDARD_REBUILD_REPEATABILITY_REHEARSAL_V1",
+  "candidateTag": "analytics_20260921_233309",
+  "baseRuntimeTag": "analytics_20260921_005100",
+  "baseManifestSha256": "27dece8d1427a83c32cd55d204a017880331858b3ab5e8a0047d2beb77be4e97",
+  "candidateSnapshot": "releases/_candidates/analytics_20260921_233309",
+  "approvedOverlay": {
+    "approvedNew": 1,
+    "approvedModified": 0,
+    "unexpected": 0,
+    "file": "source/web/public/rebuild-repeatability-fixture.txt"
+  },
+  "candidateManifestSha256": "b48dd5b65abe6a11e7e092a88598c7e6322875296903ac754c6fab89fba60a40",
+  "approvedChangeManifestSha256": "f813d8570ea6809da19b55f6c5c74768d416edc8f3f8a1bdb40f962c3275dd62",
+  "webImageDigest": "sha256:65116d11f546d5005c1466b752a4e2cbf87848d1aaaf84eaf3952e9289b1e7f7",
+  "apiImageDigest": "sha256:e406fe82db320a97467a7c09a1ff27d27ba9b0c7c59c95383cb3ed81de7c5f88",
+  "isolatedRuntime": {
+    "project": "analytics_rehearsal_analytics_20260921_233309",
+    "web": "http://localhost:7188/version.json",
+    "api": "http://localhost:7189/api/version",
+    "webImageTag": "analytics_20260921_233309",
+    "apiImageTag": "analytics_20260921_233309"
+  },
+  "promotionPreflight": "PROMOTION_ELIGIBLE",
+  "nextBaselineSimulation": "releases/_rehearsal/NEXT_BASELINE_SIMULATION.json",
+  "secondGenerationDryRun": {
+    "created": true,
+    "manifestSha256": "588a628741f9f2eda273e58790808210e5c00bf64819086a327ac3b543fcd4a0",
+    "dockerBuild": "NOT_RUN"
+  },
+  "productionMutation": {
+    "dockerProductionRebuild": 0,
+    "productionPromotion": 0,
+    "productionRuntimeTagChange": 0,
+    "currentProductionBaselineChange": 0
+  },
+  "gates": {
+    "R1": "PASS",
+    "R2": "PASS",
+    "R3": "PASS",
+    "R4": "PASS",
+    "R5": "PASS",
+    "R6": "PASS",
+    "R7": "PASS",
+    "R8": "PASS",
+    "R9": "PROMOTION_ELIGIBLE",
+    "R10": "PASS",
+    "R11": "PASS",
+    "R12": "PASS",
+    "R13": "NO",
+    "R14": "NO"
+  }
+}

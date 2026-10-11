@@ -1,0 +1,155 @@
+{
+    "sprint":  "ANALYTICS_FORWARD_ONLY_PRODUCTION_BASELINE_AND_REBUILD_GUARD_V1",
+    "decision":  "PASS_ANALYTICS_FORWARD_ONLY_PRODUCTION_BASELINE_AND_REBUILD_GUARD_V1",
+    "reviewLevel":  [
+                        "LEVEL_1_MACHINE_VERIFY",
+                        "LEVEL_2_LIGHT_REVIEW"
+                    ],
+    "canonicalAuthority":  "governance/CURRENT_PRODUCTION_BASELINE.json",
+    "currentProduction":  {
+                              "runtimeTag":  "analytics_20260921_005100",
+                              "sourceSnapshot":  "releases/analytics_20260921_005100",
+                              "sourceManifest":  "releases/analytics_20260921_005100/manifests/source-manifest.json",
+                              "sourceManifestSha256":  "27dece8d1427a83c32cd55d204a017880331858b3ab5e8a0047d2beb77be4e97",
+                              "webImageDigest":  "sha256:bb9aec691bf0e7f7d656ca6bdcd77d87100d6619488dc2791d4dd77bbffe51de",
+                              "apiImageDigest":  "sha256:74aa7545e7cacf3968735694eb55bf869f7b4d436b72bb0a8753d2e7d8dfbbf1",
+                              "status":  "CANONICAL_PRODUCTION_BASELINE"
+                          },
+    "identityAuthority":  {
+                              "rule":  "runtimeTag + sourceManifestSha256. Date comparison and Git HEAD recency are not authority.",
+                              "gitHeadIsNotAutomaticBase":  true,
+                              "dirtyWorktreeIsNotBuildInput":  true,
+                              "nasTarIsNotAutomaticBase":  true,
+                              "previousDockerTagIsNotAutomaticBase":  true,
+                              "gitHeadAllowedOnlyIfEntireBuildInputProvenEqualToCanonicalManifest":  true
+                          },
+    "rebuildFlow":  [
+                        "Baseline Authority Check",
+                        "Candidate Source Gate",
+                        "Existing Build (candidate snapshot context only)",
+                        "Existing Verify",
+                        "Existing Promotion",
+                        "Baseline Freeze / pointer update"
+                    ],
+    "candidateContract":  {
+                              "workspace":  "releases/_candidates/\u003ccandidate-tag\u003e/",
+                              "base":  "CURRENT_PRODUCTION_BASELINE",
+                              "overlay":  "APPROVED_CHANGESET",
+                              "requiredFiles":  [
+                                                    "manifests/candidate-identity.json (baseRuntimeTag, baseSourceManifestSha256)",
+                                                    "manifests/approved-change-manifest.json",
+                                                    "manifests/source-manifest.json"
+                                                ],
+                              "classifications":  [
+                                                      "BASELINE_UNCHANGED",
+                                                      "APPROVED_NEW",
+                                                      "APPROVED_MODIFIED",
+                                                      "UNEXPECTED"
+                                                  ],
+                              "unexpectedMustBeZero":  true,
+                              "dockerBuildContextMustEqualCandidateSnapshot":  true
+                          },
+    "promotionContract":  {
+                              "requiredAfterBuild":  [
+                                                         "candidate source snapshot",
+                                                         "candidate source manifest",
+                                                         "approved change manifest",
+                                                         "web image digest",
+                                                         "api image digest",
+                                                         "version tag"
+                                                     ],
+                              "dockerImageSuccessIsNotPromotionComplete":  true,
+                              "pointerUpdateSameWorkflow":  true,
+                              "pointerFailureStatus":  "HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE",
+                              "promotionCompleteIfPointerFails":  false
+                          },
+    "protection":  {
+                       "currentAndPreviousSnapshotsExcludedFromAutoDelete":  true,
+                       "currentTag":  "analytics_20260921_005100",
+                       "previousTag":  null,
+                       "noGitResetCleanStash":  true
+                   },
+    "buildKitRole":  "RECOVERY_EVIDENCE_ONLY",
+    "bypassSwitches":  {
+                           "forceOldBase":  "NOT_CREATED",
+                           "ignoreBaseline":  "NOT_CREATED",
+                           "buildFromWorktree":  "NOT_CREATED"
+                       },
+    "thisSprintForbidden":  {
+                                "dockerRebuild":  "NO",
+                                "productionPromotion":  "NO",
+                                "runtimeTagChange":  "NO",
+                                "replacementOverlay":  "NO"
+                            },
+    "scriptsTouched":  [
+                           "scripts/analytics_forward_only_guard.ps1",
+                           "scripts/analytics_rebuild_and_verify.ps1",
+                           "scripts/analytics_build_candidate.ps1",
+                           "scripts/analytics_promote_or_rollback.ps1",
+                           "scripts/start-analytics-local.ps1"
+                       ],
+    "productionBuildEntrypoints":  [
+                                       {
+                                           "path":  "scripts/analytics_build_candidate.ps1",
+                                           "kind":  "PRODUCTION_BUILD_ENTRYPOINT",
+                                           "status":  "GUARDED",
+                                           "note":  "docker build only from releases/_candidates snapshot after baseline+approved-change gates"
+                                       },
+                                       {
+                                           "path":  "scripts/analytics_rebuild_and_verify.ps1",
+                                           "kind":  "PRODUCTION_BUILD_ORCHESTRATOR",
+                                           "status":  "GUARDED",
+                                           "note":  "Baseline Authority Check then Candidate Source Gate then existing build/verify/promote then pointer freeze. -DryRun skips docker."
+                                       },
+                                       {
+                                           "path":  "scripts/start-analytics-local.ps1",
+                                           "kind":  "PRODUCTION_BUILD_ENTRYPOINT",
+                                           "status":  "CLOSED",
+                                           "note":  "compose --build from worktree removed; now --no-build. Original start capability kept without image rebuild."
+                                       },
+                                       {
+                                           "path":  "docker/analytics.local.yml",
+                                           "kind":  "PRODUCTION_BUILD_ENTRYPOINT",
+                                           "status":  "INVENTORIED_OPERATOR_FORBIDDEN",
+                                           "note":  "leftover compose build.context ../api and ../web. Raw docker compose up --build is operator-forbidden. Schema not deleted."
+                                       },
+                                       {
+                                           "path":  "scripts/cmd-analytics-local.ps1",
+                                           "kind":  "UP_ONLY",
+                                           "status":  "NO_BUILD"
+                                       },
+                                       {
+                                           "path":  "scripts/analytics_up.ps1",
+                                           "kind":  "UP_ONLY",
+                                           "status":  "NO_BUILD"
+                                       },
+                                       {
+                                           "path":  "scripts/cmd-analytics-nas.ps1",
+                                           "kind":  "UP_ONLY",
+                                           "status":  "NO_BUILD"
+                                       },
+                                       {
+                                           "path":  "scripts/build-analytics-nas-images-tar.ps1",
+                                           "kind":  "DOCKER_SAVE",
+                                           "status":  "NO_BUILD"
+                                       },
+                                       {
+                                           "path":  "scripts/generate-analytics-nas-images-tar.ps1",
+                                           "kind":  "DOCKER_SAVE",
+                                           "status":  "NO_BUILD"
+                                       },
+                                       {
+                                           "path":  "scripts/deploy-analytics-nas.ps1",
+                                           "kind":  "DOCKER_LOAD_UP",
+                                           "status":  "NO_BUILD"
+                                       },
+                                       {
+                                           "path":  "scripts/analytics_promote_or_rollback.ps1",
+                                           "kind":  "PROMOTION",
+                                           "status":  "GUARDED",
+                                           "note":  "PASS requires candidate snapshot/manifests/digests then pointer freeze"
+                                       }
+                                   ],
+    "fallbackPolicy":  "On baseline integrity failure STOP with HOLD_CURRENT_PRODUCTION_BASELINE_NOT_REPRODUCIBLE. No Git HEAD, NAS tar, or previous release fallback.",
+    "nextSprint":  "GFA_CREATIVE_EDITOR_IMAGE_UPLOAD_REPLACEMENT_ISOLATED_PROMOTION_RETRY_V1 must start from analytics_20260921_005100 Canonical Source Baseline + approved overlay only. Not started in this sprint."
+}

@@ -45,6 +45,8 @@ services:
       # 로컬/테스트에서만 사용: Firebase Admin SDK 없이도 사용자관리 화면을 검증할 수 있는 모드
       # (운영에서는 절대 켜지지 않도록 기본값 0)
       ADMIN_TEST_MODE: ${ADMIN_TEST_MODE:-0}
+      # 리뷰 Knowledge 검증 기록 쓰기(기본 OFF). 로컬만 docker/env.analytics.local에서 켠다. NAS는 별도 승인 전까지 OFF.
+      REVIEW_KNOWLEDGE_VALIDATION_WRITE_ENABLED: ${REVIEW_KNOWLEDGE_VALIDATION_WRITE_ENABLED:-0}
 
       ANALYTICS_DB_URL: postgresql://analytics:analytics_pw@analytics-db:5432/analytics
       API_SETTINGS_DB_ONLY: "1"
@@ -71,6 +73,10 @@ services:
       REQUIRE_HOST_CDP: "0"
       PW_CDP_URL: "http://host.docker.internal:9223"
       SHOPPING_SEED_PRODUCT_URL: "https://smartstore.naver.com/thesujata/products/4743750201"
+      GFA_GENERATED_IMAGE_DIR: /data/gfa_generated_creatives
+      CONTENT_GENERATED_IMAGE_DIR: /data/content_generated_images
+      CONTENT_ASSET_DIR: /data/content_assets
+      GFA_WINDOWS_FONT_DIR: /host_windows_fonts
     ports:
       - "5189:8000"
       - "19222:9222"
@@ -78,6 +84,11 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - analytics-browser-data:/data/playwright
+      - analytics-generated-data:/data/gfa_generated_creatives
+      - analytics-content-images:/data/content_generated_images
+      - analytics-content-assets:/data/content_assets
+      - ../calibration:/calibration:ro
+      - C:/Windows/Fonts:/host_windows_fonts:ro
 
   analytics-web:
     image: analytics-analytics-web:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.master.lock with --env-file)}
@@ -93,4 +104,10 @@ volumes:
     name: analytics-master_analytics-db-data
   analytics-browser-data:
     name: analytics-master_analytics-browser-data
+  analytics-generated-data:
+    name: analytics-master_analytics-generated-data
+  analytics-content-images:
+    name: analytics-master_analytics-content-images
+  analytics-content-assets:
+    name: analytics-master_analytics-content-assets
 

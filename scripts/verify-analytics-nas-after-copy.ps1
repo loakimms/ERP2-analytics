@@ -59,27 +59,24 @@ function Get-ExpectedHostAgentRelease {
   return @{ version = $agentVersion; manageNo = $agentManageNo }
 }
 
+function New-RemoteScript([string] $bashCmd) {
+  # Send the actual script over stdin to avoid nested quote breakage in ssh "bash -lc ...".
+  return @"
+DOCKER_BIN=`$(command -v docker 2>/dev/null || true)
+if [ -z "`$DOCKER_BIN" ]; then DOCKER_BIN='/var/packages/ContainerManager/target/usr/bin/docker'; fi
+$bashCmd
+"@
+}
+
 function Invoke-Ssh([string] $bashCmd, [string] $label) {
-  $q = [char]34
-  # Synology 비대화형 SSH는 PATH가 비어 docker/bash를 못 찾는 경우가 있어 fail-fast + fallback을 둔다.
-  # - bash가 있으면 bash -lc (pipefail 등 bash 기능 사용 가능)
-  # - bash가 없으면 sh -lc 로 degrade (pipefail 미사용)
-  # - docker가 PATH에 없으면 ContainerManager 기본 경로로 fallback
-  $wrapped =
-    "DOCKER_BIN=`$(command -v docker 2>/dev/null || true); " +
-    "if [ -z `"`$DOCKER_BIN`" ]; then DOCKER_BIN='/var/packages/ContainerManager/target/usr/bin/docker'; fi; " +
-    "if command -v bash >/dev/null 2>&1; then bash -lc $q$bashCmd$q; else sh -lc $q$bashCmd$q; fi"
-  & ssh.exe @sshOpts $sshTarget $wrapped
+  $payload = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes((New-RemoteScript $bashCmd)))
+  & ssh.exe @sshOpts $sshTarget ("echo '" + $payload + "' | base64 -d | sh")
   Assert-Ok $label
 }
 
 function Invoke-SshCapture([string] $bashCmd, [string] $label) {
-  $q = [char]34
-  $wrapped =
-    "DOCKER_BIN=`$(command -v docker 2>/dev/null || true); " +
-    "if [ -z `"`$DOCKER_BIN`" ]; then DOCKER_BIN='/var/packages/ContainerManager/target/usr/bin/docker'; fi; " +
-    "if command -v bash >/dev/null 2>&1; then bash -lc $q$bashCmd$q; else sh -lc $q$bashCmd$q; fi"
-  $out = & ssh.exe @sshOpts $sshTarget $wrapped 2>&1 | Out-String
+  $payload = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes((New-RemoteScript $bashCmd)))
+  $out = & ssh.exe @sshOpts $sshTarget ("echo '" + $payload + "' | base64 -d | sh") 2>&1 | Out-String
   Assert-Ok $label
   return $out
 }
@@ -92,6 +89,14 @@ if (-not $tag) { throw "Remote lock missing ANALYTICS_IMAGE_TAG ($NasPath/docker
 Write-Info "NAS lock tag = $tag"
 $expectedAgent = Get-ExpectedHostAgentRelease
 Write-Info ("Expected Host Agent release = version {0}, manageNo {1}" -f $expectedAgent.version, $expectedAgent.manageNo)
+$composeEnvFiles = "--env-file docker/analytics.nas.master.lock"
+$adminEnvState = (Invoke-SshCapture "set +e; cd '$NasPath'; if [ -s docker/env.firebase.admin.local ]; then echo present; else echo missing; fi" 'ssh check firebase admin env').Trim()
+if ($adminEnvState -eq 'present') {
+  $composeEnvFiles = "$composeEnvFiles --env-file docker/env.firebase.admin.local"
+  Write-Info "Firebase Admin env file present: docker/env.firebase.admin.local"
+} else {
+  Write-Info "Firebase Admin env file not present on NAS; user management Admin SDK will be disabled."
+}
 
 $remoteTar = "$NasPath/docker_images/analytics_images_$tag.tar"
 Write-Step "Verify tar exists ($remoteTar)"
@@ -121,13 +126,13 @@ Write-Step 'NAS: ensure external DB volume'
 Invoke-Ssh "set -eu; ""`$DOCKER_BIN"" volume inspect analytics_analytics-db-data >/dev/null 2>&1 || ""`$DOCKER_BIN"" volume create analytics_analytics-db-data >/dev/null" 'ssh ensure external DB volume'
 
 Write-Step 'NAS: compose up db (if needed)'
-Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d analytics-db --pull never --remove-orphans" 'ssh compose up db'
+Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles up -d analytics-db --pull never --remove-orphans" 'ssh compose up db'
 
 Write-Step 'NAS: stop web before api recreate (avoid proxy 502 during api warmup)'
-Invoke-Ssh "set +e; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock stop analytics-web >/dev/null 2>&1; exit 0" 'ssh stop web before api recreate'
+Invoke-Ssh "set +e; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles stop analytics-web >/dev/null 2>&1; exit 0" 'ssh stop web before api recreate'
 
 Write-Step 'NAS: compose up api (force-recreate)'
-Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-api --pull never --remove-orphans" 'ssh compose up api'
+Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles up -d --no-deps --force-recreate analytics-api --pull never --remove-orphans" 'ssh compose up api'
 
 Write-Step 'NAS: wait api version before starting web'
 $apiWarmup = Invoke-SshCapture "set +e; for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do curl -sS --max-time 3 http://127.0.0.1:6189/api/version 2>/dev/null && exit 0; sleep 2; done; echo '__API_UNREACHABLE__'; exit 0" 'ssh wait api before web'
@@ -136,21 +141,21 @@ if ($apiWarmup -match '__API_UNREACHABLE__') {
 }
 try {
   $apiWarmupObj = $apiWarmup | ConvertFrom-Json
-  $apiWarmupTag = [string]($apiWarmupObj.imageTag ?? '')
+  $apiWarmupTag = if ($null -ne $apiWarmupObj.imageTag) { [string]$apiWarmupObj.imageTag } else { '' }
   if ($apiWarmupTag -ne $tag) { throw "NAS api imageTag mismatch before web start: expected=$tag actual=$apiWarmupTag" }
 } catch {
   throw ("NAS api warmup verify failed: " + $_.Exception.Message)
 }
 
 Write-Step 'NAS: compose up web (force-recreate)'
-Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock up -d --no-deps --force-recreate analytics-web --pull never --remove-orphans" 'ssh compose up web'
+Invoke-Ssh "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles up -d --no-deps --force-recreate analytics-web --pull never --remove-orphans" 'ssh compose up web'
 
 Write-Step 'Verify: web version.json (internal)'
 $webJson = Invoke-SshCapture "set -eu; curl -sS http://127.0.0.1:6188/version.json" 'ssh curl web version'
 Write-Info ("web version.json: " + ($webJson.Trim() -replace '\\s+', ' '))
 try {
   $webObj = $webJson | ConvertFrom-Json
-  $webTag = [string]($webObj.imageTag ?? '')
+  $webTag = if ($null -ne $webObj.imageTag) { [string]$webObj.imageTag } else { '' }
   if ($webTag -ne $tag) { throw "NAS web imageTag mismatch: expected=$tag actual=$webTag" }
 } catch {
   throw ("NAS web version.json verify failed: " + $_.Exception.Message)
@@ -171,9 +176,9 @@ Write-Info '  waiting up to 90s for api version...'
 $apiVer = Invoke-SshCapture "set +e; for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45; do curl -sS --max-time 3 http://127.0.0.1:6189/api/version 2>/dev/null && exit 0; curl -sS --max-time 3 http://127.0.0.1:6189/version 2>/dev/null && exit 0; sleep 2; done; echo '__API_UNREACHABLE__'; exit 0" 'ssh curl api version (retry)'
 if ($apiVer -match '__API_UNREACHABLE__') {
   Write-Info 'API not reachable after retry. Collecting evidence...'
-  $ps = Invoke-SshCapture "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock ps" 'ssh compose ps'
+  $ps = Invoke-SshCapture "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles ps" 'ssh compose ps'
   Write-Info ("compose ps: " + ($ps.Trim() -replace '\\s+', ' '))
-  $logs = Invoke-SshCapture "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml --env-file docker/analytics.nas.master.lock logs --no-log-prefix --tail=200 analytics-api" 'ssh api logs'
+  $logs = Invoke-SshCapture "set -eu; cd '$NasPath'; ""`$DOCKER_BIN"" compose -p analytics_nas -f docker/analytics.nas.master.yml $composeEnvFiles logs --no-log-prefix --tail=200 analytics-api" 'ssh api logs'
   Write-Info ("api logs tail: " + ($logs.Trim() -replace '\\s+', ' '))
   $curlDiag = Invoke-SshCapture "set +e; echo 'curl -v /api/version'; curl -v --max-time 3 http://127.0.0.1:6189/api/version 2>&1 | sed -n '1,120p'; echo; echo 'curl -v /version'; curl -v --max-time 3 http://127.0.0.1:6189/version 2>&1 | sed -n '1,120p'" 'ssh curl diag'
   Write-Info ("curl diag: " + ($curlDiag.Trim() -replace '\\s+', ' '))
@@ -182,7 +187,7 @@ if ($apiVer -match '__API_UNREACHABLE__') {
 Write-Info ("api version: " + ($apiVer.Trim() -replace '\\s+', ' '))
 try {
   $apiObj = $apiVer | ConvertFrom-Json
-  $apiTag = [string]($apiObj.imageTag ?? '')
+  $apiTag = if ($null -ne $apiObj.imageTag) { [string]$apiObj.imageTag } else { '' }
   if ($apiTag -ne $tag) { throw "NAS api imageTag mismatch: expected=$tag actual=$apiTag" }
 } catch {
   throw ("NAS api version verify failed: " + $_.Exception.Message)

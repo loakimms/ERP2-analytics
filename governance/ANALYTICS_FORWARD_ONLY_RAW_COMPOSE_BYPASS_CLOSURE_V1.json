@@ -1,0 +1,25 @@
+{
+    "sprint":  "ANALYTICS_FORWARD_ONLY_RAW_COMPOSE_BYPASS_CLOSURE_V1",
+    "decision":  "PASS_ANALYTICS_FORWARD_ONLY_RAW_COMPOSE_BYPASS_CLOSURE_V1",
+    "previousSprint":  "ANALYTICS_FORWARD_ONLY_PRODUCTION_BASELINE_AND_REBUILD_GUARD_V1",
+    "canonicalAuthorityUnchanged":  true,
+    "runtimeTag":  "analytics_20260921_005100",
+    "sourceManifestSha256":  "27dece8d1427a83c32cd55d204a017880331858b3ab5e8a0047d2beb77be4e97",
+    "actualDockerRebuild":  0,
+    "actualProductionPromotion":  0,
+    "actualRuntimeTagChange":  0,
+    "closure":  {
+                    "runtimeCompose":  "image-only RUN (no build.context to worktree)",
+                    "files":  [
+                                  "docker/analytics.local.yml",
+                                  "docker/analytics.local.override.yml",
+                                  "docker/analytics.master.yml",
+                                  "docker/analytics.nas.master.yml"
+                              ],
+                    "candidateBuildCompose":  "docker/analytics.candidate-build.yml",
+                    "candidateBuildContext":  "releases/_candidates/${ANALYTICS_CANDIDATE_FOLDER}/source/{api,web}",
+                    "startAnalyticsLocal":  "existing image only --no-build",
+                    "standardRebuild":  "scripts/analytics_rebuild_and_verify.ps1"
+                },
+    "residualBypassClosed":  "docker compose -f docker/analytics.local.yml up --build can no longer build from D:\\dev\\ERP2-analytics because analytics.local.yml has no build keys"
+}

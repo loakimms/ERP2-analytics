@@ -121,7 +121,7 @@ $browserDir = Join-Path $dataDir 'analytics_browser_data'
 if (-not (Test-Path $dbDir)) { New-Item -ItemType Directory -Path $dbDir | Out-Null }
 if (-not (Test-Path $browserDir)) { New-Item -ItemType Directory -Path $browserDir | Out-Null }
 
-Write-Host '==> Building and starting analytics local stack (analytics-db, analytics-api, analytics-web)'
+Write-Host '==> Starting analytics local stack from existing images (worktree docker build is forbidden)'
 if (-not (Wait-DockerEngine -Seconds 180)) { Write-Error 'Docker Desktop가 아직 실행되지 않았습니다.' }
 
 # Firebase Admin SDK env (전체 사용자 목록용)
@@ -140,7 +140,11 @@ $envArgs = @('--env-file', $lockFile)
 if (Test-Path -LiteralPath $envAnalytics) { $envArgs += '--env-file', $envAnalytics }
 if ($firebaseAdminEnv) { $envArgs += '--env-file', $firebaseAdminEnv }
 
-Invoke-Compose -ArgsList (@('-f', 'docker/analytics.local.yml', '-f', 'docker/analytics.local.override.yml') + $envArgs + @('up', '-d', '--build'))
+# PRODUCTION_BUILD_ENTRYPOINT closed: docker/analytics.local.yml is image-only (no build:).
+# scripts/start-analytics-local.ps1 starts existing images with --no-build.
+# Production rebuild: scripts/analytics_rebuild_and_verify.ps1 + CandidateSnapshot + docker/analytics.candidate-build.yml
+Write-Host 'start-analytics-local: existing image only (--no-build). Worktree compose --build is not possible.'
+Invoke-Compose -ArgsList (@('-f', 'docker/analytics.local.yml', '-f', 'docker/analytics.local.override.yml') + $envArgs + @('up', '-d', '--no-build'))
 
 Write-Host '==> Health check'
 Start-Sleep -Seconds 3

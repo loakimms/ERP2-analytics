@@ -7,7 +7,13 @@ param(
 
   # 어떤 lock을 갱신할지 (local만 우선 지원; nas는 추후 추가)
   [ValidateSet('local')]
-  [string] $Target = 'local'
+  [string] $Target = 'local',
+
+  # Production docker build context. Must be releases/_candidates/<tag> (never the dirty worktree).
+  [string] $CandidateSnapshot = '',
+  [string] $ApprovedChangeManifest = '',
+  [string] $CandidateTag = '',
+  [switch] $DryRun
 )
 
 $ErrorActionPreference = 'Stop'
@@ -113,15 +119,45 @@ $repoRoot = Get-RepoRoot
 Set-Location -Path $repoRoot | Out-Null
 Assert-CanonicalRoot -RepoRoot $repoRoot
 
+. (Join-Path $repoRoot 'scripts\analytics_forward_only_guard.ps1')
+Assert-NoProductionBypassSwitch -ArgTokens @($MyInvocation.UnboundArguments)
+
+Write-Info 'Baseline Authority Check'
+$baseline = Assert-CurrentProductionBaselineIntegrity -RepoRoot $repoRoot
+Assert-RuntimeComposeIsImageOnly -RepoRoot $repoRoot
+Write-Info ("CURRENT_PRODUCTION_BASELINE=" + $baseline.RuntimeTag)
+
+if ($DryRun) {
+  Write-Info 'DryRun: Candidate Source Gate only (docker build skipped)'
+  if (-not $CandidateSnapshot) {
+    Assert-NotDirectWorktreeBuildContext -RepoRoot $repoRoot -BuildContext $repoRoot -Entrypoint 'analytics_build_candidate.ps1'
+  }
+  Assert-ProductionRebuildPreflight -RepoRoot $repoRoot -CandidateSnapshot $CandidateSnapshot -ApprovedChangeManifest $ApprovedChangeManifest -Entrypoint 'analytics_build_candidate.ps1'
+  Write-Info 'DryRun PASS: docker build not executed'
+  exit 0
+}
+
+Assert-ProductionRebuildPreflight -RepoRoot $repoRoot -CandidateSnapshot $CandidateSnapshot -ApprovedChangeManifest $ApprovedChangeManifest -Entrypoint 'analytics_build_candidate.ps1'
+$snapRoot = (Resolve-Path -LiteralPath $CandidateSnapshot).Path
+$apiContext = Join-Path $snapRoot 'source\api'
+$webContext = Join-Path $snapRoot 'source\web'
+$webDockerfile = Join-Path $webContext 'Dockerfile.web'
+if (-not (Test-Path -LiteralPath (Join-Path $apiContext 'Dockerfile'))) { throw ("Candidate API Dockerfile not found: " + $apiContext) }
+if (-not (Test-Path -LiteralPath $webDockerfile)) { throw ("Candidate WEB Dockerfile.web not found: " + $webDockerfile) }
+
 if (-not $AnalyticsRoot) { $AnalyticsRoot = $repoRoot }
 if (-not (Test-Path -LiteralPath $AnalyticsRoot)) { throw ("AnalyticsRoot not found: " + $AnalyticsRoot) }
-if (-not (Test-Path -LiteralPath (Join-Path $AnalyticsRoot 'api\\Dockerfile'))) { throw ("Analytics API Dockerfile not found under: " + $AnalyticsRoot) }
-if (-not (Test-Path -LiteralPath (Join-Path $AnalyticsRoot 'web\\Dockerfile.web'))) { throw ("Analytics WEB Dockerfile not found under: " + $AnalyticsRoot) }
 
 Load-FirebaseWebEnv -RepoRoot $repoRoot
 
 $ts = Get-Date -Format 'yyyyMMdd_HHmmss'
 $tag = ("{0}_{1}" -f $Version, $ts)
+if ($CandidateTag) {
+  if ($CandidateTag -notmatch '^analytics_[0-9]{8}_[0-9]{6}$') {
+    throw ("invalid CandidateTag: " + $CandidateTag)
+  }
+  $tag = $CandidateTag
+}
 $buildTime = (Get-Date).ToString('s')
 
 $gitSha = ''
@@ -162,22 +198,35 @@ try {
   Write-Info ("Archive compose skipped: " + $_.Exception.Message)
 }
 
-Write-Info 'Build analytics API image'
-docker build -t ("analytics-analytics-api:" + $tag) (Join-Path $AnalyticsRoot 'api')
-Assert-LastExitOk 'docker build (analytics api)'
+$bannerInCandidate = Join-Path $webContext 'public\banner-analysis-ui.html'
+if (-not (Test-Path -LiteralPath $bannerInCandidate)) {
+  throw ("Banner analysis HTML missing in candidate snapshot (worktree docs are not production build input): " + $bannerInCandidate)
+}
+Write-Info 'Candidate snapshot already contains web\public\banner-analysis-ui.html (worktree not used)'
 
-Write-Info 'Build analytics WEB image'
-docker build `
-  -t ("analytics-analytics-web:" + $tag) `
-  --build-arg ("VITE_ANALYTICS_API_BASE_URL=/api") `
-  --build-arg ("VITE_FIREBASE_API_KEY=" + [string]($env:VITE_FIREBASE_API_KEY)) `
-  --build-arg ("VITE_APP_VERSION=" + $tag) `
-  --build-arg ("VITE_IMAGE_TAG=" + $tag) `
-  --build-arg ("BUILD_TIME=" + $buildTime) `
-  --build-arg ("GIT_SHA=" + $gitSha) `
-  -f (Join-Path $AnalyticsRoot 'web\\Dockerfile.web') `
-  (Join-Path $AnalyticsRoot 'web')
-Assert-LastExitOk 'docker build (analytics web)'
+$candidateFolder = Get-CandidateFolderName -RepoRoot $repoRoot -CandidateSnapshot $snapRoot
+$env:ANALYTICS_CANDIDATE_FOLDER = $candidateFolder
+$env:ANALYTICS_FORWARD_ONLY_CANDIDATE_BUILD = '1'
+$env:ANALYTICS_IMAGE_TAG = $tag
+$env:VITE_APP_VERSION = $tag
+$env:VITE_IMAGE_TAG = $tag
+$env:VITE_ANALYTICS_API_BASE_URL = '/api'
+$env:ANALYTICS_BUILD_TIME = $buildTime
+$env:ANALYTICS_GIT_SHA = $gitSha
+$candidateCompose = Join-Path $repoRoot 'docker\analytics.candidate-build.yml'
+Write-Info ("Build analytics images via candidate-only compose (folder=" + $candidateFolder + ")")
+docker compose -p analytics_candidate_build -f $candidateCompose build
+Assert-LastExitOk 'docker compose build (analytics candidate snapshot)'
+
+$identOut = Join-Path $snapRoot 'manifests\build-output-identity.json'
+@{
+  candidateTag = $tag
+  baseRuntimeTag = $baseline.RuntimeTag
+  baseSourceManifestSha256 = $baseline.SourceManifestSha256
+  apiBuildContext = $apiContext
+  webBuildContext = $webContext
+  builtAt = $buildTime
+} | ConvertTo-Json | Set-Content -Encoding UTF8 -LiteralPath $identOut
 
 Write-Info 'Done.'
 

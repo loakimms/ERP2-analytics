@@ -10,7 +10,14 @@ param(
   # - 코드 수정/검증 루프에서 디스크/시간을 소모하지 않기 위해,
   #   PASS 승격 시점의 docker save(이미지 tar) 자동 생성을 제거했다.
   # - 필요 시 별도의 수동 백업(backup-analytics.ps1 등)만 사용한다.
-  [string] $BackupDir = ''
+  [string] $BackupDir = '',
+
+  # Forward-Only: PASS promotion requires candidate snapshot + manifests + image digests.
+  [string] $CandidateSnapshot = '',
+  [string] $CandidateSourceManifest = '',
+  [string] $ApprovedChangeManifest = '',
+  [string] $WebImageDigest = '',
+  [string] $ApiImageDigest = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -264,6 +271,9 @@ $repoRoot = Get-RepoRoot
 Set-Location -Path $repoRoot | Out-Null
 Assert-CanonicalRoot -RepoRoot $repoRoot
 
+. (Join-Path $repoRoot 'scripts\analytics_forward_only_guard.ps1')
+Assert-NoProductionBypassSwitch -ArgTokens @($MyInvocation.UnboundArguments)
+
 $projectName = 'analytics_master'
 $composeFile = 'docker\\analytics.master.yml'
 $masterLock = 'docker\\analytics.master.lock'
@@ -292,6 +302,32 @@ if ([string]::IsNullOrWhiteSpace($BackupDir)) { $BackupDir = (Join-Path $repoRoo
 if ($Result -eq 'PASS') {
   $tag = Read-LockTag $candidateLock
   Write-Info ("PROMOTE candidate -> master (tag=" + $tag + ")")
+  $baseline = Assert-CurrentProductionBaselineIntegrity -RepoRoot $repoRoot
+  if (-not $CandidateSourceManifest -and $CandidateSnapshot) {
+    $CandidateSourceManifest = Join-Path $CandidateSnapshot 'manifests\source-manifest.json'
+  }
+  if (-not $ApprovedChangeManifest -and $CandidateSnapshot) {
+    $ApprovedChangeManifest = Join-Path $CandidateSnapshot 'manifests\approved-change-manifest.json'
+  }
+  $webImageName = ("analytics-analytics-web:" + $tag)
+  $apiImageName = ("analytics-analytics-api:" + $tag)
+  if (-not $WebImageDigest) {
+    try { $WebImageDigest = ((docker image inspect --format '{{.Id}}' $webImageName) | Out-String).Trim() } catch { $WebImageDigest = '' }
+  }
+  if (-not $ApiImageDigest) {
+    try { $ApiImageDigest = ((docker image inspect --format '{{.Id}}' $apiImageName) | Out-String).Trim() } catch { $ApiImageDigest = '' }
+  }
+  Assert-PromotionArtifactsPresent `
+    -CandidateSnapshot $CandidateSnapshot `
+    -CandidateSourceManifest $CandidateSourceManifest `
+    -ApprovedChangeManifest $ApprovedChangeManifest `
+    -WebImageDigest $WebImageDigest `
+    -ApiImageDigest $ApiImageDigest `
+    -VersionTag $tag
+  $ident = Read-CandidateIdentity -CandidateSnapshot $CandidateSnapshot
+  Assert-CandidateBaseIdentity -Baseline $baseline -BaseRuntimeTag ([string]$ident.baseRuntimeTag) -BaseSourceManifestSha256 ([string]$ident.baseSourceManifestSha256)
+  $chg = Read-ApprovedChangeManifest -Path $ApprovedChangeManifest
+  Assert-ApprovedChangeManifestSafe -Manifest $chg -Baseline $baseline
   $script:BuildTime = Read-LockValue $candidateLock 'ANALYTICS_BUILD_TIME'
   $script:GitSha = Read-LockValue $candidateLock 'ANALYTICS_GIT_SHA'
   $firebaseProjectId = Read-LockValue $candidateLock 'FIREBASE_PROJECT_ID'
@@ -315,6 +351,29 @@ if ($Result -eq 'PASS') {
   Assert-LastExitOk 'docker compose up (promote web/api)'
 
   Write-Info 'Auto backup disabled: skip docker save/manifest/restore generation'
+
+  $newManifestRel = $CandidateSourceManifest
+  if ([System.IO.Path]::IsPathRooted($CandidateSourceManifest)) {
+    $newManifestRel = $CandidateSourceManifest.Substring($repoRoot.Length).TrimStart('\', '/')
+  }
+  $newSnapRel = $CandidateSnapshot
+  if ([System.IO.Path]::IsPathRooted($CandidateSnapshot)) {
+    $newSnapRel = $CandidateSnapshot.Substring($repoRoot.Length).TrimStart('\', '/')
+  }
+  $newManSha = Get-FileSha256Hex $CandidateSourceManifest
+  try {
+    Write-Info 'Canonical Baseline Freeze / pointer update'
+    Update-CurrentProductionBaselinePointer `
+      -RepoRoot $repoRoot `
+      -NewRuntimeTag $tag `
+      -NewSourceSnapshot $newSnapRel.Replace('\', '/') `
+      -NewSourceManifest $newManifestRel.Replace('\', '/') `
+      -NewSourceManifestSha256 $newManSha `
+      -WebImageDigest $WebImageDigest `
+      -ApiImageDigest $ApiImageDigest | Out-Null
+  } catch {
+    throw ("HOLD_PROMOTION_BASELINE_FREEZE_INCOMPLETE: " + $_.Exception.Message)
+  }
 
   Write-Info 'Done.'
   exit 0

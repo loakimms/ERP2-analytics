@@ -1,6 +1,13 @@
-# Analytics 로컬 스택 (ERP2-dev docker-compose.local.yml 구조와 동일)
-# - 빌드+기동: scripts/start-analytics-local.ps1
+# Analytics 로컬 스택 — RUN ONLY (existing image). No worktree build.context.
+# - 기동: scripts/start-analytics-local.ps1 (--no-build) 또는 cmd-analytics-local.ps1
+# - Production image build: scripts/analytics_rebuild_and_verify.ps1
+#   → CURRENT_PRODUCTION_BASELINE + approved overlay
+#   → releases/_candidates/<tag>
+#   → docker/analytics.candidate-build.yml (only compose file that may contain build:)
 # - lock 파일(analytics.master.lock 또는 analytics.candidate.lock)이 단일 진실(SoT)
+# ANALYTICS_FORWARD_ONLY_RAW_COMPOSE_BYPASS_CLOSURE_V1:
+# `docker compose -f docker/analytics.local.yml up --build` must not be able to
+# build from D:\dev\ERP2-analytics because this file has no build: keys.
 name: analytics_local
 
 services:
@@ -25,8 +32,6 @@ services:
   analytics-api:
     restart: "no"
     image: analytics-analytics-api:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.master.lock)}
-    build:
-      context: ../api
     environment:
       ANALYTICS_IMAGE_TAG: ${ANALYTICS_IMAGE_TAG}
       ANALYTICS_BUILD_TIME: ${ANALYTICS_BUILD_TIME:-}
@@ -38,6 +43,8 @@ services:
       FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
       FIREBASE_PRIVATE_KEY_ID: ${FIREBASE_PRIVATE_KEY_ID:-}
       ADMIN_TEST_MODE: ${ADMIN_TEST_MODE:-0}
+      # 리뷰 Knowledge 검증 기록 쓰기(기본 OFF). 로컬만 docker/env.analytics.local에서 켠다. NAS는 별도 승인 전까지 OFF.
+      REVIEW_KNOWLEDGE_VALIDATION_WRITE_ENABLED: ${REVIEW_KNOWLEDGE_VALIDATION_WRITE_ENABLED:-0}
       ANALYTICS_DB_URL: postgresql://analytics:analytics_pw@analytics-db:5432/analytics
       API_SETTINGS_DB_ONLY: "1"
       CORS_ORIGINS: "*"
@@ -46,6 +53,10 @@ services:
       REQUIRE_HOST_CDP: "0"
       PW_CDP_URL: "http://host.docker.internal:9223"
       SHOPPING_SEED_PRODUCT_URL: ${SHOPPING_SEED_PRODUCT_URL:-https://smartstore.naver.com/thesujata/products/4743750201}
+      GFA_GENERATED_IMAGE_DIR: /data/gfa_generated_creatives
+      CONTENT_GENERATED_IMAGE_DIR: /data/content_generated_images
+      CONTENT_ASSET_DIR: /data/content_assets
+      GFA_WINDOWS_FONT_DIR: /host_windows_fonts
     ports:
       - "5189:8000"
       - "19222:9222"
@@ -58,6 +69,11 @@ services:
       - 1.1.1.1
     volumes:
       - ../data/analytics_browser_data:/data/playwright
+      - ../data/gfa_generated_creatives:/data/gfa_generated_creatives
+      - ../data/content_generated_images:/data/content_generated_images
+      - ../data/content_assets:/data/content_assets
+      - ../calibration:/calibration:ro
+      - "C:/Windows/Fonts:/host_windows_fonts:ro"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health || exit 1"]
       interval: 10s
@@ -73,16 +89,6 @@ services:
     image: analytics-analytics-web:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required (use docker/analytics.master.lock)}
     ports:
       - "5188:80"
-    build:
-      context: ../web
-      dockerfile: Dockerfile.web
-      args:
-        VITE_ANALYTICS_API_BASE_URL: ${VITE_ANALYTICS_API_BASE_URL:-/api}
-        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
-        VITE_APP_VERSION: ${VITE_APP_VERSION}
-        VITE_IMAGE_TAG: ${VITE_IMAGE_TAG}
-        BUILD_TIME: ${ANALYTICS_BUILD_TIME:-}
-        GIT_SHA: ${ANALYTICS_GIT_SHA:-}
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:80 || exit 1"]
       interval: 10s

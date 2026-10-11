@@ -1,0 +1,16 @@
+{
+  "status": "CANONICAL_PRODUCTION_BASELINE",
+  "runtimeTag": "analytics_20261011_145207",
+  "sourceSnapshot": "releases/_candidates/analytics_20261011_145207",
+  "sourceManifest": "releases/_candidates/analytics_20261011_145207/manifests/source-manifest.json",
+  "sourceManifestSha256": "8932d72e4f102da856653c012aed08cdc7200290f54e699d81a5ba2cd8476bd2",
+  "webImageDigest": "sha256:5967baf709f14e1042a48d86dd0edaf161190d337686a596d3aad85c10911af6",
+  "apiImageDigest": "sha256:3edc09311ea186496f1243f1fe285ca85a4d0dfe610911ff008d9b4441ec7241",
+  "previousProductionBaseline": "analytics_20261011_011722",
+  "frozenAt": "2026-10-11T15:27:35",
+  "notes": [
+    "Production Promotion + Canonical Baseline Freeze are one transaction.",
+    "CURRENT and PREVIOUS release snapshots are excluded from automatic deletion.",
+    "BuildKit/containerd/running containers are RECOVERY_EVIDENCE_ONLY."
+  ]
+}

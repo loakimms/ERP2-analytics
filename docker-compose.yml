@@ -58,6 +58,8 @@ services:
       PW_CDP_URL: "http://host.docker.internal:9223"
       # 캡차 세션 확보용 '시드' 상품 URL (개인용: 본인 스토어 상품 1개 고정 권장)
       SHOPPING_SEED_PRODUCT_URL: "https://smartstore.naver.com/thesujata/products/4743750201"
+      CONTENT_GENERATED_IMAGE_DIR: /data/content_generated_images
+      CONTENT_ASSET_DIR: /data/content_assets
     ports:
       - "5189:8000"
       # 컨테이너 내부 Chromium DevTools (캡차 직접 해결용)
@@ -68,6 +70,8 @@ services:
     volumes:
       # Playwright Chromium 사용자 데이터(쿠키/세션) 영속화
       - analytics-browser-data:/data/playwright
+      - analytics-content-images:/data/content_generated_images
+      - analytics-content-assets:/data/content_assets
 
   analytics-web:
     profiles: ["legacy"]
@@ -86,5 +90,7 @@ services:
 volumes:
   analytics-db-data:
   analytics-browser-data:
+  analytics-content-images:
+  analytics-content-assets:
 
 

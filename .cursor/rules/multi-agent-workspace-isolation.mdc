@@ -1,0 +1,101 @@
+---
+description: Parallel Cursor Agents must use separate worktrees; shared files cannot be co-edited in one dirty folder; Production is baseline+overlay only.
+alwaysApply: true
+---
+
+# Cursor 다중 Agent 작업공간 분리 규칙 (추가 / 삭제 금지 / SoT)
+
+이 규칙은 기존 Forward-Only Production Baseline / 불변 태그 SoT를 **덮어쓰지 않는다.**
+Production에 dirty worktree가 들어가는 문제는 이미 Candidate 시스템이 차단한다.
+이 문서는 **남은 문제**: 두 Agent가 같은 물리 폴더를 동시에 수정해 개발 코드가 오염되는 일을 막는다.
+
+## 원인 가설 (005100 복구 배경)
+
+유력 배경은 “Cursor Agent 2개” 자체보다, **같은 `D:\dev\ERP2-analytics`를 공유한 채 서로 다른 메뉴를 병렬 수정**하고, 그 시점의 **공유 dirty worktree 전체**가 표준 재빌드 입력이 된 구조다.
+
+같은 현상은 Agent 하나라도 commit 없이 Sprint를 누적하면 생길 수 있다.
+세션 시각 vs BuildKit timestamp를 더 캐지 않아도, 운영 대응은 아래 규칙으로 충분하다.
+
+금지됐던 경로:
+
+```text
+Agent A (전략/분석) 와 Agent B (소재/편집)
+        ↓ 같은 worktree에 공용 파일 누적
+        ↓ 미커밋 dirty 상태
+        ↓ 표준 재빌드가 worktree 전체를 이미지에 넣음
+```
+
+허용되는 경로:
+
+```text
+CURRENT_PRODUCTION_BASELINE
+  + 승인된 Overlay (A 승인 hunk/파일 및/또는 B 승인 hunk/파일)
+        ↓
+격리 Candidate Snapshot  (releases/_candidates/<tag>/)
+        ↓
+Build → Verify → Promote
+```
+
+## 작업공간 역할
+
+- **`D:\dev\ERP2-analytics`**: Canonical Integration Workspace. Production 직접 build 입력 아님. 통합/후보 조립 전용으로 취급한다.
+- **병렬 Agent**는 별도 Git worktree를 쓴다. 예:
+  - `D:\dev\ERP2-analytics-agent-gfa-strategy` — 전략/분석
+  - `D:\dev\ERP2-analytics-agent-gfa-creative` — 소재/편집
+- Agent는 **자기 worktree 안에서만** 수정한다.
+- 메뉴가 달라도 공용 파일을 같은 폴더에서 동시에 직접 수정하지 않는다.
+- 한 Agent 결과를 다른 Agent worktree **전체 복사 금지**. 승인된 파일/hunk만 Candidate에 반영한다.
+- 두 Agent 모두 Production docker build 직접 수행 금지. 통합은 Canonical Baseline + 승인 Overlay만.
+
+시작 시 현재 워크스페이스 경로를 확인한다.
+다른 Agent 전용 경로에서 Canonical 폴더를 수정하려 하거나, Canonical 폴더에서 병렬 전용 작업을 가정하면 **즉시 중단**하고 경로를 보고한다.
+
+## Shared Integration Files
+
+아래 파일은 여러 메뉴가 공유하는 진입점이다. 병렬 Agent가 동시에 바꾸려 하면 먼저 충돌 여부를 확인한다.
+
+- `api/main.py`
+- `web/src/modules/ads/adsApi.ts`
+- `web/src/modules/ads/AdsViews.tsx`
+- `web/src/modules/layout/AppShell.tsx`
+
+추가 공용 통합면(동일 정책):
+
+- `web/src/modules/ads/GfaCreativeGeneratorView.tsx` (소재/편집 쪽 공용 표면)
+- `governance/CURRENT_PRODUCTION_BASELINE.json`
+- `docker/analytics.local.lock`, `docker/analytics.master.lock`, `docker/analytics.candidate.lock`
+
+확인 방법:
+
+1. 해당 파일의 `git status` / diff가 이 세션이 만든 변경인지 본다.
+2. 세션이 모르는 dirty가 있으면 덮어쓰지 않는다.
+3. 코드: `HOLD_SHARED_FILE_CONCURRENT_EDIT`
+4. `git checkout` / `git reset` / `git clean` / stash로 상대 Agent 변경을 지우지 않는다.
+
+## Production 통합
+
+완료된 변경을 바로 Production 이미지로 빌드하지 않는다.
+
+```text
+Agent A workspace → 전략/분석 개발
+Agent B workspace → 소재/편집 개발
+둘 다 → Production 직접 build 불가
+
+통합 시점
+  CURRENT_PRODUCTION_BASELINE
+  + A 승인 변경
+  + B 승인 변경
+  → 하나의 Candidate
+  → 검증
+  → Promote
+```
+
+- Overlay 입력이 dirty worktree 전체가 되면 `BLOCKED_DIRECT_WORKTREE_BUILD`
+- `approved-change-manifest.json` 의 `UNEXPECTED` 는 0이어야 한다
+- 표준 재빌드: `scripts/analytics_rebuild_and_verify.ps1` + CandidateSnapshot 필수
+
+## 이 규칙이 하지 않는 일
+
+- Forward-Only / 불변 태그 / lock SoT 를 대체하지 않는다
+- ERP2-dev 경로/포트를 이 워크스페이스에서 다루지 않는다
+- 물리 worktree 폴더를 사용자 요청 없이 생성하지 않는다

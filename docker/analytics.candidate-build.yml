@@ -1,0 +1,29 @@
+# Candidate-only image BUILD compose. Not a runtime stack.
+# Invoked only by scripts/analytics_build_candidate.ps1 after Forward-Only preflight.
+# Context is structurally pinned under releases/_candidates/<folder>/source/{api,web}.
+# Raw `docker compose -f docker/analytics.candidate-build.yml build` without
+# ANALYTICS_FORWARD_ONLY_CANDIDATE_BUILD and ANALYTICS_CANDIDATE_FOLDER fails.
+# ANALYTICS_FORWARD_ONLY_RAW_COMPOSE_BYPASS_CLOSURE_V1
+name: analytics_candidate_build
+
+x-forward-only-guard: ${ANALYTICS_FORWARD_ONLY_CANDIDATE_BUILD:?raw docker compose of analytics.candidate-build.yml is blocked; use scripts/analytics_rebuild_and_verify.ps1}
+
+services:
+  analytics-api:
+    image: analytics-analytics-api:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required}
+    build:
+      context: ../releases/_candidates/${ANALYTICS_CANDIDATE_FOLDER:?ANALYTICS_CANDIDATE_FOLDER is required}/source/api
+      dockerfile: Dockerfile
+
+  analytics-web:
+    image: analytics-analytics-web:${ANALYTICS_IMAGE_TAG:?ANALYTICS_IMAGE_TAG is required}
+    build:
+      context: ../releases/_candidates/${ANALYTICS_CANDIDATE_FOLDER:?ANALYTICS_CANDIDATE_FOLDER is required}/source/web
+      dockerfile: Dockerfile.web
+      args:
+        VITE_ANALYTICS_API_BASE_URL: ${VITE_ANALYTICS_API_BASE_URL:-/api}
+        VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
+        VITE_APP_VERSION: ${VITE_APP_VERSION}
+        VITE_IMAGE_TAG: ${VITE_IMAGE_TAG}
+        BUILD_TIME: ${ANALYTICS_BUILD_TIME:-}
+        GIT_SHA: ${ANALYTICS_GIT_SHA:-}
